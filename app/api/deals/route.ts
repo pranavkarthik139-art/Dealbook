@@ -47,7 +47,7 @@ export async function GET() {
   } catch (error) {
     console.error('Error fetching deals:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch deals' },
+      { error: 'Failed to fetch deals', details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }

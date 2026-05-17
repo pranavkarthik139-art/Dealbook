@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
         let activitiesLogged = 0;
         const emailsWithDeals = emails.map(email => ({
           ...email,
-          dealId: matchEmailToDeal(email, deals, contacts),
+          dealId: matchEmailToDeal(email, contacts),
         }));
 
         for (const email of emailsWithDeals) {

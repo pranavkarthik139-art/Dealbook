@@ -35,17 +35,7 @@ export async function fetchGmailEmails(
   pageToken?: string
 ): Promise<{ emails: GmailEmail[]; nextPageToken?: string }> {
   try {
-    const gmail = google.gmail({
-      version: 'v1',
-      auth: new google.auth.OAuth2(
-        process.env.GOOGLE_OAUTH_CLIENT_ID,
-        process.env.GOOGLE_OAUTH_CLIENT_SECRET,
-        process.env.NEXTAUTH_URL
-      ),
-      defaultUserAgent: 'Hashwork/1.0',
-    });
-
-    // Set the access token
+    // Set up authentication
     const auth = new google.auth.OAuth2(
       process.env.GOOGLE_OAUTH_CLIENT_ID,
       process.env.GOOGLE_OAUTH_CLIENT_SECRET,
@@ -119,7 +109,7 @@ export async function fetchGmailEmails(
 
     return {
       emails,
-      nextPageToken: response.data.nextPageToken,
+      nextPageToken: response.data.nextPageToken ?? undefined,
     };
   } catch (error) {
     console.error('❌ Error fetching Gmail emails:', error);

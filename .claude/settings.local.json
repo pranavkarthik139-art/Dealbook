@@ -68,7 +68,21 @@
       "Bash(gh --version)",
       "Bash(git remote *)",
       "Bash(git add *)",
-      "Bash(git commit -m 'feat: Add Reporting & Analytics + Gmail Email Auto-Logging Infrastructure *)"
+      "Bash(git commit -m 'feat: Add Reporting & Analytics + Gmail Email Auto-Logging Infrastructure *)",
+      "Bash(git config *)",
+      "Bash(git branch *)",
+      "Bash(git push *)",
+      "Bash(git rm *)",
+      "Bash(git commit *)",
+      "mcp__Claude_in_Chrome__find",
+      "Bash(vercel link *)",
+      "Bash(vercel env *)",
+      "Bash(vercel deploy *)",
+      "Bash(cd \"C:\\\\Users\\\\prana\\\\OneDrive\\\\Desktop\\\\Hashwork\" && mv \"app/api/auth/[...nextauth]/route.ts\" \"app/api/auth/[...nextauth]/route.ts.disabled\")",
+      "Bash(curl -s \"https://dealbook.vercel.app/api/deals\" -H \"Content-Type: application/json\")",
+      "Bash(curl -s \"https://dealbook.vercel.app/api/deals\")",
+      "Bash(curl -X POST \"https://dealbook.vercel.app/api/email/sync\" -H \"Content-Type: application/json\")",
+      "Bash(cd C:\\\\\\\\Users\\\\\\\\prana\\\\\\\\OneDrive\\\\\\\\Desktop\\\\\\\\Hashwork)"
     ]
   }
 }

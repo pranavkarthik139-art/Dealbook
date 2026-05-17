@@ -29,9 +29,10 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   }
 }
 
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const contactId = parseInt(params.id);
+    const { id } = await params;
+    const contactId = parseInt(id);
     const { name, email, title, role, company, linkedinUrl, notes } = await request.json();
 
     // Verify contact exists and belongs to user
@@ -88,9 +89,10 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
   }
 }
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const contactId = parseInt(params.id);
+    const { id } = await params;
+    const contactId = parseInt(id);
 
     // Verify contact exists and belongs to user
     const contact = await prisma.contact.findUnique({

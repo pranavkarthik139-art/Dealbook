@@ -37,7 +37,7 @@ export async function GET(request: NextRequest) {
       const status = deal.status || 'active';
       if (statusBreakdown[status]) {
         statusBreakdown[status].count += 1;
-        statusBreakdown[status].value += deal.amount || 0;
+        statusBreakdown[status].value += deal.amount ? Number(deal.amount) : 0;
         if (deal.health) {
           healthScores[status].push(deal.health);
         }

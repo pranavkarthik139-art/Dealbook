@@ -7,28 +7,20 @@ const USER_ID = 1; // hardcoded for prototype
 
 export async function POST(request: NextRequest) {
   try {
-    // Get user from session (optional for now, using hardcoded USER_ID)
-    // const session = await getServerSession();
-    // if (!session) {
-    //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    // }
+    // Get user session (NextAuth stores OAuth tokens here)
+    const session = await getServerSession() as any;
 
-    // Get user preferences with Gmail token
-    const userPref = await prisma.userPreference.findUnique({
-      where: { userId: USER_ID },
-    });
-
-    if (!userPref?.gmailToken) {
+    if (!session?.accessToken) {
       return NextResponse.json(
-        { error: 'Gmail not connected. Please authorize email access in settings.' },
+        { error: 'Gmail not connected. Please log in with Google first.' },
         { status: 400 }
       );
     }
 
     console.log('📧 Starting email sync for user:', USER_ID);
 
-    // Fetch emails from Gmail
-    const { emails } = await fetchGmailEmails(userPref.gmailToken, 50);
+    // Fetch emails from Gmail using OAuth token
+    const { emails } = await fetchGmailEmails(session.accessToken, 50);
 
     // Fetch all contacts for matching (email-based)
     const contacts = await prisma.contact.findMany({

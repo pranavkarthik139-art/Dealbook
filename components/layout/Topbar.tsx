@@ -3,11 +3,13 @@
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useSession, signIn, signOut } from 'next-auth/react';
 import { CreateDealModal } from '@/components/deals/CreateDealModal';
 
 export function Topbar() {
   const pathname = usePathname();
   const router = useRouter();
+  const { data: session, status } = useSession();
   const [showCreateModal, setShowCreateModal] = useState(false);
 
   const getBreadcrumb = () => {
@@ -45,32 +47,96 @@ export function Topbar() {
           alignItems: 'center',
           gap: '16px'
         }}>
-          <button
-            onClick={() => setShowCreateModal(true)}
-            type="button"
-            style={{
-              padding: '10px 18px',
-              backgroundColor: 'var(--cobalt)',
-              color: 'white',
-              border: 'none',
-              borderRadius: '7px',
-              fontSize: '13px',
-              fontWeight: 600,
-              cursor: 'pointer',
-              transition: 'all 150ms ease',
-              boxShadow: 'var(--shadow-sm)'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--cobalt-hover)';
-              e.currentTarget.style.boxShadow = 'var(--shadow-md)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--cobalt)';
-              e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
-            }}
-          >
-            + New Deal
-          </button>
+          {session && (
+            <button
+              onClick={() => setShowCreateModal(true)}
+              type="button"
+              style={{
+                padding: '10px 18px',
+                backgroundColor: 'var(--cobalt)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '7px',
+                fontSize: '13px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 150ms ease',
+                boxShadow: 'var(--shadow-sm)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'var(--cobalt-hover)';
+                e.currentTarget.style.boxShadow = 'var(--shadow-md)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'var(--cobalt)';
+                e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
+              }}
+            >
+              + New Deal
+            </button>
+          )}
+
+          {/* Auth Button */}
+          {status === 'loading' ? (
+            <div style={{
+              padding: '8px 12px',
+              color: 'var(--ink-light)',
+              fontSize: '13px'
+            }}>
+              Loading...
+            </div>
+          ) : session ? (
+            <button
+              onClick={() => signOut()}
+              type="button"
+              style={{
+                padding: '8px 14px',
+                backgroundColor: 'var(--ink-light)',
+                color: 'var(--paper)',
+                border: 'none',
+                borderRadius: '7px',
+                fontSize: '13px',
+                fontWeight: 500,
+                cursor: 'pointer',
+                transition: 'all 150ms ease'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.opacity = '0.8';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.opacity = '1';
+              }}
+            >
+              {session.user?.email || 'Sign Out'}
+            </button>
+          ) : (
+            <button
+              onClick={() => signIn('google')}
+              type="button"
+              style={{
+                padding: '8px 14px',
+                backgroundColor: 'var(--cobalt)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '7px',
+                fontSize: '13px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                transition: 'all 150ms ease',
+                boxShadow: 'var(--shadow-sm)'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = 'var(--cobalt-hover)';
+                e.currentTarget.style.boxShadow = 'var(--shadow-md)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'var(--cobalt)';
+                e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
+              }}
+            >
+              Sign in with Google
+            </button>
+          )}
         </div>
       </header>
 

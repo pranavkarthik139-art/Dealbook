@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
       const stage = deal.stage || 'demo';
       if (stageBreakdown[stage]) {
         stageBreakdown[stage].count += 1;
-        stageBreakdown[stage].value += deal.amount || 0;
+        stageBreakdown[stage].value += deal.amount ? Number(deal.amount) : 0;
         stageBreakdown[stage].deals.push(deal);
       }
     }
