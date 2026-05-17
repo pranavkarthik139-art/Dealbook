@@ -1,0 +1,131 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Deal {
+  id              Int       @id @default(autoincrement())
+  userId          Int       @map("user_id")
+  name            String    @db.VarChar(255)
+  email           String?   @db.VarChar(255)
+  amount          Decimal?  @db.Decimal(12, 2)
+  status          String?   @db.VarChar(50) // 'active', 'closed', 'on_hold', 'lost'
+  stage           String?   @db.VarChar(50) // 'demo', 'poc', 'validation', 'closed'
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  lastActivityAt  DateTime? @map("last_activity_at")
+  externalId      String?   @db.VarChar(255) @map("external_id")
+  primaryContactId Int?     @map("primary_contact_id")
+
+  // Relations
+  contacts        Contact[]
+  calendarEvents  CalendarEvent[]
+  todos           Todo[]
+  activityLogs    ActivityLog[]
+
+  @@index([userId])
+  @@map("deals")
+}
+
+model Contact {
+  id              Int       @id @default(autoincrement())
+  userId          Int       @map("user_id")
+  dealId          Int       @map("deal_id")
+  name            String    @db.VarChar(255)
+  email           String    @db.VarChar(255)
+  title           String?   @db.VarChar(255)
+  role            String?   @db.VarChar(100) // 'decision_maker', 'influencer', 'end_user', 'technical_buyer', 'economic_buyer'
+  company         String?   @db.VarChar(255)
+  linkedinUrl     String?   @db.VarChar(255) @map("linkedin_url")
+  notes           String?   @db.Text
+  lastContactedAt DateTime? @map("last_contacted_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  deal            Deal      @relation(fields: [dealId], references: [id], onDelete: Cascade)
+
+  @@unique([dealId, email])
+  @@index([userId])
+  @@index([dealId])
+  @@map("contacts")
+}
+
+model CalendarEvent {
+  id              Int       @id @default(autoincrement())
+  userId          Int       @map("user_id")
+  googleEventId   String?   @db.VarChar(255) @map("google_event_id")
+  title           String    @db.VarChar(255)
+  startTime       DateTime  @map("start_time")
+  endTime         DateTime  @map("end_time")
+  attendees       String[]  @default([])
+  description     String?   @db.Text
+  dealId          Int?      @map("deal_id")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  deal            Deal?     @relation(fields: [dealId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([dealId])
+  @@map("calendar_events")
+}
+
+model Todo {
+  id              Int       @id @default(autoincrement())
+  userId          Int       @map("user_id")
+  content         String    @db.Text
+  dealId          Int?      @map("deal_id")
+  completed       Boolean   @default(false)
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  deal            Deal?     @relation(fields: [dealId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([dealId])
+  @@map("todos")
+}
+
+model UserPreference {
+  id                      Int       @id @default(autoincrement())
+  userId                  Int       @unique @map("user_id")
+  timezonePrimary         String    @default("UTC") @db.VarChar(50) @map("timezone_primary")
+  timezoneSecondary       String?   @db.VarChar(50) @map("timezone_secondary")
+  googleCalendarToken     String?   @db.Text @map("google_calendar_token")
+  googleCalendarRefreshToken String? @db.Text @map("google_calendar_refresh_token")
+  gmailToken              String?   @db.Text @map("gmail_token")
+  gmailRefreshToken       String?   @db.Text @map("gmail_refresh_token")
+  lastGmailSyncAt         DateTime? @map("last_gmail_sync_at")
+  createdAt               DateTime  @default(now()) @map("created_at")
+  updatedAt               DateTime  @updatedAt @map("updated_at")
+
+  @@map("user_preferences")
+}
+
+model ActivityLog {
+  id              Int       @id @default(autoincrement())
+  userId          Int       @map("user_id")
+  dealId          Int?      @map("deal_id")
+  action          String    @db.VarChar(100)
+  description     String?   @db.Text
+  metadata        Json?
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  deal            Deal?     @relation(fields: [dealId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([dealId])
+  @@map("activity_log")
+}

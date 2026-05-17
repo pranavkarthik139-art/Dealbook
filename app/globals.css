@@ -1,0 +1,74 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap");
+@import "tailwindcss";
+
+:root {
+  /* Professional light mode only */
+  --paper: #ffffff;
+  --paper-bg: #f5f5f5;
+  --paper-alt: #fafafa;
+  --ink: #1a1a1a;
+  --ink-light: #4a4a4a;
+  --ink-lighter: #767676;
+  --cobalt: #0052cc;
+  --cobalt-light: #f0f4ff;
+  --cobalt-hover: #0047b2;
+  --amber: #e8a000;
+  --amber-light: #fff8e8;
+  --red: #d42626;
+  --red-light: #ffe8e8;
+  --green: #059669;
+  --green-light: #ecfdf5;
+  --line: #e0e0e0;
+  --line-light: #f0f0f0;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.12);
+}
+
+* {
+  color-scheme: light;
+}
+
+body {
+  background: var(--paper-bg);
+  color: var(--ink);
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Playfair Display", serif;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@layer utilities {
+  .animate-fade-up {
+    animation: fade-up 0.35s ease both;
+  }
+
+  .shadow-card {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  }
+
+  .text-brand {
+    font-family: "Playfair Display", serif;
+    font-weight: 700;
+  }
+}

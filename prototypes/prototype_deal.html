@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Milestone — Deal · Aether Logistics (prototype)</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --paper:#F9F9F7;--ink:#1A1A18;--ink-mid:#3D3D3A;--ink-mute:#8A8A85;--ink-faint:#C9C9C4;
+  --cobalt:#0047FF;--cobalt-mid:#0039D6;--cobalt-tint:#E8EEFF;--cobalt-wash:#F0F3FF;
+  --amber:#BA7517;--amber-tint:#FAEEDA;
+  --red:#A32D2D;--red-tint:#FCEBEB;
+  --green:#3B6D11;--green-tint:#EAF3DE;
+  --line:rgba(0,0,0,0.07);--line-soft:rgba(0,0,0,0.04);
+  --serif:'Playfair Display',Georgia,serif;
+  --sans:'DM Sans',system-ui,sans-serif;
+  --shadow:0 1px 3px rgba(0,0,0,0.04),0 8px 32px rgba(0,0,0,0.05);
+}
+body{background:var(--paper);font-family:var(--sans);color:var(--ink);font-feature-settings:'tnum' 1;-webkit-font-smoothing:antialiased;}
+button{font-family:inherit;border:none;cursor:pointer;background:none;color:inherit;}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;gap:14px;padding:18px 36px;border-bottom:1px solid var(--line);background:var(--paper);}
+.crumbs{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--ink-mute);}
+.crumbs a{color:var(--ink-mute);cursor:pointer;text-decoration:none;}
+.crumbs a:hover{color:var(--cobalt);}
+.crumbs .sep{color:var(--ink-faint);}
+.crumbs strong{color:var(--ink);font-weight:500;}
+.topbar-r{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;font-size:12px;font-weight:500;border-radius:7px;transition:.12s;}
+.btn-ghost{color:var(--ink-mid);}
+.btn-ghost:hover{background:rgba(0,0,0,0.04);color:var(--ink);}
+.btn-primary{background:var(--cobalt);color:#fff;}
+.btn-primary:hover{background:var(--cobalt-mid);}
+.btn svg{width:12px;height:12px;}
+
+/* HERO */
+.hero{padding:36px 36px 24px;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:end;}
+.eyebrow{font-size:10px;letter-spacing:1.8px;text-transform:uppercase;color:var(--ink-mute);margin-bottom:8px;font-weight:500;}
+.title{font-family:var(--serif);font-size:38px;font-weight:900;letter-spacing:-1.2px;line-height:1;}
+.title-meta{font-size:13px;color:var(--ink-mid);margin-top:10px;display:flex;gap:14px;align-items:center;}
+.title-meta .pill{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;background:var(--cobalt-wash);border-radius:20px;color:var(--cobalt);font-size:11px;font-weight:500;}
+.title-meta .pill .dot{width:5px;height:5px;border-radius:50%;background:var(--cobalt);animation:pulse 1.6s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+.tabs{display:flex;gap:2px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:3px;}
+.tab{font-size:12px;padding:6px 14px;border-radius:6px;color:var(--ink-mid);font-weight:500;cursor:pointer;}
+.tab.on{background:var(--cobalt);color:#fff;}
+.tab:not(.on):hover{background:rgba(0,0,0,0.04);}
+
+/* MAIN GRID */
+.main{padding:0 36px 48px;display:grid;grid-template-columns:300px 1fr 320px;gap:20px;align-items:start;}
+
+/* CARD */
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;}
+.card-h{padding:18px 22px 14px;border-bottom:1px solid var(--line-soft);display:flex;align-items:center;justify-content:space-between;}
+.card-t{font-family:var(--serif);font-size:15px;font-weight:700;letter-spacing:-0.2px;}
+.card-h small{font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:var(--ink-mute);font-weight:500;}
+.card-b{padding:18px 22px;}
+
+/* AI CARD (left, top) */
+.ai-card{background:linear-gradient(135deg,#fff 0%,#FAFBFF 100%);border:1px solid var(--cobalt-tint);border-radius:14px;padding:20px;}
+.ai-eyebrow{display:flex;align-items:center;gap:7px;font-size:9px;letter-spacing:1.6px;text-transform:uppercase;color:var(--cobalt);font-weight:600;margin-bottom:10px;}
+.ai-eyebrow svg{width:11px;height:11px;}
+.ai-headline{font-size:13px;font-weight:500;line-height:1.45;color:var(--ink);}
+.ai-headline strong{font-weight:600;}
+.ai-meta{font-size:11px;color:var(--ink-mute);margin-top:8px;line-height:1.4;}
+.ai-actions{display:flex;gap:6px;margin-top:14px;flex-wrap:wrap;}
+.ai-actions .btn{padding:6px 11px;font-size:11px;}
+
+/* STEPPER (vertical) */
+.stepper{display:flex;flex-direction:column;}
+.step{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--line-soft);position:relative;cursor:pointer;}
+.step:last-child{border-bottom:none;padding-bottom:0;}
+.step:first-child{padding-top:0;}
+.step-rail{flex-shrink:0;display:flex;flex-direction:column;align-items:center;width:26px;}
+.step-num{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0;font-family:var(--sans);}
+.step.done .step-num{background:var(--cobalt);color:#fff;}
+.step.now .step-num{background:#fff;color:var(--cobalt);box-shadow:0 0 0 2px var(--cobalt);}
+.step.next .step-num{background:#fff;color:var(--ink-mute);border:1.5px solid var(--ink-faint);}
+.step-line{flex:1;width:1px;background:var(--line);margin:6px 0 -14px;}
+.step:last-child .step-line{display:none;}
+.step.done .step-line{background:var(--cobalt);}
+.step-body{flex:1;min-width:0;padding-top:2px;}
+.step-name{font-size:13px;font-weight:500;color:var(--ink);}
+.step.next .step-name{color:var(--ink-mute);font-weight:400;}
+.step.now .step-name{color:var(--cobalt);font-weight:600;}
+.step-meta{font-size:11px;color:var(--ink-mute);margin-top:2px;}
+.step-prog{margin-top:8px;display:none;}
+.step.now .step-prog{display:block;}
+.step-prog-bar{width:100%;height:3px;background:rgba(0,71,255,0.12);border-radius:2px;overflow:hidden;}
+.step-prog-bar > div{height:100%;background:var(--cobalt);border-radius:2px;}
+.step-prog-meta{font-size:10px;color:var(--ink-mute);margin-top:5px;display:flex;justify-content:space-between;}
+
+/* GAPS */
+.gaps{padding:0;}
+.gap-row{display:grid;grid-template-columns:1fr auto auto;gap:14px;padding:13px 22px;border-bottom:1px solid var(--line-soft);align-items:center;}
+.gap-row:last-child{border-bottom:none;}
+.gap-row:hover{background:rgba(0,71,255,0.02);}
+.gap-name{font-size:13px;font-weight:500;color:var(--ink);letter-spacing:-0.1px;}
+.gap-sub{font-size:11px;color:var(--ink-mute);margin-top:2px;}
+.priority{font-size:9px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;padding:2px 7px;border-radius:4px;}
+.p-crit{background:var(--red-tint);color:var(--red);}
+.p-high{background:var(--amber-tint);color:var(--amber);}
+.p-med{background:var(--cobalt-wash);color:var(--cobalt);}
+.status{display:inline-flex;align-items:center;gap:5px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500;white-space:nowrap;}
+.status .dot{width:5px;height:5px;border-radius:50%;}
+.s-ok{background:var(--green-tint);color:var(--green);}
+.s-ok .dot{background:var(--green);}
+.s-no{background:var(--red-tint);color:var(--red);}
+.s-no .dot{background:var(--red);}
+.s-mid{background:var(--amber-tint);color:var(--amber);}
+.s-mid .dot{background:var(--amber);}
+.s-soon{background:var(--cobalt-wash);color:var(--cobalt);}
+.s-soon .dot{background:var(--cobalt);}
+
+/* MAP */
+.map-section{padding:0 22px;}
+.map-section + .map-section{border-top:1px solid var(--line-soft);}
+.map-section-h{display:flex;align-items:center;gap:10px;padding:14px 0 10px;}
+.map-owner{font-size:9px;letter-spacing:1.4px;text-transform:uppercase;font-weight:600;padding:3px 8px;border-radius:4px;}
+.owner-us{background:var(--cobalt-wash);color:var(--cobalt);}
+.owner-them{background:var(--green-tint);color:var(--green);}
+.map-stats{margin-left:auto;font-size:11px;color:var(--ink-mute);}
+.map-list{padding-bottom:14px;}
+.map-item{display:flex;gap:11px;padding:8px 0;cursor:pointer;align-items:flex-start;border-radius:6px;transition:background .12s;margin:0 -8px;padding-left:8px;padding-right:8px;}
+.map-item:hover{background:rgba(0,71,255,0.025);}
+.chk{width:16px;height:16px;border-radius:5px;border:1.5px solid var(--ink-faint);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;transition:.12s;}
+.map-item.done .chk{background:var(--cobalt);border-color:var(--cobalt);}
+.chk svg{width:9px;height:9px;color:#fff;display:none;}
+.map-item.done .chk svg{display:block;}
+.map-text{font-size:12.5px;line-height:1.4;color:var(--ink-mid);}
+.map-item.done .map-text{color:var(--ink-mute);text-decoration:line-through;text-decoration-thickness:1px;}
+.map-due{font-size:10px;color:var(--ink-mute);margin-top:2px;}
+.map-due.over{color:var(--red);font-weight:500;}
+
+/* STAKEHOLDERS */
+.stake{display:flex;flex-direction:column;}
+.stake-row{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line-soft);}
+.stake-row:last-child{border-bottom:none;}
+.stake-row:first-child{padding-top:0;}
+.stake-av{width:30px;height:30px;border-radius:50%;background:var(--cobalt-tint);color:var(--cobalt);font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.stake-av.cham{background:var(--green-tint);color:var(--green);}
+.stake-av.bloc{background:var(--red-tint);color:var(--red);}
+.stake-av.unkn{background:#F1EFE8;color:#5F5E5A;}
+.stake-info{flex:1;min-width:0;}
+.stake-name{font-size:12.5px;font-weight:500;color:var(--ink);}
+.stake-role{font-size:10.5px;color:var(--ink-mute);margin-top:1px;}
+.stake-tag{font-size:9px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;padding:2px 6px;border-radius:3px;}
+.tag-cham{background:var(--green-tint);color:var(--green);}
+.tag-bloc{background:var(--red-tint);color:var(--red);}
+.tag-dm{background:var(--amber-tint);color:var(--amber);}
+.tag-unkn{color:var(--ink-mute);background:#F1EFE8;}
+
+/* STREAM */
+.stream{display:flex;flex-direction:column;}
+.stream-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--line-soft);}
+.stream-item:last-child{border-bottom:none;padding-bottom:0;}
+.stream-item:first-child{padding-top:0;}
+.stream-iconwrap{flex-shrink:0;width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;background:var(--cobalt-wash);color:var(--cobalt);}
+.stream-iconwrap svg{width:12px;height:12px;}
+.stream-iconwrap.green{background:var(--green-tint);color:var(--green);}
+.stream-iconwrap.amber{background:var(--amber-tint);color:var(--amber);}
+.stream-iconwrap.mute{background:#F1EFE8;color:#5F5E5A;}
+.stream-content{min-width:0;}
+.stream-event{font-size:12px;font-weight:500;color:var(--ink);line-height:1.4;}
+.stream-sub{font-size:11px;color:var(--ink-mute);margin-top:2px;line-height:1.4;}
+.stream-time{font-size:10px;color:var(--ink-mute);margin-top:4px;letter-spacing:.3px;}
+.viewall{margin-top:12px;font-size:11px;color:var(--cobalt);font-weight:500;cursor:pointer;letter-spacing:.2px;}
+
+/* HEALTH STRIP */
+.health-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:0;background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;}
+.hs-cell{padding:16px 18px;border-right:1px solid var(--line-soft);}
+.hs-cell:last-child{border-right:none;}
+.hs-lbl{font-size:9px;letter-spacing:1.6px;text-transform:uppercase;color:var(--ink-mute);font-weight:500;margin-bottom:6px;}
+.hs-val{font-family:var(--serif);font-size:24px;font-weight:700;letter-spacing:-0.6px;line-height:1;color:var(--cobalt);}
+.hs-val.ink{color:var(--ink);}
+.hs-val.amber{color:var(--amber);}
+.hs-sub{font-size:10px;color:var(--ink-mute);margin-top:4px;}
+
+/* COL CONTAINERS */
+.col{display:flex;flex-direction:column;gap:16px;}
+
+@keyframes fu{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+.ai-card,.card,.health-strip{animation:fu .35s ease both;}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-arrow-right" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-arrow-left" viewBox="0 0 16 16"><path d="M13 8H3M7 4l-4 4 4 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-share" viewBox="0 0 16 16"><circle cx="4" cy="8" r="2" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="12" cy="4" r="2" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="12" cy="12" r="2" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M5.7 7.2l4.6-2.4M5.7 8.8l4.6 2.4" stroke="currentColor" stroke-width="1.4"/></symbol>
+    <symbol id="i-check" viewBox="0 0 16 16"><path d="M3 8.5L6.5 12 13 5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-ai" viewBox="0 0 16 16"><path d="M8 2l1.4 3.6L13 7l-3.6 1.4L8 12l-1.4-3.6L3 7l3.6-1.4z" fill="currentColor"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 16 16"><path d="M2 8s2.5-4 6-4 6 4 6 4-2.5 4-6 4-6-4-6-4z" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="8" cy="8" r="1.6" fill="currentColor"/></symbol>
+    <symbol id="i-msg" viewBox="0 0 16 16"><path d="M3 4h10v7H8l-3 2v-2H3z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></symbol>
+    <symbol id="i-cal" viewBox="0 0 16 16"><rect x="2.5" y="3.5" width="11" height="10" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M2.5 6.5h11M5 2v3M11 2v3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></symbol>
+    <symbol id="i-warn" viewBox="0 0 16 16"><path d="M8 2.5L14 13H2z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M8 6.5v3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="8" cy="11.3" r=".7" fill="currentColor"/></symbol>
+    <symbol id="i-target" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8" r="2.5" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8" r=".8" fill="currentColor"/></symbol>
+    <symbol id="i-doc" viewBox="0 0 16 16"><path d="M4 2h5l3 3v9H4z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M9 2v3h3" fill="none" stroke="currentColor" stroke-width="1.3"/></symbol>
+  </defs>
+</svg>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="crumbs">
+    <a>Deals</a><span class="sep">/</span><strong>Aether Logistics</strong>
+  </div>
+  <div class="topbar-r">
+    <button class="btn btn-ghost"><svg><use href="#i-share"/></svg>Share</button>
+    <button class="btn btn-primary">Log update</button>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <div>
+    <div class="eyebrow">Pilot · Day 25 of 30 · Owner MK</div>
+    <div class="title">Aether Logistics</div>
+    <div class="title-meta">
+      <span class="pill"><span class="dot"></span>Live · health 9.1</span>
+      <span>Enterprise · 5,100 seats</span>
+      <span style="color:var(--ink-faint);">·</span>
+      <span>$720k ARR</span>
+      <span style="color:var(--ink-faint);">·</span>
+      <span>Decision target <strong style="color:var(--amber);font-weight:500;">Jun 8 · 3 days</strong></span>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab on">Pulse</button>
+    <button class="tab">Stakeholders</button>
+    <button class="tab">Documents</button>
+    <button class="tab">Notes</button>
+  </div>
+</div>
+
+<!-- HEALTH STRIP -->
+<div style="padding:0 36px 20px;">
+  <div class="health-strip">
+    <div class="hs-cell"><div class="hs-lbl">Health score</div><div class="hs-val">9.1</div><div class="hs-sub">↑ 0.3 this week</div></div>
+    <div class="hs-cell"><div class="hs-lbl">Win probability</div><div class="hs-val ink">87%</div><div class="hs-sub">↑ 12pp since kickoff</div></div>
+    <div class="hs-cell"><div class="hs-lbl">Critical gaps</div><div class="hs-val amber">1</div><div class="hs-sub">Bulk export · workaround drafted</div></div>
+    <div class="hs-cell"><div class="hs-lbl">Open tasks</div><div class="hs-val ink">4</div><div class="hs-sub">1 overdue · 3 due this week</div></div>
+  </div>
+</div>
+
+<!-- MAIN GRID -->
+<div class="main">
+
+  <!-- LEFT COL -->
+  <div class="col">
+
+    <!-- AI CARD -->
+    <div class="ai-card">
+      <div class="ai-eyebrow"><svg><use href="#i-ai"/></svg>Suggested next action</div>
+      <div class="ai-headline">Send the bulk-export workaround doc to <strong>D. Okafor</strong>. He spent 8m on the compliance section yesterday but hasn't replied to your last message.</div>
+      <div class="ai-meta">Confidence high · 4 similar deals closed within 2 days of this nudge</div>
+      <div class="ai-actions">
+        <button class="btn btn-primary">Draft email <svg><use href="#i-arrow-right"/></svg></button>
+        <button class="btn btn-ghost">Other ideas</button>
+        <button class="btn btn-ghost">Dismiss</button>
+      </div>
+    </div>
+
+    <!-- ROADMAP -->
+    <div class="card">
+      <div class="card-h"><div class="card-t">Roadmap</div><small>Stage 3 of 5</small></div>
+      <div class="card-b" style="padding:14px 22px 18px;">
+        <div class="stepper">
+          <div class="step done"><div class="step-rail"><div class="step-num"><svg width="11" height="11"><use href="#i-check"/></svg></div><div class="step-line"></div></div><div class="step-body"><div class="step-name">Discovery</div><div class="step-meta">Completed May 22 · 4 calls</div></div></div>
+          <div class="step done"><div class="step-rail"><div class="step-num"><svg width="11" height="11"><use href="#i-check"/></svg></div><div class="step-line"></div></div><div class="step-body"><div class="step-name">Environment setup</div><div class="step-meta">Completed Jun 1 · sandbox provisioned</div></div></div>
+          <div class="step now"><div class="step-rail"><div class="step-num">3</div><div class="step-line"></div></div><div class="step-body"><div class="step-name">Use case validation</div><div class="step-meta">In progress · 4 tasks remaining</div><div class="step-prog"><div class="step-prog-bar"><div style="width:60%"></div></div><div class="step-prog-meta"><span>6 of 10 done</span><span>Due Jun 14</span></div></div></div></div>
+          <div class="step next"><div class="step-rail"><div class="step-num">4</div><div class="step-line"></div></div><div class="step-body"><div class="step-name">Final review</div><div class="step-meta">Starts Jun 18</div></div></div>
+          <div class="step next"><div class="step-rail"><div class="step-num">5</div></div><div class="step-body"><div class="step-name">Decision</div><div class="step-meta">Target Jun 28</div></div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CENTER COL -->
+  <div class="col">
+
+    <!-- GAPS -->
+    <div class="card">
+      <div class="card-h"><div class="card-t">Gap tracker</div><small>1 critical · 5 features</small></div>
+      <div class="gaps">
+        <div class="gap-row">
+          <div><div class="gap-name">SSO via Okta / SAML</div><div class="gap-sub">Required for IT sign-off</div></div>
+          <span class="priority p-crit">Critical</span>
+          <span class="status s-ok"><span class="dot"></span>Available</span>
+        </div>
+        <div class="gap-row">
+          <div><div class="gap-name">Bulk data export (CSV/JSON)</div><div class="gap-sub">Ops dependency · workaround drafted</div></div>
+          <span class="priority p-crit">Critical</span>
+          <span class="status s-mid"><span class="dot"></span>Workaround</span>
+        </div>
+        <div class="gap-row">
+          <div><div class="gap-name">Custom role permissions</div><div class="gap-sub">Multi-tenant requirement</div></div>
+          <span class="priority p-high">High</span>
+          <span class="status s-mid"><span class="dot"></span>Partial</span>
+        </div>
+        <div class="gap-row">
+          <div><div class="gap-name">Audit log export</div><div class="gap-sub">Compliance mandate</div></div>
+          <span class="priority p-high">High</span>
+          <span class="status s-ok"><span class="dot"></span>Available</span>
+        </div>
+        <div class="gap-row">
+          <div><div class="gap-name">Webhook integrations</div><div class="gap-sub">Slack + PagerDuty</div></div>
+          <span class="priority p-med">Medium</span>
+          <span class="status s-soon"><span class="dot"></span>Roadmap Q4</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MUTUAL ACTION PLAN -->
+    <div class="card">
+      <div class="card-h"><div class="card-t">Mutual action plan</div><small>7 of 11 done</small></div>
+      <div style="padding:0;">
+        <div class="map-section">
+          <div class="map-section-h">
+            <span class="map-owner owner-us">Us · MK</span>
+            <span class="map-stats">3 of 5 done</span>
+          </div>
+          <div class="map-list">
+            <div class="map-item done"><div class="chk"><svg><use href="#i-check"/></svg></div><div><div class="map-text">Deliver security whitepaper + compliance docs</div><div class="map-due">Completed Jun 2</div></div></div>
+            <div class="map-item done"><div class="chk"><svg><use href="#i-check"/></svg></div><div><div class="map-text">Configure sandbox with sample data</div><div class="map-due">Completed Jun 4</div></div></div>
+            <div class="map-item done"><div class="chk"><svg><use href="#i-check"/></svg></div><div><div class="map-text">Run live demo for VP Engineering</div><div class="map-due">Completed Jun 6</div></div></div>
+            <div class="map-item"><div class="chk"><svg><use href="#i-check"/></svg></div><div><div class="map-text">Submit formal RFP response</div><div class="map-due over">Due Jun 7 · overdue</div></div></div>
+            <div class="map-item"><div class="chk"><svg><use href="#i-check"/></svg></div><div><div class="map-text">Prepare use case validation report</div><div class="map-due">Due Jun 14</div></div></div>
+          </div>
+        </div>
+        <div class="map-section">
+          <div class="map-section-h">
+            <span class="map-owner owner-them">Aether team</span>
+            <span class="map-stats">3 of 6 done</span>
+          </div>
+          <div class="map-list">
+            <div class="map-item done"><div class="chk"><svg><use href="#i-check"/></svg></div><div><div class="map-text">Provide IT credentials for environment setup</div><div class="map-due">Completed Jun 1</div></div></div>
+            <div class="map-item done"><div class="chk"><svg><use href="#i-check"/></svg></div><div><div class="map-text">Confirm technical POC lead — D. Okafor</div><div class="map-due">Completed Jun 3</div></div></div>
+            <div class="map-item done"><div class="chk"><svg><use href="#i-check"/></svg></div><div><div class="map-text">Join shared Slack #aether-launchpad-poc</div><div class="map-due">Completed Jun 4</div></div></div>
+            <div class="map-item"><div class="chk"><svg><use href="#i-check"/></svg></div><div><div class="map-text">Internal stakeholder alignment meeting</div><div class="map-due">Due Jun 12</div></div></div>
+            <div class="map-item"><div class="chk"><svg><use href="#i-check"/></svg></div><div><div class="map-text">Share feedback from 3 power users</div><div class="map-due">Due Jun 19</div></div></div>
+            <div class="map-item"><div class="chk"><svg><use href="#i-check"/></svg></div><div><div class="map-text">Final go / no-go decision</div><div class="map-due">Due Jun 28</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT COL -->
+  <div class="col">
+
+    <!-- STAKEHOLDERS -->
+    <div class="card">
+      <div class="card-h"><div class="card-t">Stakeholders</div><small>5 mapped</small></div>
+      <div class="card-b">
+        <div class="stake">
+          <div class="stake-row">
+            <div class="stake-av cham">DO</div>
+            <div class="stake-info"><div class="stake-name">D. Okafor</div><div class="stake-role">Technical POC lead · Engineering</div></div>
+            <span class="stake-tag tag-cham">Champion</span>
+          </div>
+          <div class="stake-row">
+            <div class="stake-av cham">SP</div>
+            <div class="stake-info"><div class="stake-name">S. Park</div><div class="stake-role">VP Engineering</div></div>
+            <span class="stake-tag tag-cham">Champion</span>
+          </div>
+          <div class="stake-row">
+            <div class="stake-av">RM</div>
+            <div class="stake-info"><div class="stake-name">R. Mehta</div><div class="stake-role">CIO · Decision maker</div></div>
+            <span class="stake-tag tag-dm">DM</span>
+          </div>
+          <div class="stake-row">
+            <div class="stake-av bloc">JT</div>
+            <div class="stake-info"><div class="stake-name">J. Tan</div><div class="stake-role">Procurement lead</div></div>
+            <span class="stake-tag tag-bloc">Blocker</span>
+          </div>
+          <div class="stake-row">
+            <div class="stake-av unkn">??</div>
+            <div class="stake-info"><div class="stake-name">CFO (unidentified)</div><div class="stake-role">Approves over $500k · ID needed</div></div>
+            <span class="stake-tag tag-unkn">Unknown</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTIVITY -->
+    <div class="card">
+      <div class="card-h"><div class="card-t">Pulse</div><small>Live</small></div>
+      <div class="card-b">
+        <div class="stream">
+          <div class="stream-item">
+            <div class="stream-iconwrap"><svg><use href="#i-eye"/></svg></div>
+            <div class="stream-content"><div class="stream-event">Security whitepaper read</div><div class="stream-sub">D. Okafor · 8m on compliance section</div><div class="stream-time">Today · 2:31 PM</div></div>
+          </div>
+          <div class="stream-item">
+            <div class="stream-iconwrap green"><svg><use href="#i-check"/></svg></div>
+            <div class="stream-content"><div class="stream-event">Milestone 2 complete</div><div class="stream-sub">Environment setup signed off</div><div class="stream-time">Today · 11:04 AM</div></div>
+          </div>
+          <div class="stream-item">
+            <div class="stream-iconwrap"><svg><use href="#i-msg"/></svg></div>
+            <div class="stream-content"><div class="stream-event">D. Okafor joined Slack channel</div><div class="stream-sub">#aether-launchpad-poc</div><div class="stream-time">Yesterday · 4:15 PM</div></div>
+          </div>
+          <div class="stream-item">
+            <div class="stream-iconwrap"><svg><use href="#i-doc"/></svg></div>
+            <div class="stream-content"><div class="stream-event">RFP doc opened</div><div class="stream-sub">3 stakeholders viewed proposal</div><div class="stream-time">Yesterday · 10:22 AM</div></div>
+          </div>
+          <div class="stream-item">
+            <div class="stream-iconwrap amber"><svg><use href="#i-warn"/></svg></div>
+            <div class="stream-content"><div class="stream-event">Gap flagged: Bulk export</div><div class="stream-sub">Marked critical blocker for IT sign-off</div><div class="stream-time">May 28 · 1:17 PM</div></div>
+          </div>
+          <div class="stream-item">
+            <div class="stream-iconwrap mute"><svg><use href="#i-cal"/></svg></div>
+            <div class="stream-content"><div class="stream-event">POC kickoff call</div><div class="stream-sub">7 attendees · 54 min · recording shared</div><div class="stream-time">May 20 · 10:00 AM</div></div>
+          </div>
+        </div>
+        <div class="viewall">Load earlier activity →</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // Tab toggle
+  document.querySelectorAll('.tab').forEach(t=>{
+    t.addEventListener('click',()=>{
+      document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+      t.classList.add('on');
+    });
+  });
+  // MAP toggle (consistent state for both sides)
+  document.querySelectorAll('.map-item').forEach(item=>{
+    item.addEventListener('click',()=>{
+      item.classList.toggle('done');
+      // Recompute counts
+      document.querySelectorAll('.map-section').forEach(sec=>{
+        const total=sec.querySelectorAll('.map-item').length;
+        const done=sec.querySelectorAll('.map-item.done').length;
+        const stat=sec.querySelector('.map-stats');
+        if(stat) stat.textContent = done+' of '+total+' done';
+      });
+      const totalAll=document.querySelectorAll('.map-item').length;
+      const doneAll=document.querySelectorAll('.map-item.done').length;
+      const small=document.querySelector('.card .card-h small');
+      // Update overall count too if we can find the right one
+      document.querySelectorAll('.card-h').forEach(h=>{
+        if(h.querySelector('.card-t')?.textContent.includes('Mutual action')){
+          h.querySelector('small').textContent = doneAll+' of '+totalAll+' done';
+        }
+      });
+    });
+  });
+</script>
+</body>
+</html>

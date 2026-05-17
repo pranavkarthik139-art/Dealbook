@@ -1,0 +1,850 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --paper: #F9F9F7;
+    --charcoal: #1A1A18;
+    --charcoal-mid: #3D3D3A;
+    --charcoal-muted: #8A8A85;
+    --cobalt: #0047FF;
+    --cobalt-light: #E8EEFF;
+    --cobalt-faint: #F0F3FF;
+    --serif: 'Playfair Display', Georgia, serif;
+    --sans: 'DM Sans', system-ui, sans-serif;
+    --shadow-card: 0 2px 24px rgba(0,0,0,0.06), 0 1px 4px rgba(0,0,0,0.04);
+    --shadow-hover: 0 8px 40px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.06);
+  }
+
+  body, .root {
+    background: var(--paper);
+    font-family: var(--sans);
+    color: var(--charcoal);
+    min-height: 100vh;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    grid-template-rows: auto 1fr;
+    min-height: 680px;
+    background: var(--paper);
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    grid-row: 1 / 3;
+    padding: 40px 28px 40px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
+    position: relative;
+  }
+
+  .sidebar::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 32px; bottom: 32px;
+    width: 0.5px;
+    background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.08) 20%, rgba(0,0,0,0.08) 80%, transparent);
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .brand-mark {
+    width: 28px; height: 28px;
+    background: var(--cobalt);
+    border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .brand-mark svg { width: 14px; height: 14px; }
+
+  .brand-name {
+    font-family: var(--serif);
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    color: var(--charcoal);
+  }
+
+  .nav-section-label {
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: var(--charcoal-muted);
+    margin-bottom: 12px;
+  }
+
+  .nav-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--charcoal-mid);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    margin-bottom: 2px;
+  }
+
+  .nav-item:hover { background: rgba(0,71,255,0.05); color: var(--cobalt); }
+
+  .nav-item.active {
+    background: var(--cobalt-faint);
+    color: var(--cobalt);
+    font-weight: 500;
+  }
+
+  .nav-dot {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: currentColor;
+    opacity: 0.4;
+    flex-shrink: 0;
+  }
+
+  .nav-item.active .nav-dot { opacity: 1; }
+
+  .nav-count {
+    margin-left: auto;
+    font-size: 11px;
+    background: var(--cobalt-light);
+    color: var(--cobalt);
+    padding: 1px 7px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+
+  /* TOPBAR */
+  .topbar {
+    padding: 32px 48px 24px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  .page-title-group {}
+
+  .page-eyebrow {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--charcoal-muted);
+    margin-bottom: 6px;
+    font-weight: 400;
+  }
+
+  .page-title {
+    font-family: var(--serif);
+    font-size: 30px;
+    font-weight: 900;
+    color: var(--charcoal);
+    letter-spacing: -0.8px;
+    line-height: 1.1;
+  }
+
+  .topbar-actions {
+    display: flex; align-items: center; gap: 12px;
+    margin-top: 6px;
+  }
+
+  .btn-ghost {
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--charcoal-mid);
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .btn-ghost:hover { background: rgba(0,0,0,0.04); }
+
+  .btn-primary {
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 500;
+    color: #fff;
+    padding: 8px 18px;
+    border-radius: 8px;
+    border: none;
+    background: var(--cobalt);
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex; align-items: center; gap: 6px;
+  }
+
+  .btn-primary:hover { background: #0039d6; }
+
+  /* MAIN CONTENT */
+  .main {
+    padding: 0 48px 48px;
+    overflow: hidden;
+  }
+
+  /* KPI ROW */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+
+  .kpi-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 22px 24px;
+    box-shadow: var(--shadow-card);
+    transition: box-shadow 0.2s;
+    cursor: default;
+  }
+
+  .kpi-card:hover { box-shadow: var(--shadow-hover); }
+
+  .kpi-label {
+    font-size: 10px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--charcoal-muted);
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  .kpi-value {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--charcoal);
+    letter-spacing: -1px;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .kpi-value.cobalt { color: var(--cobalt); }
+
+  .kpi-delta {
+    font-size: 11px;
+    color: var(--charcoal-muted);
+    display: flex; align-items: center; gap: 4px;
+  }
+
+  .delta-up { color: #1A7A3C; font-weight: 500; }
+  .delta-down { color: #C0392B; font-weight: 500; }
+
+  /* ASYMMETRIC CONTENT GRID */
+  .content-grid {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 24px;
+    align-items: start;
+  }
+
+  /* POC TABLE */
+  .poc-panel {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+  }
+
+  .poc-panel-header {
+    padding: 24px 28px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 0.5px solid rgba(0,0,0,0.06);
+  }
+
+  .poc-panel-title {
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+
+  .filter-pills {
+    display: flex; gap: 6px;
+  }
+
+  .pill {
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    font-family: var(--sans);
+    transition: all 0.15s;
+  }
+
+  .pill.active {
+    background: var(--cobalt);
+    color: #fff;
+    font-weight: 500;
+  }
+
+  .pill:not(.active) {
+    background: transparent;
+    color: var(--charcoal-muted);
+    border: 0.5px solid rgba(0,0,0,0.12);
+  }
+
+  .pill:not(.active):hover {
+    background: var(--cobalt-faint);
+    color: var(--cobalt);
+    border-color: var(--cobalt-light);
+  }
+
+  .poc-table { width: 100%; border-collapse: collapse; }
+
+  .poc-table thead tr {
+    border-bottom: 0.5px solid rgba(0,0,0,0.06);
+  }
+
+  .poc-table th {
+    padding: 10px 28px;
+    font-size: 9px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: var(--charcoal-muted);
+    font-weight: 500;
+    text-align: left;
+    font-family: var(--sans);
+  }
+
+  .poc-table td {
+    padding: 16px 28px;
+    font-size: 13px;
+    border-bottom: 0.5px solid rgba(0,0,0,0.04);
+    vertical-align: middle;
+  }
+
+  .poc-table tr:last-child td { border-bottom: none; }
+
+  .poc-table tr:hover td { background: rgba(0,71,255,0.015); }
+
+  .client-name {
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--charcoal);
+    letter-spacing: -0.2px;
+  }
+
+  .client-sub {
+    font-size: 11px;
+    color: var(--charcoal-muted);
+    margin-top: 2px;
+  }
+
+  .stage-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+  }
+
+  .stage-badge .dot {
+    width: 5px; height: 5px; border-radius: 50%;
+  }
+
+  .stage-active { background: #EAF3DE; color: #3B6D11; }
+  .stage-active .dot { background: #639922; }
+  .stage-pending { background: var(--cobalt-faint); color: var(--cobalt); }
+  .stage-pending .dot { background: var(--cobalt); }
+  .stage-review { background: #FAEEDA; color: #854F0B; }
+  .stage-review .dot { background: #BA7517; }
+  .stage-closed { background: #F1EFE8; color: #5F5E5A; }
+  .stage-closed .dot { background: #888780; }
+
+  .progress-bar-wrap {
+    width: 80px; height: 4px;
+    background: rgba(0,0,0,0.07);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 2px;
+    background: var(--cobalt);
+    transition: width 0.3s ease;
+  }
+
+  .owner-avatar {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--cobalt-light);
+    color: var(--cobalt);
+    font-size: 10px;
+    font-weight: 500;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* RIGHT PANEL */
+  .right-col { display: flex; flex-direction: column; gap: 20px; }
+
+  .side-card {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: var(--shadow-card);
+    padding: 24px;
+  }
+
+  .side-card-title {
+    font-family: var(--serif);
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    letter-spacing: -0.2px;
+  }
+
+  /* Timeline */
+  .timeline { display: flex; flex-direction: column; gap: 0; }
+
+  .tl-item {
+    display: flex; gap: 14px;
+    position: relative;
+    padding-bottom: 18px;
+  }
+
+  .tl-item:last-child { padding-bottom: 0; }
+
+  .tl-line-col {
+    display: flex; flex-direction: column; align-items: center;
+    flex-shrink: 0;
+    width: 14px;
+  }
+
+  .tl-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+
+  .tl-dot-cobalt { background: var(--cobalt); }
+  .tl-dot-gray { background: rgba(0,0,0,0.15); }
+  .tl-dot-green { background: #639922; }
+  .tl-dot-amber { background: #BA7517; }
+
+  .tl-connector {
+    flex: 1;
+    width: 0.5px;
+    background: rgba(0,0,0,0.08);
+    margin-top: 4px;
+  }
+
+  .tl-item:last-child .tl-connector { display: none; }
+
+  .tl-content {}
+
+  .tl-client {
+    font-family: var(--serif);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--charcoal);
+  }
+
+  .tl-desc {
+    font-size: 11px;
+    color: var(--charcoal-muted);
+    margin-top: 1px;
+    line-height: 1.4;
+  }
+
+  .tl-time {
+    font-size: 10px;
+    color: var(--charcoal-muted);
+    margin-top: 4px;
+    letter-spacing: 0.3px;
+  }
+
+  /* Win rate donut */
+  .donut-wrap {
+    display: flex; align-items: center; gap: 20px;
+  }
+
+  .donut-labels { display: flex; flex-direction: column; gap: 10px; }
+
+  .donut-leg { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+
+  .donut-leg-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  .donut-leg-val { font-weight: 500; color: var(--charcoal); margin-left: auto; }
+
+  .donut-leg-lbl { color: var(--charcoal-muted); }
+
+  /* Cobalt accent line at top of highlight card */
+  .card-accent {
+    border-top: 3px solid var(--cobalt);
+    border-radius: 16px;
+  }
+
+  .cobalt-tag {
+    display: inline-block;
+    background: var(--cobalt);
+    color: #fff;
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 4px;
+    margin-bottom: 12px;
+  }
+
+  .health-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 4px;
+  }
+
+  .health-item {
+    padding: 12px 14px;
+    background: var(--cobalt-faint);
+    border-radius: 10px;
+  }
+
+  .health-val {
+    font-family: var(--serif);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--cobalt);
+    line-height: 1;
+  }
+
+  .health-lbl {
+    font-size: 10px;
+    color: var(--charcoal-muted);
+    margin-top: 4px;
+    letter-spacing: 0.3px;
+  }
+
+  .sep { height: 0.5px; background: rgba(0,0,0,0.06); margin: 16px 0; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .kpi-card { animation: fadeUp 0.4s ease both; }
+  .kpi-card:nth-child(1) { animation-delay: 0.05s; }
+  .kpi-card:nth-child(2) { animation-delay: 0.10s; }
+  .kpi-card:nth-child(3) { animation-delay: 0.15s; }
+  .kpi-card:nth-child(4) { animation-delay: 0.20s; }
+  .poc-panel { animation: fadeUp 0.4s 0.25s ease both; }
+  .side-card { animation: fadeUp 0.4s 0.3s ease both; }
+</style>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M2 11L7 3L12 11" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M4 8.5H10" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <span class="brand-name">Launchpad</span>
+    </div>
+
+    <div>
+      <div class="nav-section-label">Workspace</div>
+      <div class="nav-item active">
+        <span class="nav-dot"></span>
+        POC Overview
+        <span class="nav-count">12</span>
+      </div>
+      <div class="nav-item">
+        <span class="nav-dot"></span>
+        Active Trials
+        <span class="nav-count">5</span>
+      </div>
+      <div class="nav-item">
+        <span class="nav-dot"></span>
+        Clients
+      </div>
+      <div class="nav-item">
+        <span class="nav-dot"></span>
+        Deal Intelligence
+      </div>
+    </div>
+
+    <div>
+      <div class="nav-section-label">Reports</div>
+      <div class="nav-item">
+        <span class="nav-dot"></span>
+        Win/Loss Analysis
+      </div>
+      <div class="nav-item">
+        <span class="nav-dot"></span>
+        Team Performance
+      </div>
+      <div class="nav-item">
+        <span class="nav-dot"></span>
+        Stakeholder Reports
+      </div>
+    </div>
+
+    <div style="margin-top: auto;">
+      <div style="padding: 16px; background: var(--cobalt-faint); border-radius: 12px;">
+        <div style="font-size: 11px; font-weight: 500; color: var(--cobalt); margin-bottom: 4px;">Q2 on track</div>
+        <div style="font-size: 10px; color: var(--charcoal-muted); line-height: 1.5;">3 POCs closing this month · $2.1M pipeline</div>
+        <div style="height: 3px; background: rgba(0,71,255,0.12); border-radius: 2px; margin-top: 10px;">
+          <div style="height: 100%; width: 67%; background: var(--cobalt); border-radius: 2px;"></div>
+        </div>
+        <div style="font-size: 9px; color: var(--charcoal-muted); margin-top: 5px;">67% of quarterly target</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="page-title-group">
+      <div class="page-eyebrow">Presales · Q2 2025</div>
+      <div class="page-title">POC Dashboard</div>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn-ghost">Filter</button>
+      <button class="btn-ghost">Export</button>
+      <button class="btn-primary">
+        <svg width="11" height="11" viewBox="0 0 11 11" fill="none"><path d="M5.5 1v9M1 5.5h9" stroke="white" stroke-width="1.6" stroke-linecap="round"/></svg>
+        New POC
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- KPI ROW -->
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">Active POCs</div>
+        <div class="kpi-value cobalt">12</div>
+        <div class="kpi-delta"><span class="delta-up">↑ 3</span> from last month</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Win Rate</div>
+        <div class="kpi-value">68%</div>
+        <div class="kpi-delta"><span class="delta-up">↑ 4pp</span> vs. prior quarter</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Avg. Duration</div>
+        <div class="kpi-value">23d</div>
+        <div class="kpi-delta"><span class="delta-down">↑ 2d</span> over target</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Pipeline Value</div>
+        <div class="kpi-value">$4.2M</div>
+        <div class="kpi-delta"><span class="delta-up">↑ $800k</span> this quarter</div>
+      </div>
+    </div>
+
+    <!-- ASYMMETRIC GRID -->
+    <div class="content-grid">
+
+      <!-- POC TABLE -->
+      <div class="poc-panel">
+        <div class="poc-panel-header">
+          <div class="poc-panel-title">Active Evaluations</div>
+          <div class="filter-pills">
+            <button class="pill active">All</button>
+            <button class="pill">In Progress</button>
+            <button class="pill">Review</button>
+            <button class="pill">Won</button>
+          </div>
+        </div>
+        <table class="poc-table">
+          <thead>
+            <tr>
+              <th>Client</th>
+              <th>Stage</th>
+              <th>Progress</th>
+              <th>Value</th>
+              <th>Owner</th>
+              <th>Due</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <div class="client-name">Meridian Health</div>
+                <div class="client-sub">Enterprise · 2,400 seats</div>
+              </td>
+              <td><span class="stage-badge stage-active"><span class="dot"></span>In Progress</span></td>
+              <td>
+                <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:75%"></div></div>
+              </td>
+              <td style="font-weight:500; font-size:13px;">$380k</td>
+              <td><div class="owner-avatar">JR</div></td>
+              <td style="font-size:12px; color:var(--charcoal-muted);">Jun 14</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="client-name">Volta Capital</div>
+                <div class="client-sub">Mid-market · 640 seats</div>
+              </td>
+              <td><span class="stage-badge stage-pending"><span class="dot"></span>Kickoff</span></td>
+              <td>
+                <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:12%"></div></div>
+              </td>
+              <td style="font-weight:500; font-size:13px;">$210k</td>
+              <td><div class="owner-avatar" style="background:#EAF3DE;color:#3B6D11;">AL</div></td>
+              <td style="font-size:12px; color:var(--charcoal-muted);">Jul 2</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="client-name">Aether Logistics</div>
+                <div class="client-sub">Enterprise · 5,100 seats</div>
+              </td>
+              <td><span class="stage-badge stage-review"><span class="dot"></span>Under Review</span></td>
+              <td>
+                <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:90%; background:#BA7517;"></div></div>
+              </td>
+              <td style="font-weight:500; font-size:13px;">$720k</td>
+              <td><div class="owner-avatar" style="background:#FAEEDA;color:#854F0B;">MK</div></td>
+              <td style="font-size:12px; color:#C0392B; font-weight:500;">Jun 8</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="client-name">Nucleus Labs</div>
+                <div class="client-sub">Startup · 120 seats</div>
+              </td>
+              <td><span class="stage-badge stage-pending"><span class="dot"></span>Technical Setup</span></td>
+              <td>
+                <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:30%"></div></div>
+              </td>
+              <td style="font-weight:500; font-size:13px;">$95k</td>
+              <td><div class="owner-avatar">JR</div></td>
+              <td style="font-size:12px; color:var(--charcoal-muted);">Jun 28</td>
+            </tr>
+            <tr>
+              <td>
+                <div class="client-name">Pinnacle Group</div>
+                <div class="client-sub">Enterprise · 8,200 seats</div>
+              </td>
+              <td><span class="stage-badge stage-closed"><span class="dot"></span>Closed Won</span></td>
+              <td>
+                <div class="progress-bar-wrap"><div class="progress-bar-fill" style="width:100%; background:#888780;"></div></div>
+              </td>
+              <td style="font-weight:500; font-size:13px;">$1.1M</td>
+              <td><div class="owner-avatar" style="background:#EAF3DE;color:#3B6D11;">AL</div></td>
+              <td style="font-size:12px; color:var(--charcoal-muted);">May 30</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- RIGHT COLUMN -->
+      <div class="right-col">
+
+        <!-- Highlight Card -->
+        <div class="side-card card-accent">
+          <div class="cobalt-tag">Spotlight</div>
+          <div style="font-family: var(--serif); font-size: 16px; font-weight: 700; letter-spacing: -0.3px; color: var(--charcoal); margin-bottom: 4px;">Aether Logistics</div>
+          <div style="font-size: 11px; color: var(--charcoal-muted); margin-bottom: 16px;">Evaluation ends Jun 8 · 3 champions identified</div>
+          <div class="health-grid">
+            <div class="health-item">
+              <div class="health-val">9.1</div>
+              <div class="health-lbl">Health Score</div>
+            </div>
+            <div class="health-item">
+              <div class="health-val">4</div>
+              <div class="health-lbl">Open Tasks</div>
+            </div>
+            <div class="health-item">
+              <div class="health-val" style="font-size:16px;">$720k</div>
+              <div class="health-lbl">Deal Value</div>
+            </div>
+            <div class="health-item">
+              <div class="health-val">87%</div>
+              <div class="health-lbl">Win Prob.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Activity Timeline -->
+        <div class="side-card">
+          <div class="side-card-title">Recent Activity</div>
+          <div class="timeline">
+            <div class="tl-item">
+              <div class="tl-line-col">
+                <div class="tl-dot tl-dot-cobalt"></div>
+                <div class="tl-connector"></div>
+              </div>
+              <div class="tl-content">
+                <div class="tl-client">Volta Capital</div>
+                <div class="tl-desc">Kickoff call scheduled with IT lead</div>
+                <div class="tl-time">Today · 2:14 PM</div>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-line-col">
+                <div class="tl-dot tl-dot-green"></div>
+                <div class="tl-connector"></div>
+              </div>
+              <div class="tl-content">
+                <div class="tl-client">Pinnacle Group</div>
+                <div class="tl-desc">Contract signed — moving to onboarding</div>
+                <div class="tl-time">Yesterday · 11:40 AM</div>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-line-col">
+                <div class="tl-dot tl-dot-amber"></div>
+                <div class="tl-connector"></div>
+              </div>
+              <div class="tl-content">
+                <div class="tl-client">Aether Logistics</div>
+                <div class="tl-desc">Security review docs requested</div>
+                <div class="tl-time">Mon · 9:02 AM</div>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-line-col">
+                <div class="tl-dot tl-dot-gray"></div>
+                <div class="tl-connector"></div>
+              </div>
+              <div class="tl-content">
+                <div class="tl-client">Meridian Health</div>
+                <div class="tl-desc">Demo delivered to VP of Engineering</div>
+                <div class="tl-time">Jun 3 · 3:30 PM</div>
+              </div>
+            </div>
+          </div>
+          <div class="sep"></div>
+          <div style="font-size: 11px; color: var(--cobalt); font-weight: 500; cursor: pointer; letter-spacing: 0.2px;">View all activity →</div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  document.querySelectorAll('.pill').forEach(p => {
+    p.addEventListener('click', () => {
+      document.querySelectorAll('.pill').forEach(x => x.classList.remove('active'));
+      p.classList.add('active');
+    });
+  });
+  document.querySelectorAll('.nav-item').forEach(n => {
+    n.addEventListener('click', () => {
+      document.querySelectorAll('.nav-item').forEach(x => x.classList.remove('active'));
+      n.classList.add('active');
+    });
+  });
+</script>
