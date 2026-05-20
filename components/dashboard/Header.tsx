@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 
 interface HeaderProps {
@@ -8,29 +8,44 @@ interface HeaderProps {
 }
 
 export function Header({ userName = 'Engineer' }: HeaderProps) {
-  const today = format(new Date(), 'EEEE, MMMM d, yyyy');
+  const [greeting, setGreeting] = useState('Good morning');
+
+  useEffect(() => {
+    const updateGreeting = () => {
+      const hour = new Date().getHours();
+      if (hour < 12) {
+        setGreeting('Good morning');
+      } else if (hour < 18) {
+        setGreeting('Good afternoon');
+      } else {
+        setGreeting('Good evening');
+      }
+    };
+
+    updateGreeting();
+    const interval = setInterval(updateGreeting, 60000); // Update every minute
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div style={{
-      marginBottom: '32px',
-      borderBottom: '1px solid var(--line)',
-      paddingBottom: '24px'
+      marginBottom: 'var(--space-8)',
+      paddingBottom: 0
     }}>
       <h1 style={{
-        fontSize: '28px',
+        fontSize: 'var(--text-4xl)',
         fontFamily: '"Playfair Display", serif',
         fontWeight: 700,
         color: 'var(--ink)',
-        marginBottom: '8px',
-        margin: '0 0 8px 0'
+        margin: 0,
+        letterSpacing: '-0.5px',
+        textDecoration: 'underline',
+        textDecorationThickness: '2px',
+        textUnderlineOffset: '6px',
+        textDecorationColor: 'var(--ink)'
       }}>
-        Good morning, {userName}
+        {greeting}, {userName}
       </h1>
-      <p style={{
-        fontSize: '14px',
-        color: 'var(--ink-lighter)',
-        margin: 0
-      }}>{today}</p>
     </div>
   );
 }

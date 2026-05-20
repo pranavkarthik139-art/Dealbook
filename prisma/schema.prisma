@@ -11,14 +11,56 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
+model User {
+  id                Int               @id @default(autoincrement())
+  email             String            @unique
+  name              String
+  role              String            @default("presales_lead") // 'presales_lead', 'sales_engineer', 'admin'
+
+  // Relations to main features
+  deals             Deal[]
+  contacts          Contact[]
+  calendarEvents    CalendarEvent[]
+  calls             Call[]            // NEW: Logged calls with Gong descriptions
+  todos             Todo[]
+  activityLogs      ActivityLog[]
+  preferences       UserPreference?
+
+  // Phase 4 relations
+  templates         DealTemplate[]
+  automations       DealAutomation[]
+  sharedDeals       SharedDeal[]      @relation("sharedBy")
+  resources         Resource[]
+  allocations       ResourceAllocation[]
+  comments          CollaborationComment[]
+  forecasts         Forecast[]
+
+  // Phase 5: Deal Intelligence relations
+  intelligenceSnapshots DealIntelligenceSnapshot[]
+  engagementLogs    ContactEngagementLog[]
+
+  // Gong Insights
+  gongInsights      GongInsight[]
+
+  createdAt         DateTime          @default(now()) @map("created_at")
+  updatedAt         DateTime          @updatedAt @map("updated_at")
+
+  @@index([email])
+  @@map("users")
+}
+
 model Deal {
   id              Int       @id @default(autoincrement())
   userId          Int       @map("user_id")
   name            String    @db.VarChar(255)
   email           String?   @db.VarChar(255)
+  leadSource      String?   @db.VarChar(100) @map("lead_source") // 'inbound', 'outbound', 'referral', 'partner', 'event', 'marketing', 'other'
   amount          Decimal?  @db.Decimal(12, 2)
   status          String?   @db.VarChar(50) // 'active', 'closed', 'on_hold', 'lost'
   stage           String?   @db.VarChar(50) // 'demo', 'poc', 'validation', 'closed'
+  probability     Int       @default(50) // 0-100 for forecasting
+  expectedCloseDate DateTime? @map("expected_close_date")
+  templateId      Int?      @map("template_id")
   createdAt       DateTime  @default(now()) @map("created_at")
   updatedAt       DateTime  @updatedAt @map("updated_at")
   lastActivityAt  DateTime? @map("last_activity_at")
@@ -26,10 +68,20 @@ model Deal {
   primaryContactId Int?     @map("primary_contact_id")
 
   // Relations
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  template        DealTemplate? @relation("usesTemplate", fields: [templateId], references: [id], onDelete: SetNull)
   contacts        Contact[]
   calendarEvents  CalendarEvent[]
+  calls           Call[]            @relation("dealCalls") // NEW: Logged calls with Gong descriptions
   todos           Todo[]
   activityLogs    ActivityLog[]
+  sharedWith      SharedDeal[]
+  comments        CollaborationComment[]
+  allocations     ResourceAllocation[]
+  automationExecutions AutomationExecution[]
+  intelligenceSnapshots DealIntelligenceSnapshot[] // Link to intelligence history
+  engagementLogs  ContactEngagementLog[] // Link to engagement events
+  gongInsights    GongInsight[] // Link to Gong call insights
 
   @@index([userId])
   @@map("deals")
@@ -51,7 +103,9 @@ model Contact {
   updatedAt       DateTime  @updatedAt @map("updated_at")
 
   // Relations
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   deal            Deal      @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  engagementLogs  ContactEngagementLog[] // Link to engagement events
 
   @@unique([dealId, email])
   @@index([userId])
@@ -73,11 +127,44 @@ model CalendarEvent {
   updatedAt       DateTime  @updatedAt @map("updated_at")
 
   // Relations
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   deal            Deal?     @relation(fields: [dealId], references: [id], onDelete: SetNull)
 
   @@index([userId])
   @@index([dealId])
   @@map("calendar_events")
+}
+
+model Call {
+  id                Int       @id @default(autoincrement())
+  userId            Int       @map("user_id")
+  dealId            Int       @map("deal_id")
+
+  // Call details
+  title             String    @db.VarChar(255) // e.g., "Technical Discovery Call"
+  callDate          DateTime  @map("call_date")
+  durationMinutes   Int?      @map("duration_minutes")
+  attendees         String[]  @default([]) // Email addresses or names
+  notes             String?   @db.Text
+
+  // Gong integration
+  gongDescription   String?   @db.Text @map("gong_description") // User-filled Gong insights
+  gongCallId        String?   @db.VarChar(255) @map("gong_call_id") // External Gong call ID
+  gongInsightSummary String?  @db.Text @map("gong_insight_summary") // Auto-populated from Gong API
+  gongRiskLevel     String?   @db.VarChar(50) @map("gong_risk_level") // 'low', 'medium', 'high'
+  gongSyncedAt      DateTime? @map("gong_synced_at") // When call was synced from Gong
+
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deal              Deal      @relation("dealCalls", fields: [dealId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([dealId])
+  @@index([gongCallId])
+  @@map("calls")
 }
 
 model Todo {
@@ -90,6 +177,7 @@ model Todo {
   updatedAt       DateTime  @updatedAt @map("updated_at")
 
   // Relations
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   deal            Deal?     @relation(fields: [dealId], references: [id], onDelete: SetNull)
 
   @@index([userId])
@@ -107,8 +195,15 @@ model UserPreference {
   gmailToken              String?   @db.Text @map("gmail_token")
   gmailRefreshToken       String?   @db.Text @map("gmail_refresh_token")
   lastGmailSyncAt         DateTime? @map("last_gmail_sync_at")
+  gongAccessToken         String?   @db.Text @map("gong_access_token")     // NEW: Gong API token
+  gongRefreshToken        String?   @db.Text @map("gong_refresh_token")    // NEW: Gong refresh token
+  lastGongSyncAt          DateTime? @map("last_gong_sync_at")              // NEW: Last Gong sync
+  cardColorMetric         String    @default("stall_severity") @db.VarChar(50) @map("card_color_metric") // 'stall_severity', 'deal_health', 'critical_data'
   createdAt               DateTime  @default(now()) @map("created_at")
   updatedAt               DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  user                    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("user_preferences")
 }
@@ -123,9 +218,361 @@ model ActivityLog {
   createdAt       DateTime  @default(now()) @map("created_at")
 
   // Relations
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   deal            Deal?     @relation(fields: [dealId], references: [id], onDelete: SetNull)
 
   @@index([userId])
   @@index([dealId])
   @@map("activity_log")
 }
+
+model GongInsight {
+  id                    Int       @id @default(autoincrement())
+  userId                Int       @map("user_id")
+  dealId                Int       @map("deal_id")
+
+  // Call insight data
+  callBrief             String    @db.Text @map("call_brief") // Summary of the call
+  riskLevel             String    @db.VarChar(50) // 'low', 'medium', 'high'
+  riskDescription       String?   @db.Text @map("risk_description") // Why is there risk?
+  nextSteps             String    @db.Text @map("next_steps") // Recommendations
+
+  // Approval workflow
+  status                String    @default("pending") @db.VarChar(50) // 'pending', 'approved', 'rejected'
+  approvedBy            Int?      @map("approved_by") // UserId of who approved
+  syncedToSalesforce    Boolean   @default(false) @map("synced_to_salesforce")
+
+  // Salesforce sync data
+  syncedFields          Json?     @map("synced_fields") // Which fields were synced
+
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
+  approvedAt            DateTime? @map("approved_at")
+
+  // Relations
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deal                  Deal      @relation(fields: [dealId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([dealId])
+  @@index([status])
+  @@map("gong_insights")
+}
+
+// ==================== PHASE 4: ENTERPRISE FEATURES ====================
+
+// Deal Templates - Create once, reuse forever
+model DealTemplate {
+  id                Int                   @id @default(autoincrement())
+  userId            Int                   @map("user_id")
+  name              String                @db.VarChar(255)
+  description       String?               @db.Text
+  dealType          String                @db.VarChar(100) @map("deal_type") // 'enterprise', 'mid-market', 'startup'
+  defaultStage      String                @default("demo") @db.VarChar(50) @map("default_stage")
+  expectedDuration  Int?                  @map("expected_duration") // days until close
+  estimatedValue    Decimal?              @db.Decimal(12, 2) @map("estimated_value")
+  isPublic          Boolean               @default(false) @map("is_public")
+  usage             Int                   @default(0)
+  createdAt         DateTime              @default(now()) @map("created_at")
+  updatedAt         DateTime              @updatedAt @map("updated_at")
+
+  // Relations
+  user              User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stages            DealTemplateStage[]
+  milestones        DealTemplateMilestone[]
+  automationRules   DealAutomationRule[]
+  deals             Deal[]                @relation("usesTemplate")
+
+  @@unique([userId, name])
+  @@index([userId])
+  @@map("deal_templates")
+}
+
+model DealTemplateStage {
+  id                Int               @id @default(autoincrement())
+  templateId        Int               @map("template_id")
+  stageName         String            @db.VarChar(100) @map("stage_name")
+  order             Int
+  expectedDays      Int               @map("expected_days")
+  createdAt         DateTime          @default(now()) @map("created_at")
+
+  // Relations
+  template          DealTemplate      @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  milestones        DealTemplateMilestone[]
+
+  @@unique([templateId, stageName])
+  @@index([templateId])
+  @@map("deal_template_stages")
+}
+
+model DealTemplateMilestone {
+  id                Int               @id @default(autoincrement())
+  templateId        Int               @map("template_id")
+  stageId           Int?              @map("stage_id")
+  title             String            @db.VarChar(255)
+  description       String?           @db.Text
+  daysAfterStart    Int?              @map("days_after_start")
+  createdAt         DateTime          @default(now()) @map("created_at")
+
+  // Relations
+  template          DealTemplate      @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  stage             DealTemplateStage? @relation(fields: [stageId], references: [id], onDelete: SetNull)
+
+  @@index([templateId])
+  @@map("deal_template_milestones")
+}
+
+// Automation & SmartFill
+model DealAutomation {
+  id                Int                   @id @default(autoincrement())
+  userId            Int                   @map("user_id")
+  name              String                @db.VarChar(255)
+  description       String?               @db.Text
+  enabled           Boolean               @default(true)
+  trigger           String                @db.VarChar(100) // 'deal_created', 'stage_changed', 'date_reached', 'email_received'
+  triggerConfig     Json                  @map("trigger_config") // Configuration for trigger conditions
+  action            String                @db.VarChar(100) // 'create_todo', 'send_email', 'update_field', 'create_task'
+  actionConfig      Json                  @map("action_config") // Configuration for action execution
+  createdAt         DateTime              @default(now()) @map("created_at")
+  updatedAt         DateTime              @updatedAt @map("updated_at")
+
+  // Relations
+  user              User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rules             DealAutomationRule[]
+  executions        AutomationExecution[]
+
+  @@index([userId])
+  @@map("deal_automations")
+}
+
+model DealAutomationRule {
+  id                Int               @id @default(autoincrement())
+  automationId      Int               @map("automation_id")
+  templateId        Int?              @map("template_id")
+  ruleName          String            @db.VarChar(255) @map("rule_name")
+  condition         String            @db.Text // e.g., 'amount >= 100000', 'stage == "poc"'
+  conditionJson     Json              @map("condition_json") // Structured condition
+  createdAt         DateTime          @default(now()) @map("created_at")
+
+  // Relations
+  automation        DealAutomation    @relation(fields: [automationId], references: [id], onDelete: Cascade)
+  template          DealTemplate?     @relation(fields: [templateId], references: [id], onDelete: SetNull)
+
+  @@unique([automationId, ruleName])
+  @@index([automationId])
+  @@map("deal_automation_rules")
+}
+
+model AutomationExecution {
+  id                Int               @id @default(autoincrement())
+  automationId      Int               @map("automation_id")
+  dealId            Int               @map("deal_id")
+  trigger           String            @db.VarChar(100)
+  status            String            @db.VarChar(50) // 'success', 'failed', 'pending'
+  result            String?           @db.Text
+  error             String?           @db.Text
+  executedAt        DateTime          @default(now()) @map("executed_at")
+
+  // Relations
+  automation        DealAutomation    @relation(fields: [automationId], references: [id], onDelete: Cascade)
+  deal              Deal              @relation(fields: [dealId], references: [id], onDelete: Cascade)
+
+  @@index([automationId])
+  @@index([dealId])
+  @@map("automation_executions")
+}
+
+// Sharing & Collaboration
+model SharedDeal {
+  id                Int               @id @default(autoincrement())
+  dealId            Int               @map("deal_id")
+  sharedByUserId    Int               @map("shared_by_user_id")
+  sharedWithEmail   String            @db.VarChar(255) @map("shared_with_email")
+  permission        String            @default("view") @db.VarChar(50) // 'view', 'comment', 'edit'
+  accessToken       String            @unique @map("access_token")
+  expiresAt         DateTime?         @map("expires_at")
+  isPublic          Boolean           @default(false) @map("is_public")
+  createdAt         DateTime          @default(now()) @map("created_at")
+  updatedAt         DateTime          @updatedAt @map("updated_at")
+
+  // Relations
+  deal              Deal              @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  sharedBy          User              @relation("sharedBy", fields: [sharedByUserId], references: [id])
+
+  @@unique([dealId, sharedWithEmail])
+  @@index([dealId])
+  @@index([accessToken])
+  @@map("shared_deals")
+}
+
+model CollaborationComment {
+  id                Int               @id @default(autoincrement())
+  dealId            Int               @map("deal_id")
+  userId            Int               @map("user_id")
+  content           String            @db.Text
+  createdAt         DateTime          @default(now()) @map("created_at")
+  updatedAt         DateTime          @updatedAt @map("updated_at")
+
+  // Relations
+  deal              Deal              @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  author            User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([dealId])
+  @@map("collaboration_comments")
+}
+
+// Resource Forecasting
+model Resource {
+  id                Int                   @id @default(autoincrement())
+  userId            Int                   @map("user_id")
+  name              String                @db.VarChar(255)
+  type              String                @db.VarChar(50) // 'person', 'service', 'infrastructure'
+  category          String                @db.VarChar(100) // 'engineering', 'sales', 'support', 'infrastructure'
+  totalCapacity     Decimal               @db.Decimal(12, 2) @map("total_capacity")
+  costPerUnit       Decimal?              @db.Decimal(10, 2) @map("cost_per_unit")
+  createdAt         DateTime              @default(now()) @map("created_at")
+  updatedAt         DateTime              @updatedAt @map("updated_at")
+
+  // Relations
+  user              User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  allocations       ResourceAllocation[]
+
+  @@index([userId])
+  @@map("resources")
+}
+
+model ResourceAllocation {
+  id                Int               @id @default(autoincrement())
+  dealId            Int               @map("deal_id")
+  resourceId        Int               @map("resource_id")
+  userId            Int               @map("user_id")
+  allocatedAmount   Decimal           @db.Decimal(12, 2) @map("allocated_amount")
+  allocatedCost     Decimal?          @db.Decimal(12, 2) @map("allocated_cost")
+  startDate         DateTime          @map("start_date")
+  endDate           DateTime          @map("end_date")
+  status            String            @default("planned") @db.VarChar(50) // 'planned', 'active', 'completed'
+  createdAt         DateTime          @default(now()) @map("created_at")
+  updatedAt         DateTime          @updatedAt @map("updated_at")
+
+  // Relations
+  deal              Deal              @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  resource          Resource          @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+  allocatedBy       User              @relation(fields: [userId], references: [id])
+
+  @@unique([dealId, resourceId])
+  @@index([dealId])
+  @@index([resourceId])
+  @@map("resource_allocations")
+}
+
+model Forecast {
+  id                Int               @id @default(autoincrement())
+  userId            Int               @map("user_id")
+  period            String            @db.VarChar(50) // 'quarterly', 'monthly', 'yearly'
+  periodStart       DateTime          @map("period_start")
+  periodEnd         DateTime          @map("period_end")
+  projectedRevenue  Decimal           @db.Decimal(14, 2) @map("projected_revenue")
+  projectedDeals    Int               @map("projected_deals")
+  confidence        Int               // 0-100
+  riskFactors       String?           @db.Text @map("risk_factors")
+  byStage           Json              @map("by_stage") // JSON breakdown by stage
+  byResource        Json              @map("by_resource") // JSON breakdown by resource
+  createdAt         DateTime          @default(now()) @map("created_at")
+  updatedAt         DateTime          @updatedAt @map("updated_at")
+
+  // Relations
+  user              User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("forecasts")
+}
+
+// ==================== PHASE 5: DEAL INTELLIGENCE ====================
+
+/**
+ * Deal Intelligence Snapshot - Monthly intelligence state + ground truth outcome
+ * Used to build supervised training dataset for ML model (Option C)
+ * Stores normalized intelligence signals + actual deal outcome as ground truth labels
+ */
+model DealIntelligenceSnapshot {
+  id                      Int       @id @default(autoincrement())
+  userId                  Int       @map("user_id")
+  dealId                  Int       @map("deal_id")
+
+  // Snapshot of intelligence at this point in time
+  healthScore             Int       // 0-100
+  riskScore               Int       // 0-100
+  riskLevel               String    @db.VarChar(20) // 'low', 'medium', 'high', 'critical'
+  momentum                String    @db.VarChar(20) // 'positive', 'neutral', 'negative'
+
+  // Activity & engagement metrics
+  contactEngagementCount  Int       // Number of engaged contacts
+  engagedContactsRatio    Decimal   @db.Decimal(5, 2) // 0-100 percentage
+  averageActivityFrequency Decimal  @db.Decimal(10, 4) // Activities per day
+  activityTrend           String    @db.VarChar(20) // 'up', 'flat', 'down'
+  daysWithoutActivity     Int       // Days since last activity
+
+  // Stage & milestone metrics
+  stageName               String    @db.VarChar(50)
+  stageDaysElapsed        Int       // Days in current stage
+  daysAheadBehind         Int       // Negative = ahead, positive = behind
+
+  // Deal outcome (ground truth - set when deal closes)
+  dealStatus              String?   @db.VarChar(20) // 'active', 'won', 'lost', 'stalled'
+  actualCloseDate         DateTime? @map("actual_close_date")
+  daysToClose             Int?      // Days from creation to close
+
+  // ML feature vector (normalized for model training)
+  mlFeatures              Json      // { healthPercentile, riskScore, momentumEncoded, ... }
+
+  snapshotDate            DateTime  @default(now()) @map("snapshot_date") // When this snapshot was taken
+  createdAt               DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  user                    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deal                    Deal      @relation(fields: [dealId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([dealId])
+  @@index([snapshotDate])
+  @@map("deal_intelligence_snapshots")
+}
+
+/**
+ * Contact Engagement Log - Granular per-contact activity tracking
+ * Enables detailed engagement analysis and response time calculations
+ * Events: email_sent, email_received, call_made, meeting_attended, message_sent, etc.
+ */
+model ContactEngagementLog {
+  id                Int       @id @default(autoincrement())
+  userId            Int       @map("user_id")
+  contactId         Int       @map("contact_id")
+  dealId            Int       @map("deal_id")
+
+  // Event tracking
+  eventType         String    @db.VarChar(50) // 'email_sent', 'email_received', 'call_made', 'meeting_attended', 'message_sent'
+  eventDescription  String?   @db.Text @map("event_description") // Descriptive text about the event
+
+  // Response metrics
+  responseTime      Int?      // Minutes to respond (for received events)
+  responseRequired  Boolean   @default(false) // Did this event require a response?
+  responded         Boolean   @default(false) // Was there a response?
+
+  // Metadata
+  metadata          Json?     // Additional context: email subject, call duration, meeting outcome, etc.
+
+  eventDate         DateTime  @map("event_date") // When did this event occur?
+  createdAt         DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  contact           Contact   @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  deal              Deal      @relation(fields: [dealId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([contactId])
+  @@index([dealId])
+  @@index([eventDate])
+  @@map("contact_engagement_logs")
+}
+
