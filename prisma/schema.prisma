@@ -14,8 +14,14 @@ datasource db {
 model User {
   id                Int               @id @default(autoincrement())
   email             String            @unique
-  name              String
-  role              String            @default("presales_lead") // 'presales_lead', 'sales_engineer', 'admin'
+  emailVerified     DateTime?         @map("email_verified")
+  name              String?
+  image             String?           // Profile picture from OAuth
+  role              String            @default("sales_engineer") // 'admin', 'presales_lead', 'sales_engineer'
+
+  // NextAuth Relations
+  accounts          Account[]
+  sessions          Session[]
 
   // Relations to main features
   deals             Deal[]
@@ -30,6 +36,7 @@ model User {
   templates         DealTemplate[]
   automations       DealAutomation[]
   sharedDeals       SharedDeal[]      @relation("sharedBy")
+  sharedWith        SharedDeal[]      @relation("sharedWith")
   resources         Resource[]
   allocations       ResourceAllocation[]
   comments          CollaborationComment[]
@@ -47,6 +54,38 @@ model User {
 
   @@index([email])
   @@map("users")
+}
+
+model Account {
+  id                 String  @id @default(cuid())
+  userId             Int     // Points to User.id (Int)
+  type               String
+  provider           String
+  providerAccountId  String
+  refresh_token      String?  @db.Text
+  access_token       String?  @db.Text
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String?  @db.Text
+  session_state      String?
+
+  user               User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+  @@map("accounts")
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       Int      // Points to User.id (Int)
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("sessions")
 }
 
 model Deal {
@@ -387,7 +426,8 @@ model SharedDeal {
   id                Int               @id @default(autoincrement())
   dealId            Int               @map("deal_id")
   sharedByUserId    Int               @map("shared_by_user_id")
-  sharedWithEmail   String            @db.VarChar(255) @map("shared_with_email")
+  sharedWithUserId  Int?              @map("shared_with_user_id") // For internal team shares
+  sharedWithEmail   String            @db.VarChar(255) @map("shared_with_email") // For external/prospect shares
   permission        String            @default("view") @db.VarChar(50) // 'view', 'comment', 'edit'
   accessToken       String            @unique @map("access_token")
   expiresAt         DateTime?         @map("expires_at")
@@ -397,7 +437,8 @@ model SharedDeal {
 
   // Relations
   deal              Deal              @relation(fields: [dealId], references: [id], onDelete: Cascade)
-  sharedBy          User              @relation("sharedBy", fields: [sharedByUserId], references: [id])
+  sharedBy          User              @relation("sharedBy", fields: [sharedByUserId], references: [id], onDelete: Cascade)
+  sharedWith        User?             @relation("sharedWith", fields: [sharedWithUserId], references: [id], onDelete: Cascade)
 
   @@unique([dealId, sharedWithEmail])
   @@index([dealId])

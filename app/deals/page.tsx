@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { DealCard } from '@/components/deals/DealCard';
 import { DealFilters } from '@/components/deals/DealFilters';
@@ -34,6 +35,7 @@ interface Deal {
 }
 
 export default function DealsPage() {
+  const router = useRouter();
   const [deals, setDeals] = useState<Deal[]>([]);
   const [filteredDeals, setFilteredDeals] = useState<Deal[]>([]);
   const [selectedDeal, setSelectedDeal] = useState<Deal | null>(null);
@@ -43,6 +45,7 @@ export default function DealsPage() {
   const [selectedDealIds, setSelectedDealIds] = useState<Set<number>>(new Set());
   const [bulkUpdating, setBulkUpdating] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
   const [newDeal, setNewDeal] = useState({
     name: '',
     email: '',
@@ -226,10 +229,7 @@ export default function DealsPage() {
       });
 
       if (response.ok) {
-        // Refresh deals
-        const dealsResponse = await fetch('/api/deals');
-        const data = await dealsResponse.json();
-        setDeals(data.deals || []);
+        const createdDeal = await response.json();
 
         // Reset and close modal
         setNewDeal({
@@ -241,9 +241,21 @@ export default function DealsPage() {
           leadSource: 'inbound'
         });
         setShowCreateModal(false);
+
+        // Show success message
+        setShowSuccessMessage(true);
+        setTimeout(() => setShowSuccessMessage(false), 3000);
+
+        // Navigate to deal detail page
+        router.push(`/deals/${createdDeal.id}`);
+      } else {
+        const error = await response.json();
+        console.error('Failed to create deal:', error);
+        alert(`Error: ${error.error}`);
       }
     } catch (error) {
       console.error('Failed to create deal:', error);
+      alert('Failed to create deal. Please try again.');
     } finally {
       setCreatingDeal(false);
     }
@@ -256,6 +268,28 @@ export default function DealsPage() {
         maxWidth: '100%',
       }}
     >
+      {/* Success Toast */}
+      {showSuccessMessage && (
+        <div
+          style={{
+            position: 'fixed',
+            top: '20px',
+            right: '20px',
+            backgroundColor: 'var(--success)',
+            color: 'white',
+            padding: '14px 20px',
+            borderRadius: '8px',
+            boxShadow: 'var(--shadow-lg)',
+            fontSize: '14px',
+            fontWeight: 500,
+            zIndex: 10000,
+            animation: 'slideIn 300ms ease-out',
+          }}
+        >
+          ✓ Deal created successfully!
+        </div>
+      )}
+
       {/* Header */}
       <div style={{ marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '24px' }}>
         <div>

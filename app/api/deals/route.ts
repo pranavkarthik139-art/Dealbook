@@ -1,13 +1,21 @@
 import { prisma } from '@/lib/db';
 import { detectStall } from '@/lib/dealHealth';
+import { getCurrentUser } from '@/lib/auth-utils';
 import { NextRequest, NextResponse } from 'next/server';
-
-const USER_ID = 1; // Hardcoded for prototype
 
 export async function GET() {
   try {
+    const user = await getCurrentUser();
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
     const deals = await prisma.deal.findMany({
-      where: { userId: USER_ID },
+      where: { userId: user.id },
       include: {
         calendarEvents: true,
         todos: { where: { completed: false } },
@@ -55,6 +63,15 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
+    const user = await getCurrentUser();
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
     const body = await req.json();
     const { name, email, amount, status = 'active', stage = 'demo', leadSource = 'inbound' } = body;
 
@@ -67,7 +84,7 @@ export async function POST(req: NextRequest) {
 
     const deal = await prisma.deal.create({
       data: {
-        userId: USER_ID,
+        userId: user.id,
         name,
         email: email || null,
         amount: amount ? parseFloat(amount) : null,
@@ -80,7 +97,7 @@ export async function POST(req: NextRequest) {
     // Log activity
     await prisma.activityLog.create({
       data: {
-        userId: USER_ID,
+        userId: user.id,
         dealId: deal.id,
         action: 'deal_created',
         description: `Deal "${name}" created`,
