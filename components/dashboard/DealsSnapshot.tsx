@@ -51,16 +51,70 @@ export function DealsSnapshot() {
   ];
 
   return (
-    <div className="mb-8">
-      <h2 className="text-lg font-serif font-bold text-slate-900 mb-4">Deals Summary</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div>
+      <h2 style={{
+        fontSize: 'var(--text-xl)',
+        fontFamily: '"Playfair Display", serif',
+        fontWeight: 700,
+        color: 'var(--ink)',
+        margin: '0 0 var(--space-4) 0'
+      }}>📊 Your Pipeline</h2>
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(4, 1fr)',
+        gap: 'var(--space-6)',
+        gridAutoColumns: 'minmax(0, 1fr)'
+      }}>
         {statCards.map((stat) => (
-          <Card key={stat.label}>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-slate-900 mb-2">{stat.value}</div>
+          <div
+            key={stat.label}
+            style={{
+              backgroundColor: 'var(--paper)',
+              border: '1px solid var(--line)',
+              borderRadius: 'var(--radius-lg)',
+              padding: 'var(--space-6) var(--space-5)',
+              textAlign: 'center',
+              cursor: 'pointer',
+              transition: 'all var(--transition-base)',
+              position: 'relative',
+              overflow: 'hidden'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.boxShadow = 'var(--shadow-md)';
+              e.currentTarget.style.borderColor = 'var(--cobalt-light)';
+              e.currentTarget.style.transform = 'translateY(-4px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.boxShadow = 'var(--shadow-xs)';
+              e.currentTarget.style.borderColor = 'var(--line)';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}
+          >
+            {/* Background accent */}
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              right: 0,
+              width: '100px',
+              height: '100px',
+              background: 'linear-gradient(135deg, var(--cobalt-light), transparent)',
+              opacity: 0.3,
+              borderRadius: '50%',
+              pointerEvents: 'none'
+            }} />
+
+            <div style={{ position: 'relative', zIndex: 1 }}>
+              <div style={{
+                fontSize: 'var(--text-5xl)',
+                fontWeight: 700,
+                color: 'var(--cobalt)',
+                marginBottom: 'var(--space-3)',
+                lineHeight: 1,
+                fontVariantNumeric: 'tabular-nums'
+              }}>{stat.value}</div>
               <Badge variant={stat.variant}>{stat.label}</Badge>
             </div>
-          </Card>
+          </div>
         ))}
       </div>
     </div>

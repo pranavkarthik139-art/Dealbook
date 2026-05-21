@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { CreateDealModal } from '@/components/deals/CreateDealModal';
+import { TimezoneSelector } from '@/components/dashboard/TimezoneSelector';
 
 export function Topbar() {
   const pathname = usePathname();
@@ -41,12 +42,15 @@ export function Topbar() {
           {getBreadcrumb()}
         </div>
 
-        {/* Right: Buttons */}
+        {/* Right: Timezone Selector + Buttons */}
         <div style={{
           display: 'flex',
           alignItems: 'center',
           gap: '16px'
         }}>
+          {/* Timezone Selector */}
+          <TimezoneSelector />
+
           {session && (
             <button
               onClick={() => setShowCreateModal(true)}

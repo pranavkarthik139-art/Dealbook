@@ -1,10 +1,14 @@
 import { prisma } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
-
-const USER_ID = 1; // hardcoded for prototype
+import { getCurrentUser } from '@/lib/auth-utils';
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { id } = await params;
     const dealId = parseInt(id);
 
@@ -13,7 +17,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       where: { id: dealId },
     });
 
-    if (!deal || deal.userId !== USER_ID) {
+    if (!deal || deal.userId !== user.id) {
       return NextResponse.json(
         { error: 'Deal not found or unauthorized' },
         { status: 404 }
@@ -40,6 +44,11 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { id } = await params;
     const dealId = parseInt(id);
     const { name, email, title, role, company, linkedinUrl, notes } = await request.json();
@@ -56,7 +65,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       where: { id: dealId },
     });
 
-    if (!deal || deal.userId !== USER_ID) {
+    if (!deal || deal.userId !== user.id) {
       return NextResponse.json(
         { error: 'Deal not found or unauthorized' },
         { status: 404 }
@@ -82,7 +91,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
     const contact = await prisma.contact.create({
       data: {
-        userId: USER_ID,
+        userId: user.id,
         dealId,
         name,
         email,

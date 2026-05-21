@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { Card } from '@/components/common/Card';
+import { Spinner } from '@/components/common/Spinner';
 
 interface Deal {
   id: number;
@@ -44,56 +46,87 @@ export function StageAnalytics() {
   };
 
   const stages = [
-    { name: 'Demo', color: '#0047FF', count: stageBreakdown.demo, value: stageValues.demo },
+    { name: 'Demo', color: 'var(--cobalt)', count: stageBreakdown.demo, value: stageValues.demo },
     { name: 'POC', color: '#7C3AED', count: stageBreakdown.poc, value: stageValues.poc },
-    { name: 'Validation', color: '#F59E0B', count: stageBreakdown.validation, value: stageValues.validation },
-    { name: 'Closed', color: '#10B981', count: stageBreakdown.closed, value: stageValues.closed },
+    { name: 'Validation', color: 'var(--warning)', count: stageBreakdown.validation, value: stageValues.validation },
+    { name: 'Closed', color: 'var(--success)', count: stageBreakdown.closed, value: stageValues.closed },
   ];
 
   if (loading) {
     return (
-      <div style={{
-        backgroundColor: 'white',
-        border: '1px solid #e5e7eb',
-        borderRadius: '12px',
-        padding: '20px',
-        height: '300px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        color: '#999'
-      }}>
-        Loading...
-      </div>
+      <Card>
+        <div style={{
+          height: '300px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}>
+          <Spinner />
+        </div>
+      </Card>
     );
   }
 
   return (
-    <div style={{
-      backgroundColor: 'white',
-      border: '1px solid #e5e7eb',
-      borderRadius: '12px',
-      padding: '20px'
-    }}>
-      <p style={{ fontSize: '12px', color: '#999', fontWeight: '600', margin: '0 0 16px 0', textTransform: 'uppercase' }}>
+    <Card>
+      <p style={{
+        fontSize: 'var(--text-xs)',
+        color: 'var(--ink-lighter)',
+        fontWeight: 600,
+        margin: '0 0 var(--space-6) 0',
+        textTransform: 'uppercase',
+        letterSpacing: '0.5px'
+      }}>
         Pipeline Breakdown
       </p>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 'var(--space-4)'
+      }}>
         {stages.map((stage) => (
           <div key={stage.name}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <div style={{ width: '12px', height: '12px', borderRadius: '2px', backgroundColor: stage.color }} />
-                <span style={{ fontSize: '13px', color: '#666', fontWeight: '500' }}>{stage.name}</span>
+            <div style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: 'var(--space-2)'
+            }}>
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 'var(--space-2)'
+              }}>
+                <div style={{
+                  width: '12px',
+                  height: '12px',
+                  borderRadius: 'var(--radius-sm)',
+                  backgroundColor: stage.color,
+                  flexShrink: 0
+                }} />
+                <span style={{
+                  fontSize: 'var(--text-sm)',
+                  color: 'var(--ink-light)',
+                  fontWeight: 500
+                }}>{stage.name}</span>
               </div>
-              <span style={{ fontSize: '13px', fontWeight: '700', color: '#1a1a1a' }}>{stage.count} deals</span>
+              <span style={{
+                fontSize: 'var(--text-sm)',
+                fontWeight: 700,
+                color: 'var(--ink)'
+              }}>{stage.count} deals</span>
             </div>
-            <p style={{ fontSize: '12px', color: '#999', margin: 0 }}>
+            <p style={{
+              fontSize: 'var(--text-xs)',
+              color: 'var(--ink-lighter)',
+              margin: 0,
+              marginLeft: 'calc(12px + var(--space-2))'
+            }}>
               ${(stage.value / 1000000).toFixed(2)}M
             </p>
           </div>
         ))}
       </div>
-    </div>
+    </Card>
   );
 }

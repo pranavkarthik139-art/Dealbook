@@ -37,9 +37,9 @@ export async function fetchGmailEmails(
   try {
     // Set up authentication
     const auth = new google.auth.OAuth2(
-      process.env.GOOGLE_OAUTH_CLIENT_ID,
-      process.env.GOOGLE_OAUTH_CLIENT_SECRET,
-      process.env.NEXTAUTH_URL
+      process.env.GOOGLE_OAUTH_CLIENT_ID || '',
+      process.env.GOOGLE_OAUTH_CLIENT_SECRET || '',
+      process.env.NEXTAUTH_URL || 'http://localhost:3000/api/auth/callback/google'
     );
     auth.setCredentials({ access_token: accessToken });
 

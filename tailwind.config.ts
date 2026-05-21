@@ -6,6 +6,39 @@ const config: Config = {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
+    colors: {
+      white: "#ffffff",
+      transparent: "transparent",
+      paper: "var(--paper)",
+      "paper-bg": "var(--paper-bg)",
+      "paper-alt": "var(--paper-alt)",
+      ink: {
+        DEFAULT: "var(--ink)",
+        light: "var(--ink-light)",
+        lighter: "var(--ink-lighter)",
+      },
+      cobalt: {
+        DEFAULT: "var(--cobalt)",
+        light: "var(--cobalt-light)",
+        hover: "var(--cobalt-hover)",
+      },
+      amber: {
+        DEFAULT: "var(--amber)",
+        light: "var(--amber-light)",
+      },
+      red: {
+        DEFAULT: "var(--red)",
+        light: "var(--red-light)",
+      },
+      green: {
+        DEFAULT: "var(--green)",
+        light: "var(--green-light)",
+      },
+      line: {
+        DEFAULT: "var(--line)",
+        light: "var(--line-light)",
+      },
+    },
     extend: {
       colors: {
         paper: "var(--paper)",

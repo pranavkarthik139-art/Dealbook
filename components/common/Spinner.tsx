@@ -1,7 +1,19 @@
 export function Spinner() {
   return (
-    <div className="flex items-center justify-center">
-      <div className="animate-spin h-6 w-6 border-2 border-slate-300 border-t-slate-900 rounded-full"></div>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{
+        animation: 'spin 1s linear infinite',
+        width: '24px',
+        height: '24px',
+        border: '2px solid var(--line)',
+        borderTopColor: 'var(--cobalt)',
+        borderRadius: '50%'
+      }} />
+      <style>{`
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   );
 }

@@ -12,6 +12,7 @@ import { IntelligenceAlerts } from './IntelligenceAlerts';
 import { GongInsightCard } from './GongInsightCard';
 import { CallLogModal } from './CallLogModal';
 import { PulseAlert } from './PulseAlert';
+import { EmailThread } from './EmailThread';
 import { calculateDealPulse, type PulseSignal } from '@/lib/dealPulse';
 import type { CompanyData, ContactData } from '@/lib/apollo';
 
@@ -841,6 +842,12 @@ export function DealDetailView({ dealId }: { dealId: number }) {
             calls={calls}
             onUpdateGongDescription={handleUpdateGongDescription}
           />
+        </div>
+
+        {/* Email Thread Section */}
+        <div className="border-t border-line pt-12">
+          <h2 className="text-lg font-semibold text-ink mb-6">Email Interactions</h2>
+          <EmailThread dealId={deal.id} prospectEmail={deal.email || undefined} />
         </div>
       </div>
 

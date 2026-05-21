@@ -80,7 +80,7 @@ export async function searchCompanies(query: string): Promise<CompanyData[]> {
       per_page: 10,
     });
 
-    return response.organizations || [];
+    return (response.organizations || []).map((org: any) => mapApolloCompanyData(org));
   } catch (error) {
     console.error('Failed to search companies:', error);
     return [];
@@ -138,23 +138,23 @@ function mapApolloCompanyData(data: any): CompanyData {
     industry: data.industry,
     subIndustry: data.sub_industry,
     employeeCount: data.employee_count,
-    employeeCountRange: data.employee_count_range || data.estimated_num_employees,
+    employeeCountRange: data.employee_count_range || data.employeeCountRange || data.estimated_num_employees,
     fundingStatus: data.funding_status,
-    fundingAmount: data.total_funding || data.funding_amount,
-    fundingStage: data.latest_funding_stage || data.funding_stage,
-    lastRaisedAmount: data.latest_funding_amount,
-    lastRaisedDate: data.latest_funding_date,
+    fundingAmount: data.total_funding || data.funding_amount || data.fundingAmount,
+    fundingStage: data.latest_funding_stage || data.funding_stage || data.fundingStage,
+    lastRaisedAmount: data.latest_funding_amount || data.lastRaisedAmount,
+    lastRaisedDate: data.latest_funding_date || data.lastRaisedDate,
     headquarters: {
       city: data.headquarters_city,
       state: data.headquarters_state,
       country: data.headquarters_country,
     },
-    logoUrl: data.logo_url,
-    description: data.short_description,
-    linkedinUrl: data.linkedin_url,
+    logoUrl: data.logo_url || data.logoUrl,
+    description: data.short_description || data.description,
+    linkedinUrl: data.linkedin_url || data.linkedinUrl,
     technologies: data.technologies || [],
-    yearFounded: data.year_founded,
-    revenueRange: data.annual_revenue_range,
-    estimatedRevenue: data.estimated_annual_revenue,
+    yearFounded: data.year_founded || data.yearFounded,
+    revenueRange: data.annual_revenue_range || data.revenueRange,
+    estimatedRevenue: data.estimated_annual_revenue || data.estimatedRevenue,
   };
 }

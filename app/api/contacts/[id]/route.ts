@@ -1,10 +1,14 @@
 import { prisma } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
-
-const USER_ID = 1; // hardcoded for prototype
+import { getCurrentUser } from '@/lib/auth-utils';
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { id } = await params;
     const contactId = parseInt(id);
 
@@ -12,7 +16,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       where: { id: contactId },
     });
 
-    if (!contact || contact.userId !== USER_ID) {
+    if (!contact || contact.userId !== user.id) {
       return NextResponse.json(
         { error: 'Contact not found or unauthorized' },
         { status: 404 }
@@ -31,6 +35,11 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { id } = await params;
     const contactId = parseInt(id);
     const { name, email, title, role, company, linkedinUrl, notes } = await request.json();
@@ -40,7 +49,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       where: { id: contactId },
     });
 
-    if (!existing || existing.userId !== USER_ID) {
+    if (!existing || existing.userId !== user.id) {
       return NextResponse.json(
         { error: 'Contact not found or unauthorized' },
         { status: 404 }
@@ -91,6 +100,11 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { id } = await params;
     const contactId = parseInt(id);
 
@@ -99,7 +113,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
       where: { id: contactId },
     });
 
-    if (!contact || contact.userId !== USER_ID) {
+    if (!contact || contact.userId !== user.id) {
       return NextResponse.json(
         { error: 'Contact not found or unauthorized' },
         { status: 404 }

@@ -50,25 +50,67 @@ export function ActivityFeed() {
 
   return (
     <div>
-      <h2 className="text-lg font-serif font-bold text-slate-900 mb-4">Activity Feed</h2>
+      <h2 style={{
+        fontSize: 'var(--text-lg)',
+        fontFamily: '"Playfair Display", serif',
+        fontWeight: 700,
+        color: 'var(--ink)',
+        margin: '0 0 var(--space-6) 0'
+      }}>Activity Feed</h2>
       <Card>
         {activities.length === 0 ? (
-          <p className="text-slate-600 text-center py-8">No activity yet</p>
+          <p style={{
+            color: 'var(--ink-lighter)',
+            textAlign: 'center',
+            paddingTop: 'var(--space-8)',
+            paddingBottom: 'var(--space-8)',
+            margin: 0
+          }}>No activity yet</p>
         ) : (
-          <div className="space-y-3">
-            {activities.map((activity) => (
-              <div key={activity.id} className="flex gap-3 pb-3 border-b border-slate-100 last:border-0 last:pb-0">
-                <div className="flex-shrink-0 text-lg">
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 0
+          }}>
+            {activities.map((activity, index) => (
+              <div
+                key={activity.id}
+                style={{
+                  display: 'flex',
+                  gap: 'var(--space-3)',
+                  paddingBottom: 'var(--space-3)',
+                  paddingTop: 'var(--space-3)',
+                  borderBottom: index < activities.length - 1 ? '1px solid var(--line-light)' : 'none',
+                  fontSize: 'var(--text-lg)'
+                }}
+              >
+                <div style={{
+                  flexShrink: 0,
+                  fontSize: 'var(--text-lg)'
+                }}>
                   {actionIcons[activity.action] || actionIcons.default}
                 </div>
-                <div className="flex-1">
-                  <p className="text-sm text-slate-900">
+                <div style={{ flex: 1 }}>
+                  <p style={{
+                    fontSize: 'var(--text-sm)',
+                    color: 'var(--ink)',
+                    margin: 0,
+                    lineHeight: 'var(--leading-normal)'
+                  }}>
                     {activity.description}
                     {activity.deal && (
-                      <span className="font-medium ml-1">{activity.deal.name}</span>
+                      <span style={{
+                        fontWeight: 600,
+                        marginLeft: 'var(--space-2)'
+                      }}>{activity.deal.name}</span>
                     )}
                   </p>
-                  <p className="text-xs text-slate-500 mt-1">
+                  <p style={{
+                    fontSize: 'var(--text-xs)',
+                    color: 'var(--ink-lighter)',
+                    marginTop: 'var(--space-1)',
+                    margin: 'var(--space-1) 0 0 0'
+                  }}>
                     {formatDistanceToNow(new Date(activity.createdAt), { addSuffix: true })}
                   </p>
                 </div>

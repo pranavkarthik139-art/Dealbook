@@ -59,7 +59,7 @@ export function PipelineChart() {
 
           return (
             <div key={stage} className="flex-1">
-              <div className="bg-slate-50 rounded-lg border border-line p-4">
+              <div className="bg-paper-alt rounded-lg border border-line p-4">
                 <h4 className="text-sm font-semibold text-ink mb-2">{stageLabels[stage]}</h4>
                 <div className="text-2xl font-bold text-cobalt mb-1">${(value / 1000).toFixed(0)}k</div>
                 <div className="text-xs text-ink-lighter">{count} deal{count !== 1 ? 's' : ''}</div>

@@ -32,7 +32,7 @@ const MOMENTUM_ICONS: Record<string, string> = {
 const PRIORITY_COLORS: Record<string, string> = {
   high: 'text-red border-red bg-red-50',
   medium: 'text-amber border-amber bg-amber-50',
-  low: 'text-slate-500 border-line bg-slate-50',
+  low: 'text-ink-lighter border-line bg-paper-alt',
 };
 
 export function DealIntelligence({ deal, health }: DealIntelligenceProps) {
@@ -152,7 +152,7 @@ export function DealIntelligence({ deal, health }: DealIntelligenceProps) {
       )}
 
       {/* Follow-Up Timing */}
-      <div className="bg-slate-50 rounded-lg border border-line p-4">
+      <div className="bg-paper-alt rounded-lg border border-line p-4">
         <p className="text-sm text-ink-lighter">
           <span className="font-medium text-ink">Suggested follow-up:</span> In{' '}
           <span className="font-medium text-ink">{analysis.suggestedFollowUpDays} day{analysis.suggestedFollowUpDays > 1 ? 's' : ''}</span>

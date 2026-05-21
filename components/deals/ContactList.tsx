@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { LogEngagementModal } from './LogEngagementModal';
 
 interface Contact {
   id: number;
@@ -19,6 +20,7 @@ interface ContactListProps {
   onAdd: () => void;
   onEdit: (contact: Contact) => void;
   onDelete: (contactId: number) => Promise<void>;
+  onEngagementLogged?: () => void;
   isLoading?: boolean;
 }
 
@@ -29,9 +31,11 @@ export function ContactList({
   onAdd,
   onEdit,
   onDelete,
+  onEngagementLogged,
   isLoading,
 }: ContactListProps) {
   const [deleting, setDeleting] = useState<number | null>(null);
+  const [loggingEngagement, setLoggingEngagement] = useState<number | null>(null);
 
   const handleDelete = async (contactId: number) => {
     if (confirm('Are you sure you want to delete this contact?')) {
@@ -55,7 +59,7 @@ export function ContactList({
   return (
     <div className="space-y-4">
       {contacts.length === 0 ? (
-        <div className="text-center py-8 bg-slate-50 rounded-lg border border-line">
+        <div className="text-center py-8 bg-paper-alt rounded-lg border border-line">
           <p className="text-ink-lighter text-sm mb-3">No contacts yet</p>
           <button
             onClick={onAdd}
@@ -81,7 +85,7 @@ export function ContactList({
                     <div className="flex items-center gap-2">
                       <h4 className="font-medium text-ink">{contact.name}</h4>
                       {contact.role && (
-                        <span className="text-xs bg-slate-100 text-ink-lighter px-2 py-0.5 rounded">
+                        <span className="text-xs bg-paper-alt text-ink-lighter px-2 py-0.5 rounded">
                           {contact.role.replace('_', ' ').charAt(0).toUpperCase() + contact.role.replace('_', ' ').slice(1)}
                         </span>
                       )}
@@ -111,6 +115,12 @@ export function ContactList({
                       </a>
                     )}
                     <button
+                      onClick={() => setLoggingEngagement(contact.id)}
+                      className="text-xs text-cobalt hover:text-blue-700"
+                    >
+                      Log Activity
+                    </button>
+                    <button
                       onClick={() => onEdit(contact)}
                       className="text-xs text-cobalt hover:text-blue-700"
                     >
@@ -130,11 +140,25 @@ export function ContactList({
           </div>
           <button
             onClick={onAdd}
-            className="w-full px-3 py-2 text-xs rounded-lg border border-line text-ink hover:bg-slate-50 transition-colors"
+            className="w-full px-3 py-2 text-xs rounded-lg border border-line text-ink hover:bg-paper-alt transition-colors"
           >
             + Add Another Contact
           </button>
         </>
+      )}
+
+      {/* Log Engagement Modal */}
+      {loggingEngagement && (
+        <LogEngagementModal
+          contactId={loggingEngagement}
+          contactName={contacts.find(c => c.id === loggingEngagement)?.name || ''}
+          dealId={dealId}
+          onClose={() => setLoggingEngagement(null)}
+          onSuccess={() => {
+            setLoggingEngagement(null);
+            onEngagementLogged?.();
+          }}
+        />
       )}
     </div>
   );

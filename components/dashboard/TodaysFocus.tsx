@@ -77,26 +77,61 @@ export function TodaysFocus() {
   }, []);
 
   if (loading) {
-    return <div className="mb-8 h-40 flex items-center justify-center"><Spinner /></div>;
+    return <div style={{
+      padding: 'var(--space-8)',
+      textAlign: 'center',
+      color: 'var(--ink-lighter)'
+    }}>Loading calendar...</div>;
   }
 
-  const upcomingEvents = events.slice(0, 3);
+  const upcomingEvents = events.slice(0, 4);
 
   return (
-    <div className="mb-8">
-      <h2 className="text-lg font-serif font-bold text-slate-900 mb-4">Today's Focus</h2>
+    <div>
+      <h2 style={{
+        fontSize: 'var(--text-xl)',
+        fontFamily: '"Playfair Display", serif',
+        fontWeight: 700,
+        color: 'var(--ink)',
+        margin: '0 0 var(--space-4) 0'
+      }}>📅 Today's Focus</h2>
       {upcomingEvents.length === 0 ? (
         <Card>
-          <p className="text-slate-600 text-center py-8">No calls scheduled for today</p>
+          <p style={{
+            color: 'var(--ink-lighter)',
+            textAlign: 'center',
+            paddingTop: 'var(--space-8)',
+            paddingBottom: 'var(--space-8)',
+            margin: 0
+          }}>No calls scheduled for today</p>
         </Card>
       ) : (
-        <div className="space-y-3">
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 'var(--space-4)'
+        }}>
           {upcomingEvents.map((event) => (
-            <Card key={event.id} className="hover:shadow-md transition-shadow">
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <h3 className="font-semibold text-slate-900 mb-1">{event.title}</h3>
-                  <p className="text-sm text-slate-600 mb-2">
+            <Card key={event.id}>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-start'
+              }}>
+                <div style={{ flex: 1 }}>
+                  <h3 style={{
+                    fontWeight: 600,
+                    color: 'var(--ink)',
+                    marginBottom: 'var(--space-2)',
+                    margin: '0 0 var(--space-2) 0',
+                    fontSize: 'var(--text-base)'
+                  }}>{event.title}</h3>
+                  <p style={{
+                    fontSize: 'var(--text-sm)',
+                    color: 'var(--ink-lighter)',
+                    marginBottom: 'var(--space-3)',
+                    margin: '0 0 var(--space-3) 0'
+                  }}>
                     {new Date(event.startTime).toLocaleTimeString([], {
                       hour: '2-digit',
                       minute: '2-digit',
@@ -104,15 +139,29 @@ export function TodaysFocus() {
                     {formatDistanceToNow(new Date(event.startTime), { addSuffix: true })}
                   </p>
                   {event.attendees.length > 0 && (
-                    <p className="text-xs text-slate-500 mb-3">
+                    <p style={{
+                      fontSize: 'var(--text-xs)',
+                      color: 'var(--ink-lighter)',
+                      marginBottom: 'var(--space-3)',
+                      margin: '0 0 var(--space-3) 0'
+                    }}>
                       Attendees: {event.attendees.join(', ')}
                     </p>
                   )}
                   {event.deal && (
-                    <div className="inline-block">
+                    <div style={{ display: 'inline-block' }}>
                       <a
                         href={`/deals/${event.deal.id}`}
-                        className="text-sm font-medium text-blue-600 hover:text-blue-800"
+                        style={{
+                          fontSize: 'var(--text-sm)',
+                          fontWeight: 500,
+                          color: 'var(--cobalt)',
+                          textDecoration: 'none',
+                          cursor: 'pointer',
+                          transition: 'color var(--transition-base)'
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.color = 'var(--cobalt-hover)'}
+                        onMouseLeave={(e) => e.currentTarget.style.color = 'var(--cobalt)'}
                       >
                         {event.deal.name} →
                       </a>
@@ -125,7 +174,12 @@ export function TodaysFocus() {
         </div>
       )}
       {!synced && (
-        <p className="text-xs text-amber-600 mt-3">
+        <p style={{
+          fontSize: 'var(--text-xs)',
+          color: 'var(--warning)',
+          marginTop: 'var(--space-3)',
+          margin: 'var(--space-3) 0 0 0'
+        }}>
           💡 Tip: Connect your Google Calendar in preferences to auto-sync calls
         </p>
       )}

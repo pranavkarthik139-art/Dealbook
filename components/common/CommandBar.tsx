@@ -109,7 +109,7 @@ export function CommandBar() {
                 className={`w-full text-left px-4 py-3 border-b border-line last:border-b-0 transition-colors ${
                   idx === selectedIndex
                     ? 'bg-cobalt-light text-cobalt'
-                    : 'text-ink hover:bg-slate-50'
+                    : 'text-ink hover:bg-paper-alt'
                 }`}
               >
                 <div className="font-medium">{deal.name}</div>

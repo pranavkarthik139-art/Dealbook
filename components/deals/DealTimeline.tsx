@@ -1,6 +1,7 @@
 'use client';
 
 import { formatDistanceToNow } from 'date-fns';
+import { CallActivityItem } from './CallActivityItem';
 
 interface Activity {
   id: number;
@@ -8,6 +9,18 @@ interface Activity {
   description?: string;
   createdAt: string;
   metadata?: Record<string, any>;
+}
+
+interface Call {
+  id: number;
+  title: string;
+  callDate: string;
+  durationMinutes?: number;
+  attendees: string[];
+  notes?: string;
+  gongDescription?: string;
+  gongInsightSummary?: string;
+  gongRiskLevel?: string;
 }
 
 const ACTION_ICONS: Record<string, string> = {
@@ -25,8 +38,24 @@ const ACTION_ICONS: Record<string, string> = {
   default: '📌',
 };
 
-export function DealTimeline({ activities }: { activities: Activity[] }) {
-  if (!activities || activities.length === 0) {
+interface DealTimelineProps {
+  activities?: Activity[];
+  calls?: Call[];
+  onUpdateGongDescription?: (callId: number, description: string) => Promise<void>;
+}
+
+export function DealTimeline({
+  activities = [],
+  calls = [],
+  onUpdateGongDescription
+}: DealTimelineProps) {
+  // Combine and sort all items by date
+  const allItems = [
+    ...activities.map(a => ({ type: 'activity', item: a, date: new Date(a.createdAt) })),
+    ...calls.map(c => ({ type: 'call', item: c, date: new Date(c.callDate) })),
+  ].sort((a, b) => b.date.getTime() - a.date.getTime());
+
+  if (allItems.length === 0) {
     return (
       <div className="bg-white rounded-lg border border-line p-6">
         <h3 className="font-medium text-ink mb-4">Activity Timeline</h3>
@@ -42,24 +71,39 @@ export function DealTimeline({ activities }: { activities: Activity[] }) {
       <h3 className="font-medium text-ink mb-6">Activity Timeline</h3>
 
       <div className="space-y-4">
-        {activities.map((activity) => (
-          <div key={activity.id} className="flex gap-4 pb-4 border-b border-line last:border-b-0">
-            {/* Icon */}
-            <div className="text-xl flex-shrink-0 mt-1">
-              {ACTION_ICONS[activity.action] || ACTION_ICONS.default}
-            </div>
+        {allItems.map((item) => {
+          if (item.type === 'activity') {
+            const activity = item.item as Activity;
+            return (
+              <div key={`activity-${activity.id}`} className="flex gap-4 pb-4 border-b border-line last:border-b-0">
+                {/* Icon */}
+                <div className="text-xl flex-shrink-0 mt-1">
+                  {ACTION_ICONS[activity.action] || ACTION_ICONS.default}
+                </div>
 
-            {/* Content */}
-            <div className="flex-1 min-w-0">
-              <p className="text-sm text-ink">
-                {activity.description || formatActionType(activity.action)}
-              </p>
-              <p className="text-xs text-ink-lighter mt-1">
-                {formatDistanceToNow(new Date(activity.createdAt), { addSuffix: true })}
-              </p>
-            </div>
-          </div>
-        ))}
+                {/* Content */}
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm text-ink">
+                    {activity.description || formatActionType(activity.action)}
+                  </p>
+                  <p className="text-xs text-ink-lighter mt-1">
+                    {formatDistanceToNow(new Date(activity.createdAt), { addSuffix: true })}
+                  </p>
+                </div>
+              </div>
+            );
+          } else {
+            const call = item.item as Call;
+            return (
+              <div key={`call-${call.id}`} className="pb-4 border-b border-line last:border-b-0">
+                <CallActivityItem
+                  call={call}
+                  onUpdateGongDescription={onUpdateGongDescription || (() => Promise.resolve())}
+                />
+              </div>
+            );
+          }
+        })}
       </div>
     </div>
   );

@@ -1,8 +1,12 @@
 import NextAuth, { NextAuthOptions, type Session } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
+import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from '@/lib/db';
 
 export const authOptions: NextAuthOptions = {
+  // PrismaAdapter handles user creation + storage automatically
+  adapter: PrismaAdapter(prisma),
+
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_OAUTH_CLIENT_ID || '',
@@ -17,73 +21,26 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
+
   pages: {
     signIn: '/auth/signin',
   },
-  callbacks: {
-    async signIn({ user, account }: any) {
-      // Create or update user in database on first sign-in
-      if (user.email) {
-        try {
-          const existingUser = await prisma.user.findUnique({
-            where: { email: user.email },
-          });
 
-          if (!existingUser) {
-            // New user signing in for the first time
-            // Create with default role 'sales_engineer'
-            await prisma.user.create({
-              data: {
-                email: user.email,
-                name: user.name || '',
-                image: user.image,
-                emailVerified: user.emailVerified,
-                role: 'sales_engineer', // Default role for new users
-              },
-            });
-          } else {
-            // Update existing user with latest info from OAuth
-            await prisma.user.update({
-              where: { email: user.email },
-              data: {
-                name: user.name || existingUser.name,
-                image: user.image || existingUser.image,
-                emailVerified: user.emailVerified || existingUser.emailVerified,
-              },
-            });
-          }
-        } catch (error) {
-          console.error('Error in signIn callback:', error);
-        }
+  callbacks: {
+    async session({ session, user }: any): Promise<Session> {
+      // Add user ID and role to session
+      if (session.user) {
+        session.user.id = user.id;
+        session.user.role = user.role || 'sales_engineer'; // Default role
       }
-      return true;
-    },
-    async redirect({ url, baseUrl }) {
-      // Ensure redirect stays within app
-      return url.startsWith(baseUrl) ? url : baseUrl;
-    },
-    async jwt({ token, account }: any) {
-      // Persist tokens for API access
-      if (account) {
-        token.accessToken = account.access_token;
-        token.refreshToken = account.refresh_token;
-        token.provider = account.provider;
-      }
-      return token;
-    },
-    async session({ session, token }: any): Promise<Session> {
-      // Add tokens and provider to session
-      (session as any).accessToken = token.accessToken;
-      (session as any).refreshToken = token.refreshToken;
-      (session as any).provider = token.provider;
       return session;
     },
   },
+
   session: {
-    strategy: 'jwt',
+    strategy: 'database', // Use database sessions with PrismaAdapter
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
-  secret: process.env.NEXTAUTH_SECRET,
 };
 
 const handler = NextAuth(authOptions);

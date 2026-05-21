@@ -70,17 +70,17 @@ export function ActivityReport() {
         </div>
 
         <div className="grid grid-cols-3 gap-4">
-          <div className="bg-slate-50 rounded-lg p-4">
+          <div className="bg-paper-alt rounded-lg p-4">
             <div className="text-2xl font-bold text-cobalt">{data.totalActivities}</div>
             <div className="text-xs text-ink-lighter mt-1">Activities in {data.days} days</div>
           </div>
-          <div className="bg-slate-50 rounded-lg p-4">
+          <div className="bg-paper-alt rounded-lg p-4">
             <div className="text-2xl font-bold text-emerald">
               {data.totalActivities > 0 ? Math.round(data.totalActivities / data.days) : 0}
             </div>
             <div className="text-xs text-ink-lighter mt-1">Avg per day</div>
           </div>
-          <div className="bg-slate-50 rounded-lg p-4">
+          <div className="bg-paper-alt rounded-lg p-4">
             <div className="text-2xl font-bold text-amber">{data.mostActiveDeals.length}</div>
             <div className="text-xs text-ink-lighter mt-1">Active deals</div>
           </div>

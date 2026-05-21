@@ -1,14 +1,18 @@
 import { prisma } from '@/lib/db';
 import { detectStall } from '@/lib/dealHealth';
 import { NextRequest, NextResponse } from 'next/server';
-
-const USER_ID = 1; // Hardcoded for prototype
+import { getCurrentUser } from '@/lib/auth-utils';
 
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { id } = await params;
     const deal = await prisma.deal.findUnique({
       where: { id: parseInt(id) },
@@ -19,7 +23,7 @@ export async function GET(
       },
     });
 
-    if (!deal || deal.userId !== USER_ID) {
+    if (!deal || deal.userId !== user.id) {
       return NextResponse.json(
         { error: 'Deal not found' },
         { status: 404 }
@@ -38,6 +42,8 @@ export async function GET(
     const dealWithMetadata = {
       ...deal,
       amount: deal.amount ? parseFloat(deal.amount.toString()) : null,
+      probability: deal.probability || 50,
+      expectedCloseDate: deal.expectedCloseDate?.toISOString() || null,
       stall,
     };
 
@@ -56,12 +62,17 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { id } = await params;
     const deal = await prisma.deal.findUnique({
       where: { id: parseInt(id) },
     });
 
-    if (!deal || deal.userId !== USER_ID) {
+    if (!deal || deal.userId !== user.id) {
       return NextResponse.json(
         { error: 'Deal not found' },
         { status: 404 }
@@ -89,7 +100,7 @@ export async function PATCH(
 
     await prisma.activityLog.create({
       data: {
-        userId: USER_ID,
+        userId: user.id,
         dealId: deal.id,
         action,
         description,
@@ -117,12 +128,17 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { id } = await params;
     const deal = await prisma.deal.findUnique({
       where: { id: parseInt(id) },
     });
 
-    if (!deal || deal.userId !== USER_ID) {
+    if (!deal || deal.userId !== user.id) {
       return NextResponse.json(
         { error: 'Deal not found' },
         { status: 404 }

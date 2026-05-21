@@ -1,19 +1,23 @@
 import { prisma } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
-
-const USER_ID = 1; // Hardcoded for prototype
+import { getCurrentUser } from '@/lib/auth-utils';
 
 export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { id } = await params;
     const todo = await prisma.todo.findUnique({
       where: { id: parseInt(id) },
     });
 
-    if (!todo || todo.userId !== USER_ID) {
+    if (!todo || todo.userId !== user.id) {
       return NextResponse.json(
         { error: 'Todo not found' },
         { status: 404 }
@@ -31,7 +35,7 @@ export async function PATCH(
     if (body.completed && !todo.completed) {
       await prisma.activityLog.create({
         data: {
-          userId: USER_ID,
+          userId: user.id,
           dealId: todo.dealId,
           action: 'todo_completed',
           description: `Completed: "${todo.content}"`,
@@ -54,12 +58,17 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { id } = await params;
     const todo = await prisma.todo.findUnique({
       where: { id: parseInt(id) },
     });
 
-    if (!todo || todo.userId !== USER_ID) {
+    if (!todo || todo.userId !== user.id) {
       return NextResponse.json(
         { error: 'Todo not found' },
         { status: 404 }

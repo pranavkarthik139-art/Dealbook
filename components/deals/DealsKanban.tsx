@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { calculateDealHealth, getHealthStatus } from '@/lib/dealHealth';
+import { DealCard } from './DealCard';
 
 interface Stall {
   isStalled: boolean;
@@ -25,16 +27,27 @@ interface Deal {
   stall?: Stall;
 }
 
-export function DealsKanban({ deals, onDealClick }: { deals: Deal[]; onDealClick: (deal: Deal) => void }) {
+export function DealsKanban({
+  deals,
+  onDealClick,
+  selectedDealIds,
+  onToggleSelect,
+}: {
+  deals: Deal[];
+  onDealClick: (deal: Deal) => void;
+  selectedDealIds?: Set<number>;
+  onToggleSelect?: (dealId: number) => void;
+}) {
+  const router = useRouter();
   const [draggedCard, setDraggedCard] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
   const [localDeals, setLocalDeals] = useState<Deal[]>(deals);
 
   const stages = [
-    { id: 'demo', label: 'Demo', color: '#0047FF', deals: localDeals.filter(d => d.stage === 'demo') },
-    { id: 'poc', label: 'POC', color: '#7C3AED', deals: localDeals.filter(d => d.stage === 'poc') },
-    { id: 'validation', label: 'Validation', color: '#F59E0B', deals: localDeals.filter(d => d.stage === 'validation') },
-    { id: 'closed', label: 'Closed', color: '#10B981', deals: localDeals.filter(d => d.stage === 'closed') },
+    { id: 'demo', label: 'Demo', color: 'var(--cobalt)', deals: localDeals.filter(d => d.stage === 'demo') },
+    { id: 'poc', label: 'POC', color: 'var(--amber)', deals: localDeals.filter(d => d.stage === 'poc') },
+    { id: 'validation', label: 'Validation', color: 'var(--green)', deals: localDeals.filter(d => d.stage === 'validation') },
+    { id: 'closed', label: 'Closed', color: 'var(--green)', deals: localDeals.filter(d => d.stage === 'closed') },
   ];
 
   useEffect(() => {
@@ -94,31 +107,17 @@ export function DealsKanban({ deals, onDealClick }: { deals: Deal[]; onDealClick
     }
   };
 
+  const handleViewDetails = (dealId: number) => {
+    router.push(`/deals/${dealId}`);
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
-        <div style={{ backgroundColor: '#f9f9f7', border: '1px solid #e5e7eb', borderRadius: '8px', padding: '16px' }}>
-          <p style={{ fontSize: '12px', color: '#999', fontWeight: '600', margin: '0 0 8px 0' }}>TOTAL PIPELINE</p>
-          <p style={{ fontSize: '24px', fontWeight: '700', color: '#1a1a1a', margin: 0 }}>
-            ${(totalValue / 1000000).toFixed(1)}M
-          </p>
-        </div>
-        {stages.map(stage => (
-          <div key={stage.id} style={{ backgroundColor: '#f9f9f7', border: '1px solid #e5e7eb', borderRadius: '8px', padding: '16px' }}>
-            <p style={{ fontSize: '12px', color: '#999', fontWeight: '600', margin: '0 0 8px 0' }}>{stage.label.toUpperCase()}</p>
-            <p style={{ fontSize: '18px', fontWeight: '700', color: '#1a1a1a', margin: '0 0 4px 0' }}>{stage.deals.length} deals</p>
-            <p style={{ fontSize: '12px', color: '#666', margin: 0 }}>
-              ${(getStageValue(stage.deals) / 1000000).toFixed(1)}M
-            </p>
-          </div>
-        ))}
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
         {stages.map(stage => (
           <div key={stage.id} style={{ display: 'flex', flexDirection: 'column' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px', paddingBottom: '12px', borderBottom: '3px solid ' + stage.color }}>
-              <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#1a1a1a', margin: 0 }}>{stage.label}</h3>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px', paddingBottom: '12px', borderBottom: `3px solid ${stage.color}` }}>
+              <h3 style={{ fontSize: '16px', fontWeight: '700', color: 'var(--ink)', margin: 0 }}>{stage.label}</h3>
               <span style={{ backgroundColor: stage.color, color: 'white', borderRadius: '12px', padding: '4px 8px', fontSize: '12px', fontWeight: '600' }}>
                 {stage.deals.length}
               </span>
@@ -133,126 +132,43 @@ export function DealsKanban({ deals, onDealClick }: { deals: Deal[]; onDealClick
                 minHeight: '400px',
                 borderRadius: '8px',
                 padding: '12px',
-                backgroundColor: draggedCard ? '#E8F0FF' : '#F9F9F7',
-                border: draggedCard ? '2px dashed #0047FF' : '2px dashed #e5e7eb',
+                backgroundColor: draggedCard ? 'var(--cobalt-light)' : 'var(--paper-alt)',
+                border: draggedCard ? '2px dashed var(--cobalt)' : '2px dashed var(--line)',
                 transition: 'all 150ms ease'
               }}
             >
               {stage.deals.length === 0 ? (
-                <div style={{ padding: '24px 16px', textAlign: 'center', color: '#999', fontSize: '12px', backgroundColor: '#f9f9f7', borderRadius: '8px', border: '1px dashed #e5e7eb' }}>
-                  No deals
+                <div style={{ padding: '24px 16px', textAlign: 'center', color: 'var(--ink-lighter)', fontSize: '12px', backgroundColor: 'var(--paper)', borderRadius: '8px', border: '1px dashed var(--line)' }}>
+                  No deals in this stage
                 </div>
               ) : (
                 stage.deals.map(deal => {
                   const health = calculateDealHealth(deal);
-                  const healthStatus = getHealthStatus(health);
-                  const healthColor = healthStatus.color === 'green' ? '#10B981' : healthStatus.color === 'amber' ? '#F59E0B' : '#EF4444';
-                  const healthBgColor = healthStatus.color === 'green' ? '#D1FAE5' : healthStatus.color === 'amber' ? '#FEF3C7' : '#FEE2E2';
-                  const healthTextColor = healthStatus.color === 'green' ? '#065F46' : healthStatus.color === 'amber' ? '#92400E' : '#7F1D1D';
                   const isDragging = draggedCard === deal.id;
+                  const isSelected = selectedDealIds?.has(deal.id) ?? false;
 
                   return (
                     <div
                       key={deal.id}
                       draggable
                       onDragStart={(e) => handleDragStart(e, deal.id)}
-                      onClick={() => onDealClick(deal)}
                       style={{
-                        backgroundColor: isDragging ? '#F0F0F0' : 'white',
-                        border: isDragging ? '2px solid #0047FF' : '1px solid #e5e7eb',
-                        borderRadius: '8px',
-                        padding: '16px',
-                        cursor: 'grab',
-                        transition: 'all 150ms ease',
-                        boxShadow: isDragging ? '0 8px 24px rgba(0,71,255,0.2)' : '0 1px 2px rgba(0,0,0,0.05)',
                         opacity: isDragging ? 0.8 : 1,
                       }}
-                      onMouseEnter={e => {
-                        if (!isDragging) {
-                          const target = e.currentTarget as HTMLElement;
-                          target.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
-                          target.style.transform = 'translateY(-2px)';
-                        }
-                      }}
-                      onMouseLeave={e => {
-                        if (!isDragging) {
-                          const target = e.currentTarget as HTMLElement;
-                          target.style.boxShadow = '0 1px 2px rgba(0,0,0,0.05)';
-                          target.style.transform = 'translateY(0)';
-                        }
-                      }}
                     >
-                      <h4 style={{ fontSize: '14px', fontWeight: '700', color: '#1a1a1a', margin: '0 0 8px 0' }}>
-                        {deal.name}
-                      </h4>
-                      <p style={{ fontSize: '18px', fontWeight: '700', color: '#0047FF', margin: '0 0 12px 0' }}>
-                        ${(deal.amount || 0) / 1000}k
-                      </p>
-                      <div style={{ display: 'flex', gap: '6px', marginBottom: '12px', flexWrap: 'wrap' }}>
-                        {deal.status && (
-                          <span
-                            style={{
-                              display: 'inline-block',
-                              padding: '4px 8px',
-                              borderRadius: '4px',
-                              fontSize: '11px',
-                              fontWeight: '600',
-                              backgroundColor: deal.status === 'active' ? '#D1FAE5' : '#FEE2E2',
-                              color: deal.status === 'active' ? '#065F46' : '#7F1D1D',
-                            }}
-                          >
-                            {deal.status.toUpperCase()}
-                          </span>
-                        )}
-                        {deal.stall && deal.stall.isStalled && (
-                          <span
-                            style={{
-                              display: 'inline-block',
-                              padding: '4px 8px',
-                              borderRadius: '4px',
-                              fontSize: '11px',
-                              fontWeight: '600',
-                              backgroundColor: deal.stall.risk === 'critical' ? '#FEE2E2' : '#FEF3C7',
-                              color: deal.stall.risk === 'critical' ? '#DC2626' : '#D97706',
-                            }}
-                          >
-                            {deal.stall.risk === 'critical' ? '🔴' : '🟡'} STALLED {deal.stall.daysStalled}D
-                          </span>
-                        )}
-                      </div>
-                      <div
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                          padding: '8px 0',
-                          borderTop: '1px solid #e5e7eb',
-                          paddingTop: '12px',
-                        }}
-                      >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <div
-                            style={{
-                              width: '40px',
-                              height: '40px',
-                              borderRadius: '50%',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              fontWeight: '700',
-                              fontSize: '14px',
-                              backgroundColor: healthBgColor,
-                              color: healthTextColor,
-                              border: '2px solid ' + healthColor,
-                            }}
-                          >
-                            {health}
-                          </div>
-                          <span style={{ fontSize: '12px', color: '#666', fontWeight: '600' }}>
-                            {healthStatus.label}
-                          </span>
-                        </div>
-                      </div>
+                      <DealCard
+                        id={deal.id}
+                        name={deal.name}
+                        amount={deal.amount}
+                        stage={deal.stage}
+                        lastActivityAt={deal.lastActivityAt}
+                        healthScore={health}
+                        stall={deal.stall}
+                        email={(deal as any).email}
+                        onClick={() => handleViewDetails(deal.id)}
+                        isSelected={isSelected}
+                        onToggleSelect={onToggleSelect ? (dealId) => onToggleSelect(dealId) : undefined}
+                      />
                     </div>
                   );
                 })

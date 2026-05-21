@@ -3,13 +3,19 @@
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
 import { CommandBar } from '@/components/common/CommandBar';
+import { getTheme } from '@/lib/themes';
+import { useTheme } from '@/lib/ThemeContext';
 
 export function LayoutWrapper({ children }: { children: React.ReactNode }) {
+  const theme = useTheme();
+  const themeConfig = getTheme(theme);
+
   return (
     <div style={{
       display: 'flex',
       minHeight: '100vh',
-      backgroundColor: 'var(--paper-bg)'
+      backgroundColor: themeConfig.mainColor,
+      transition: 'background-color 300ms ease'
     }}>
       {/* Sidebar */}
       <Sidebar />
@@ -27,7 +33,8 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
         <main style={{
           flex: 1,
           overflowY: 'auto',
-          backgroundColor: 'var(--paper-bg)'
+          backgroundColor: themeConfig.mainColor,
+          transition: 'background-color 300ms ease'
         }}>
           {children}
         </main>

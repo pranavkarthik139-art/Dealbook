@@ -1,5 +1,10 @@
 'use client';
 
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { getBackSideColor } from '@/lib/cardColorLogic';
+import { useDealNote } from '@/hooks/useDealNote';
+
 interface StallInfo {
   isStalled: boolean;
   daysStalled: number;
@@ -15,169 +20,520 @@ interface DealCardProps {
   lastActivityAt?: string | null;
   healthScore?: number;
   stall?: StallInfo;
-  onClick: () => void;
+  email?: string;
+  onClick?: () => void;
+  isSelected?: boolean;
+  onToggleSelect?: (dealId: number, e: React.MouseEvent) => void;
 }
 
-export function DealCard({ id, name, amount, stage, lastActivityAt, healthScore, stall, onClick }: DealCardProps) {
-  const getHealthColor = (score?: number) => {
-    if (!score) return '#d1d5db';
-    if (score >= 80) return '#10b981';
-    if (score >= 50) return '#f59e0b';
-    return '#ef4444';
-  };
+export function DealCard({
+  id,
+  name,
+  amount,
+  stage,
+  lastActivityAt,
+  healthScore,
+  stall,
+  email,
+  onClick,
+  isSelected,
+  onToggleSelect,
+}: DealCardProps) {
+  const router = useRouter();
+  const [isFlipped, setIsFlipped] = useState(false);
+  const [showNoteInput, setShowNoteInput] = useState(false);
+  const [colorMetric, setColorMetric] = useState<'stall_severity' | 'deal_health' | 'critical_data'>('stall_severity');
 
-  const getStallColor = (risk?: string) => {
-    if (risk === 'critical') return { bg: '#fee2e2', text: '#dc2626', icon: '🔴' };
-    if (risk === 'warning') return { bg: '#fef3c7', text: '#d97706', icon: '🟡' };
-    return { bg: '#d1fae5', text: '#059669', icon: '🟢' };
-  };
+  // Use enhanced note hook
+  const { note, setNote, clearNote, hasNote } = useDealNote(id);
+
+  // Fetch user preferences for card color metric
+  useEffect(() => {
+    const fetchPreferences = async () => {
+      try {
+        const res = await fetch('/api/preferences');
+        if (res.ok) {
+          const data = await res.json();
+          setColorMetric(data.cardColorMetric || 'stall_severity');
+        }
+      } catch (error) {
+        console.error('Error fetching preferences:', error);
+      }
+    };
+    fetchPreferences();
+  }, []);
 
   const getStageBadgeColor = (stage?: string) => {
     const colors: { [key: string]: { bg: string; text: string } } = {
-      demo: { bg: '#dbeafe', text: '#0047ff' },
-      poc: { bg: '#e0e7ff', text: '#4f46e5' },
-      validation: { bg: '#f3e8ff', text: '#a855f7' },
-      closed: { bg: '#d1fae5', text: '#059669' },
+      demo: { bg: 'var(--cobalt-light)', text: 'var(--cobalt)' },
+      poc: { bg: 'var(--warning-light)', text: 'var(--warning)' },
+      validation: { bg: 'var(--success-light)', text: 'var(--success)' },
+      closed: { bg: 'var(--success-light)', text: 'var(--success)' },
     };
     const stageKey = stage?.toLowerCase() || 'demo';
-    return colors[stageKey] || { bg: '#f3f4f6', text: '#6b7280' };
+    return colors[stageKey] || { bg: 'var(--paper-alt)', text: 'var(--ink-lighter)' };
   };
 
-  const formatAmount = (amt?: number | string) => {
-    if (!amt) return null;
-    const numAmount = typeof amt === 'string' ? parseFloat(amt) : amt;
-    if (isNaN(numAmount)) return null;
-    return numAmount >= 1000000
-      ? `$${(numAmount / 1000000).toFixed(1)}M`
-      : `$${(numAmount / 1000).toFixed(0)}k`;
+  const stageColor = getStageBadgeColor(stage);
+
+  const handleViewDetails = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    router.push(`/deals/${id}`);
   };
 
-  const getDaysSinceActivity = () => {
-    if (!lastActivityAt) return 'No activity';
-    const days = Math.floor((Date.now() - new Date(lastActivityAt).getTime()) / (1000 * 60 * 60 * 24));
-    if (days === 0) return 'Active today';
-    if (days === 1) return 'Active yesterday';
-    return `${days}d ago`;
-  };
+  const amountNum = typeof amount === 'string' ? parseFloat(amount) : amount || 0;
+  const formattedAmount = amountNum > 0 ? `$${(amountNum / 1000).toFixed(0)}k` : '—';
 
-  const stageBadgeStyle = getStageBadgeColor(stage);
+  const healthPercent = healthScore || 50;
+  const healthColor =
+    healthPercent >= 80
+      ? 'var(--success)'
+      : healthPercent >= 50
+      ? 'var(--warning)'
+      : 'var(--error)';
+
+  // Compute back-side color based on user preference
+  const backSideColor = getBackSideColor(
+    colorMetric,
+    stall,
+    healthScore,
+    {
+      email,
+      amount,
+      stage,
+      contactCount: email ? 1 : 0, // Simple: if email exists, count as 1 contact
+    }
+  );
 
   return (
     <div
-      onClick={onClick}
+      onClick={() => setIsFlipped(!isFlipped)}
       style={{
-        backgroundColor: 'white',
-        border: '1px solid #e5e7eb',
-        borderRadius: '12px',
-        padding: '16px',
+        perspective: '1000px',
         cursor: 'pointer',
-        transition: 'all 200ms ease',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '12px',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.boxShadow = '0 8px 16px rgba(0,0,0,0.12)';
-        e.currentTarget.style.transform = 'translateY(-4px)';
-        e.currentTarget.style.borderColor = '#0047ff';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.08)';
-        e.currentTarget.style.transform = 'translateY(0)';
-        e.currentTarget.style.borderColor = '#e5e7eb';
+        height: '280px',
       }}
     >
-      {/* Header: Name + Stage Badge */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
-        <h3 style={{
-          fontSize: '16px',
-          fontWeight: 600,
-          color: '#1a1a1a',
-          margin: 0,
-          flex: 1,
-          lineHeight: 1.35
-        }}>
-          {name}
-        </h3>
-        {stage && (
-          <span style={{
-            display: 'inline-block',
-            padding: '6px 10px',
-            borderRadius: '6px',
-            fontSize: '12px',
-            fontWeight: 600,
-            backgroundColor: stageBadgeStyle.bg,
-            color: stageBadgeStyle.text,
-            whiteSpace: 'nowrap',
-            textTransform: 'capitalize',
-          }}>
-            {stage}
-          </span>
-        )}
-      </div>
-
-      {/* Amount */}
-      {amount && formatAmount(amount) && (
-        <div style={{
-          fontSize: '18px',
-          fontWeight: 700,
-          color: '#0047ff',
-        }}>
-          {formatAmount(amount)}
-        </div>
-      )}
-
-      {/* Stall Status */}
-      {stall && stall.isStalled && (
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-          padding: '8px 10px',
-          borderRadius: '6px',
-          backgroundColor: getStallColor(stall.risk).bg,
-          fontSize: '12px',
-          fontWeight: 600,
-          color: getStallColor(stall.risk).text,
-        }}>
-          <span>{getStallColor(stall.risk).icon}</span>
-          <span>STALLED: {stall.daysStalled}d</span>
-        </div>
-      )}
-
-      {/* Health Score */}
-      {healthScore !== undefined && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <div style={{
-            width: '40px',
-            height: '40px',
-            borderRadius: '50%',
-            backgroundColor: getHealthColor(healthScore),
+      <div
+        style={{
+          position: 'relative',
+          width: '100%',
+          height: '100%',
+          transition: 'transform 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+          transformStyle: 'preserve-3d',
+          transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
+        }}
+      >
+        {/* Front Side - Primary Info */}
+        <div
+          style={{
+            position: 'absolute',
+            width: '100%',
+            height: '100%',
+            backfaceVisibility: 'hidden',
+            backgroundColor: 'var(--paper)',
+            border: '1px solid var(--line)',
+            borderRadius: 'var(--radius-lg)',
+            padding: 'var(--space-5)',
             display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '14px',
-            fontWeight: 700,
-            color: 'white',
-            flexShrink: 0
-          }}>
-            {Math.round(healthScore)}
-          </div>
-          <span style={{ fontSize: '12px', color: '#666' }}>
-            {healthScore >= 80 ? 'On track' : healthScore >= 50 ? 'Attention' : 'At risk'}
-          </span>
-        </div>
-      )}
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            boxShadow: 'var(--shadow-sm)',
+            transition: 'all 0.3s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.boxShadow = 'var(--shadow-md)';
+            e.currentTarget.style.transform = 'translateY(-4px)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
+            e.currentTarget.style.transform = 'translateY(0)';
+          }}
+        >
+          {/* Header */}
+          <div>
+            <h3
+              style={{
+                fontSize: 'var(--text-lg)',
+                fontWeight: 700,
+                color: 'var(--ink)',
+                margin: '0 0 var(--space-3) 0',
+                lineHeight: 1.3,
+              }}
+            >
+              {name}
+            </h3>
 
-      {/* Activity */}
-      <div style={{
-        fontSize: '12px',
-        color: '#999',
-        borderTop: '1px solid #f0f0f0',
-        paddingTop: '8px',
-      }}>
-        {getDaysSinceActivity()}
+            {/* Amount & Stage Badge */}
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: 'var(--space-4)',
+              }}
+            >
+              <span
+                style={{
+                  fontSize: 'var(--text-xl)',
+                  fontWeight: 700,
+                  color: 'var(--cobalt)',
+                }}
+              >
+                {formattedAmount}
+              </span>
+              <span
+                style={{
+                  padding: '4px 12px',
+                  backgroundColor: stageColor.bg,
+                  color: stageColor.text,
+                  borderRadius: '6px',
+                  fontSize: 'var(--text-xs)',
+                  fontWeight: 600,
+                  textTransform: 'capitalize',
+                }}
+              >
+                {stage || 'demo'}
+              </span>
+            </div>
+          </div>
+
+          {/* Health Score */}
+          <div>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 'var(--space-2)',
+                marginBottom: 'var(--space-3)',
+              }}
+            >
+              <div
+                style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '50%',
+                  backgroundColor: healthColor + '20',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: 'var(--text-sm)',
+                  fontWeight: 700,
+                  color: healthColor,
+                }}
+              >
+                {healthPercent}
+              </div>
+              <div style={{ flex: 1 }}>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: 'var(--text-xs)',
+                    fontWeight: 600,
+                    color: 'var(--ink-lighter)',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  Health
+                </p>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: 'var(--text-xs)',
+                    color: healthColor,
+                  }}
+                >
+                  {healthPercent >= 80
+                    ? 'On track'
+                    : healthPercent >= 50
+                    ? 'Needs attention'
+                    : 'At risk'}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Tap to flip hint */}
+          <p
+            style={{
+              margin: '0',
+              fontSize: 'var(--text-xs)',
+              color: 'var(--ink-lighter)',
+              textAlign: 'center',
+              fontStyle: 'italic',
+            }}
+          >
+            ↻ Tap for details
+          </p>
+        </div>
+
+        {/* Back Side - Secondary Info */}
+        <div
+          style={{
+            position: 'absolute',
+            width: '100%',
+            height: '100%',
+            backfaceVisibility: 'hidden',
+            backgroundColor: backSideColor,
+            border: `1px solid ${backSideColor}`,
+            borderRadius: 'var(--radius-lg)',
+            padding: 'var(--space-5)',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between',
+            transform: 'rotateY(180deg)',
+            color: 'white',
+            boxShadow: 'var(--shadow-md)',
+            overflow: 'hidden',
+            transition: 'backgroundColor 0.3s ease', // Smooth color transitions
+          }}
+        >
+          {/* Secondary Info Grid */}
+          <div style={{ flex: 1, overflow: 'auto', marginBottom: 'var(--space-4)' }}>
+            {/* Email */}
+            {email && (
+              <div style={{ marginBottom: 'var(--space-3)' }}>
+                <p style={{ margin: '0 0 4px 0', fontSize: 'var(--text-xs)', opacity: 0.75, textTransform: 'uppercase' }}>
+                  Contact
+                </p>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: 'var(--text-xs)',
+                    fontWeight: 500,
+                    wordBreak: 'break-word',
+                    opacity: 0.95,
+                  }}
+                >
+                  {email}
+                </p>
+              </div>
+            )}
+
+            {/* Amount */}
+            <div style={{ marginBottom: 'var(--space-3)' }}>
+              <p style={{ margin: '0 0 4px 0', fontSize: 'var(--text-xs)', opacity: 0.75, textTransform: 'uppercase' }}>
+                Deal Value
+              </p>
+              <p style={{ margin: 0, fontSize: 'var(--text-sm)', fontWeight: 600 }}>
+                {formattedAmount}
+              </p>
+            </div>
+
+            {/* Last Activity */}
+            {lastActivityAt && (
+              <div style={{ marginBottom: 'var(--space-3)' }}>
+                <p style={{ margin: '0 0 4px 0', fontSize: 'var(--text-xs)', opacity: 0.75, textTransform: 'uppercase' }}>
+                  Last Activity
+                </p>
+                <p style={{ margin: 0, fontSize: 'var(--text-xs)', fontWeight: 500 }}>
+                  {new Date(lastActivityAt).toLocaleDateString()}
+                </p>
+              </div>
+            )}
+
+            {/* Stage */}
+            <div style={{ marginBottom: 'var(--space-3)' }}>
+              <p style={{ margin: '0 0 4px 0', fontSize: 'var(--text-xs)', opacity: 0.75, textTransform: 'uppercase' }}>
+                Stage
+              </p>
+              <p style={{ margin: 0, fontSize: 'var(--text-xs)', fontWeight: 500, textTransform: 'capitalize' }}>
+                {stage || 'demo'}
+              </p>
+            </div>
+          </div>
+
+          {/* Bookmark/Note Section - Enhanced */}
+          <div
+            style={{
+              position: 'absolute',
+              top: 'var(--space-4)',
+              right: 'var(--space-4)',
+              maxWidth: 'calc(100% - 80px)',
+            }}
+          >
+            {/* If note exists, show prominent badge */}
+            {hasNote && !showNoteInput && (
+              <div
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowNoteInput(true);
+                }}
+                style={{
+                  backgroundColor: 'rgba(255, 215, 0, 0.2)', // Gold tint
+                  border: '1px solid rgba(255, 215, 0, 0.5)',
+                  borderRadius: '6px',
+                  padding: '6px 10px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  backdropFilter: 'blur(10px)',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 215, 0, 0.3)';
+                  e.currentTarget.style.borderColor = 'rgba(255, 215, 0, 0.7)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 215, 0, 0.2)';
+                  e.currentTarget.style.borderColor = 'rgba(255, 215, 0, 0.5)';
+                }}
+              >
+                <p style={{ margin: 0, fontSize: 'var(--text-xs)', fontWeight: 600, color: 'rgba(255, 255, 255, 0.95)' }}>
+                  📌 {note}
+                </p>
+              </div>
+            )}
+
+            {/* If no note, show add button */}
+            {!hasNote && !showNoteInput && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowNoteInput(true);
+                }}
+                style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '50%',
+                  backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                  border: '1px dashed rgba(255, 255, 255, 0.4)',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  transition: 'all 0.2s ease',
+                  backdropFilter: 'blur(10px)',
+                  color: 'white',
+                  fontSize: 'var(--text-lg)',
+                  padding: 0,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.25)';
+                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.6)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.15)';
+                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.4)';
+                }}
+                title="Add a note"
+              >
+                ✎
+              </button>
+            )}
+
+            {/* Note Input Panel */}
+            {showNoteInput && (
+              <div
+                style={{
+                  backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                  border: '1px solid rgba(255, 255, 255, 0.2)',
+                  borderRadius: '8px',
+                  padding: 'var(--space-3)',
+                  backdropFilter: 'blur(10px)',
+                  animation: 'slideIn 0.2s ease',
+                }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <label style={{ fontSize: 'var(--text-xs)', opacity: 0.75, marginBottom: '4px', display: 'block', textTransform: 'uppercase', fontWeight: 600 }}>
+                  Add SE Note
+                </label>
+                <input
+                  type="text"
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  placeholder="Tag this deal with a quick note..."
+                  maxLength={100}
+                  style={{
+                    width: '100%',
+                    padding: '8px 10px',
+                    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    borderRadius: '4px',
+                    color: 'white',
+                    fontSize: 'var(--text-xs)',
+                    fontWeight: 500,
+                    boxSizing: 'border-box',
+                    marginBottom: 'var(--space-2)',
+                  }}
+                  autoFocus
+                  onKeyDown={(e) => {
+                    if (e.key === 'Escape') {
+                      setShowNoteInput(false);
+                    }
+                  }}
+                  onBlur={() => {
+                    // Keep the input open but just lose focus
+                    setTimeout(() => {
+                      if (hasNote) {
+                        setShowNoteInput(false);
+                      }
+                    }, 100);
+                  }}
+                />
+                <div style={{ display: 'flex', gap: 'var(--space-2)', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <p style={{ margin: 0, fontSize: '10px', opacity: 0.6 }}>
+                    {note.length}/100
+                  </p>
+                  {hasNote && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        clearNote();
+                        setShowNoteInput(false);
+                      }}
+                      style={{
+                        padding: '4px 8px',
+                        backgroundColor: 'rgba(255, 100, 100, 0.3)',
+                        border: '1px solid rgba(255, 100, 100, 0.5)',
+                        color: 'rgba(255, 200, 200, 0.9)',
+                        borderRadius: '3px',
+                        fontSize: '10px',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = 'rgba(255, 100, 100, 0.5)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = 'rgba(255, 100, 100, 0.3)';
+                      }}
+                    >
+                      Clear
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* View Deal Button */}
+          <button
+            onClick={handleViewDetails}
+            style={{
+              width: '100%',
+              padding: 'var(--space-3) var(--space-4)',
+              backgroundColor: 'rgba(255, 255, 255, 0.2)',
+              color: 'white',
+              border: '1px solid rgba(255, 255, 255, 0.4)',
+              borderRadius: 'var(--radius-md)',
+              fontSize: 'var(--text-sm)',
+              fontWeight: 600,
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              backdropFilter: 'blur(10px)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.3)';
+              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.6)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.2)';
+              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.4)';
+            }}
+          >
+            → View Deal Details
+          </button>
+        </div>
       </div>
     </div>
   );

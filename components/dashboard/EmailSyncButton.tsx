@@ -59,34 +59,80 @@ export function EmailSyncButton() {
   };
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between">
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 'var(--space-3)'
+    }}>
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between'
+      }}>
         <div>
-          <h3 className="font-medium text-ink">Email Sync</h3>
-          <p className="text-xs text-ink-lighter mt-1">
+          <h3 style={{
+            fontWeight: 500,
+            color: 'var(--ink)',
+            margin: 0,
+            fontSize: 'var(--text-sm)'
+          }}>Email Sync</h3>
+          <p style={{
+            fontSize: 'var(--text-xs)',
+            color: 'var(--ink-lighter)',
+            marginTop: 'var(--space-1)',
+            margin: 'var(--space-1) 0 0 0'
+          }}>
             {lastSync ? `Last synced at ${lastSync}` : 'Never synced'}
           </p>
         </div>
         <button
           onClick={handleSync}
           disabled={syncing}
-          className="px-4 py-2 rounded-lg bg-cobalt text-white text-sm hover:opacity-90 disabled:opacity-50 transition-opacity"
+          style={{
+            padding: 'var(--space-2) var(--space-4)',
+            borderRadius: 'var(--radius)',
+            backgroundColor: syncing ? 'var(--ink-lighter)' : 'var(--cobalt)',
+            color: 'white',
+            border: 'none',
+            fontSize: 'var(--text-sm)',
+            fontWeight: 500,
+            cursor: syncing ? 'not-allowed' : 'pointer',
+            transition: 'all var(--transition-base)',
+            opacity: syncing ? 0.5 : 1
+          }}
+          onMouseEnter={(e) => {
+            if (!syncing) {
+              e.currentTarget.style.backgroundColor = 'var(--cobalt-hover)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'var(--cobalt)';
+          }}
         >
           {syncing ? 'Syncing...' : 'Sync Gmail'}
         </button>
       </div>
 
       {showResult && result && (
-        <div
-          className={`p-3 rounded-lg border text-sm ${
-            result.success
-              ? 'bg-green-50 border-green text-green'
-              : 'bg-red-50 border-red text-red'
-          }`}
-        >
-          <p className="font-medium">{result.message || result.error}</p>
+        <div style={{
+          padding: 'var(--space-3)',
+          borderRadius: 'var(--radius)',
+          border: `1px solid ${result.success ? 'var(--success)' : 'var(--error)'}`,
+          backgroundColor: result.success ? 'var(--success-light)' : 'var(--error-light)',
+          fontSize: 'var(--text-sm)'
+        }}>
+          <p style={{
+            fontWeight: 500,
+            color: result.success ? 'var(--success)' : 'var(--error)',
+            margin: 0
+          }}>{result.message || result.error}</p>
           {result.success && (
-            <p className="text-xs mt-2">
+            <p style={{
+              fontSize: 'var(--text-xs)',
+              marginTop: 'var(--space-2)',
+              margin: 'var(--space-2) 0 0 0',
+              color: result.success ? 'var(--success)' : 'var(--error)'
+            }}>
               Matched: {result.matched} | Logged: {result.activitiesLogged}
             </p>
           )}

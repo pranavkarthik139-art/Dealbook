@@ -2,80 +2,82 @@
 
 import { Header } from '@/components/dashboard/Header';
 import { TimezoneSelector } from '@/components/dashboard/TimezoneSelector';
+import { ThemeSelector } from '@/components/dashboard/ThemeSelector';
 import { TodaysFocus } from '@/components/dashboard/TodaysFocus';
-import { StageAnalytics } from '@/components/dashboard/StageAnalytics';
 import { DealsSnapshot } from '@/components/dashboard/DealsSnapshot';
+import { StageAnalytics } from '@/components/dashboard/StageAnalytics';
 import { TodoList } from '@/components/dashboard/TodoList';
 import { ActivityFeed } from '@/components/dashboard/ActivityFeed';
-import { EmailSyncButton } from '@/components/dashboard/EmailSyncButton';
+import { CriticalDeals } from '@/components/dashboard/CriticalDeals';
+import { KeyInsights } from '@/components/dashboard/KeyInsights';
+import { getTheme } from '@/lib/themes';
+import { useTheme } from '@/lib/ThemeContext';
 
 export default function DashboardPage() {
+  const theme = useTheme();
+  const themeConfig = getTheme(theme);
+
   return (
     <div style={{
-      padding: '32px 24px',
-      backgroundColor: 'var(--paper-bg)',
-      minHeight: '100%'
+      padding: 'var(--space-10) var(--space-8)',
+      backgroundColor: themeConfig.mainColor,
+      minHeight: '100vh',
+      transition: 'background-color 300ms ease'
     }}>
       <div style={{
-        maxWidth: '1280px',
+        maxWidth: '1440px',
         margin: '0 auto'
       }}>
-        {/* Header with timezone selector and sync button */}
+        {/* Header with timezone selector and theme selector */}
         <div style={{
           display: 'flex',
           alignItems: 'flex-start',
           justifyContent: 'space-between',
-          marginBottom: '32px',
-          gap: '16px'
+          marginBottom: 'var(--space-10)',
+          gap: 'var(--space-6)'
         }}>
-          <Header userName="Team" />
+          <Header userName="Pranav" />
           <div style={{
             display: 'flex',
-            gap: '16px',
-            alignItems: 'flex-start'
+            gap: '12px',
+            alignItems: 'center'
           }}>
-            <div style={{
-              backgroundColor: 'white',
-              borderRadius: '8px',
-              border: '1px solid #e5e5e5',
-              padding: '12px 16px',
-              minWidth: '200px'
-            }}>
-              <EmailSyncButton />
-            </div>
+            <ThemeSelector />
             <TimezoneSelector />
           </div>
         </div>
 
-        {/* Today's Focus + Stage Analytics side by side */}
+        {/* Main Grid: Left (2/3) + Right (1/3) */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          gap: '24px',
-          marginBottom: '32px'
+          gridTemplateColumns: '2fr 1fr',
+          gap: 'var(--space-8)',
+          marginBottom: 'var(--space-10)'
         }}>
-          <div>
+          {/* LEFT COLUMN */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-8)' }}>
+            {/* Today's Focus - Compact */}
             <TodaysFocus />
-          </div>
-          <div>
+
+            {/* Pipeline Summary */}
+            <DealsSnapshot />
+
+            {/* Stage Analytics - Pipeline Breakdown */}
             <StageAnalytics />
+
+            {/* Critical Deals */}
+            <CriticalDeals />
+
+            {/* Key Insights */}
+            <KeyInsights />
           </div>
-        </div>
 
-        {/* Deals Summary */}
-        <DealsSnapshot />
-
-        {/* Main content grid - To-Do List and Activity Feed */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr',
-          gap: '32px',
-          marginTop: '32px'
-        }}>
-          <div style={{ gridColumn: 'span 1' }}>
+          {/* RIGHT COLUMN */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-8)' }}>
+            {/* To-Do List */}
             <TodoList />
-          </div>
-          <div>
+
+            {/* Activity Feed */}
             <ActivityFeed />
           </div>
         </div>

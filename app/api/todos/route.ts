@@ -1,16 +1,20 @@
 import { prisma } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
-
-const USER_ID = 1; // Hardcoded for prototype
+import { getCurrentUser } from '@/lib/auth-utils';
 
 export async function GET(req: NextRequest) {
   try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { searchParams } = new URL(req.url);
     const dealId = searchParams.get('dealId');
 
     const todos = await prisma.todo.findMany({
       where: {
-        userId: USER_ID,
+        userId: user.id,
         ...(dealId && { dealId: parseInt(dealId) }),
       },
       include: { deal: true },
@@ -29,6 +33,11 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const body = await req.json();
     const { content, dealId } = body;
 
@@ -41,7 +50,7 @@ export async function POST(req: NextRequest) {
 
     const todo = await prisma.todo.create({
       data: {
-        userId: USER_ID,
+        userId: user.id,
         content,
         dealId: dealId ? parseInt(dealId) : null,
       },
@@ -51,7 +60,7 @@ export async function POST(req: NextRequest) {
     // Log activity
     await prisma.activityLog.create({
       data: {
-        userId: USER_ID,
+        userId: user.id,
         dealId: dealId ? parseInt(dealId) : null,
         action: 'todo_created',
         description: `To-do: "${content}"`,

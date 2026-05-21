@@ -1,25 +1,41 @@
 import { prisma } from '@/lib/db';
 import { detectStall } from '@/lib/dealHealth';
-import { getCurrentUser } from '@/lib/auth-utils';
 import { NextRequest, NextResponse } from 'next/server';
+import { getCurrentUser } from '@/lib/auth-utils';
 
 export async function GET() {
   try {
     const user = await getCurrentUser();
 
     if (!user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Build where clause based on user role
+    let whereClause: any = {};
+
+    if (user.role === 'sales_engineer') {
+      // Sales engineers only see deals assigned to them
+      const assignedDealIds = (
+        await prisma.dealAssignment.findMany({
+          where: { seUserId: user.id },
+          select: { dealId: true },
+        })
+      ).map(a => a.dealId);
+
+      whereClause = { id: { in: assignedDealIds } };
+    } else {
+      // Managers and admins see all deals
+      whereClause = {};
     }
 
     const deals = await prisma.deal.findMany({
-      where: { userId: user.id },
+      where: whereClause,
       include: {
         calendarEvents: true,
         todos: { where: { completed: false } },
         activityLogs: { orderBy: { createdAt: 'desc' }, take: 5 },
+        // assignments: { include: { seUser: true } }, // TODO: Add DealAssignment table
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -66,14 +82,11 @@ export async function POST(req: NextRequest) {
     const user = await getCurrentUser();
 
     if (!user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await req.json();
-    const { name, email, amount, status = 'active', stage = 'demo', leadSource = 'inbound' } = body;
+    const { name, email, amount, status = 'active', stage = 'demo', leadSource } = body;
 
     if (!name) {
       return NextResponse.json(
@@ -111,9 +124,13 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(dealWithNumber, { status: 201 });
   } catch (error) {
-    console.error('Error creating deal:', error);
+    console.error('❌ ERROR creating deal:', error);
+    if (error instanceof Error) {
+      console.error('Message:', error.message);
+      console.error('Stack:', error.stack);
+    }
     return NextResponse.json(
-      { error: 'Failed to create deal' },
+      { error: 'Failed to create deal', details: error instanceof Error ? error.message : String(error) },
       { status: 500 }
     );
   }

@@ -1,10 +1,14 @@
 import { prisma } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
-
-const USER_ID = 1; // hardcoded for prototype
+import { getCurrentUser } from '@/lib/auth-utils';
 
 export async function GET(request: NextRequest) {
   try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const dealId = request.nextUrl.searchParams.get('dealId');
 
     if (!dealId) {
@@ -16,7 +20,7 @@ export async function GET(request: NextRequest) {
 
     const contacts = await prisma.contact.findMany({
       where: {
-        userId: USER_ID,
+        userId: user.id,
         dealId: parseInt(dealId),
       },
       orderBy: { createdAt: 'desc' },
@@ -34,6 +38,11 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { dealId, name, email, title, role, company, linkedinUrl, notes } = await request.json();
 
     if (!dealId || !name || !email) {
@@ -48,7 +57,7 @@ export async function POST(request: NextRequest) {
       where: { id: parseInt(dealId) },
     });
 
-    if (!deal || deal.userId !== USER_ID) {
+    if (!deal || deal.userId !== user.id) {
       return NextResponse.json(
         { error: 'Deal not found or unauthorized' },
         { status: 404 }
@@ -74,7 +83,7 @@ export async function POST(request: NextRequest) {
 
     const contact = await prisma.contact.create({
       data: {
-        userId: USER_ID,
+        userId: user.id,
         dealId: parseInt(dealId),
         name,
         email,

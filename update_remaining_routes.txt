@@ -1,0 +1,21 @@
+Remaining Routes to Update (11 files):
+
+1. /api/sharing/route.ts - GET (list shares), POST (create share)
+2. /api/sharing/[id]/route.ts - GET, PATCH, DELETE
+3. /api/reports/activity/route.ts - GET
+4. /api/reports/pipeline/route.ts - GET
+5. /api/reports/status/route.ts - GET
+6. /api/calls/gong/sync/route.ts - POST (internal, include userId in body)
+7. /api/email/sync/route.ts - POST (internal, include userId in body)
+8. /api/emails/send/route.ts - POST
+9. /api/deals/[id]/emails/route.ts - GET
+10. /api/forecasting/pipeline/route.ts - GET
+11. /api/contacts/[id]/engagement/log/route.ts - GET
+
+Pattern for each:
+- Add: import { getCurrentUser } from '@/lib/auth-utils';
+- Remove: const USER_ID = 1;
+- Add getCurrentUser() check at start of each handler
+- Replace all USER_ID with user.id
+- For internal endpoints (gong/sync, email/sync): expect userId in request body instead
+

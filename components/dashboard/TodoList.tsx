@@ -86,7 +86,12 @@ export function TodoList() {
   };
 
   if (loading) {
-    return <div className="h-40 flex items-center justify-center"><Spinner /></div>;
+    return <div style={{
+      height: '160px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
+    }}><Spinner /></div>;
   }
 
   const incompleteTodos = todos.filter((t) => !t.completed);
@@ -94,22 +99,73 @@ export function TodoList() {
 
   return (
     <div>
-      <h2 className="text-lg font-serif font-bold text-slate-900 mb-4">Daily To-Do</h2>
+      <h2 style={{
+        fontSize: 'var(--text-lg)',
+        fontFamily: '"Playfair Display", serif',
+        fontWeight: 700,
+        color: 'var(--ink)',
+        margin: '0 0 var(--space-6) 0'
+      }}>Daily To-Do</h2>
       <Card>
-        <form onSubmit={handleAddTodo} className="mb-4 pb-4 border-b border-slate-200">
-          <div className="flex gap-2">
+        <form onSubmit={handleAddTodo} style={{
+          marginBottom: 'var(--space-6)',
+          paddingBottom: 'var(--space-6)',
+          borderBottom: '1px solid var(--line)'
+        }}>
+          <div style={{
+            display: 'flex',
+            gap: 'var(--space-2)'
+          }}>
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Add a task..."
-              className="flex-1 px-3 py-2 border border-slate-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-slate-500"
+              style={{
+                flex: 1,
+                padding: 'var(--space-2) var(--space-3)',
+                border: '1px solid var(--line)',
+                borderRadius: 'var(--radius)',
+                fontSize: 'var(--text-sm)',
+                color: 'var(--ink)',
+                fontFamily: 'var(--font-family-sans)',
+                backgroundColor: 'var(--paper)',
+                outline: 'none',
+                transition: 'border-color var(--transition-base), box-shadow var(--transition-base)'
+              }}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = 'var(--cobalt)';
+                e.currentTarget.style.boxShadow = '0 0 0 3px var(--cobalt-light)';
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = 'var(--line)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
               disabled={submitting}
             />
             <button
               type="submit"
               disabled={submitting || !input.trim()}
-              className="px-4 py-2 bg-slate-900 text-white rounded text-sm font-medium hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
+              style={{
+                padding: 'var(--space-2) var(--space-4)',
+                backgroundColor: submitting || !input.trim() ? 'var(--ink-lighter)' : 'var(--ink)',
+                color: 'white',
+                border: 'none',
+                borderRadius: 'var(--radius)',
+                fontSize: 'var(--text-sm)',
+                fontWeight: 600,
+                cursor: submitting || !input.trim() ? 'not-allowed' : 'pointer',
+                transition: 'background-color var(--transition-base)',
+                opacity: submitting || !input.trim() ? 0.5 : 1
+              }}
+              onMouseEnter={(e) => {
+                if (!submitting && input.trim()) {
+                  e.currentTarget.style.backgroundColor = 'var(--ink-light)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = 'var(--ink)';
+              }}
             >
               {submitting ? '...' : 'Add'}
             </button>
@@ -117,30 +173,74 @@ export function TodoList() {
         </form>
 
         {incompleteTodos.length === 0 && completedTodos.length === 0 ? (
-          <p className="text-slate-600 text-center py-8">No tasks. You're all set!</p>
+          <p style={{
+            color: 'var(--ink-lighter)',
+            textAlign: 'center',
+            paddingTop: 'var(--space-8)',
+            paddingBottom: 'var(--space-8)',
+            margin: 0
+          }}>No tasks. You're all set!</p>
         ) : (
           <div>
             {incompleteTodos.length > 0 && (
-              <div className="mb-4">
-                <h3 className="text-sm font-semibold text-slate-700 mb-2">Pending</h3>
-                <div className="space-y-2">
+              <div style={{ marginBottom: 'var(--space-6)' }}>
+                <h3 style={{
+                  fontSize: 'var(--text-sm)',
+                  fontWeight: 600,
+                  color: 'var(--ink-light)',
+                  marginBottom: 'var(--space-3)',
+                  margin: '0 0 var(--space-3) 0'
+                }}>Pending</h3>
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 'var(--space-2)'
+                }}>
                   {incompleteTodos.map((todo) => (
-                    <div key={todo.id} className="flex items-start gap-3">
+                    <div key={todo.id} style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: 'var(--space-3)'
+                    }}>
                       <input
                         type="checkbox"
                         checked={false}
                         onChange={() => handleToggleTodo(todo)}
-                        className="mt-1 w-4 h-4 cursor-pointer"
+                        style={{
+                          marginTop: 'var(--space-1)',
+                          width: '16px',
+                          height: '16px',
+                          cursor: 'pointer',
+                          accentColor: 'var(--cobalt)'
+                        }}
                       />
-                      <div className="flex-1">
-                        <p className="text-sm text-slate-900">{todo.content}</p>
+                      <div style={{ flex: 1 }}>
+                        <p style={{
+                          fontSize: 'var(--text-sm)',
+                          color: 'var(--ink)',
+                          margin: 0
+                        }}>{todo.content}</p>
                         {todo.deal && (
-                          <p className="text-xs text-slate-500">{todo.deal.name}</p>
+                          <p style={{
+                            fontSize: 'var(--text-xs)',
+                            color: 'var(--ink-lighter)',
+                            margin: 'var(--space-1) 0 0 0'
+                          }}>{todo.deal.name}</p>
                         )}
                       </div>
                       <button
                         onClick={() => handleDeleteTodo(todo.id)}
-                        className="text-slate-400 hover:text-red-600 text-sm"
+                        style={{
+                          backgroundColor: 'transparent',
+                          border: 'none',
+                          color: 'var(--ink-lighter)',
+                          fontSize: 'var(--text-sm)',
+                          cursor: 'pointer',
+                          padding: 0,
+                          transition: 'color var(--transition-base)'
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.color = 'var(--error)'}
+                        onMouseLeave={(e) => e.currentTarget.style.color = 'var(--ink-lighter)'}
                       >
                         ✕
                       </button>
@@ -152,22 +252,58 @@ export function TodoList() {
 
             {completedTodos.length > 0 && (
               <div>
-                <h3 className="text-sm font-semibold text-slate-700 mb-2">Completed</h3>
-                <div className="space-y-2">
+                <h3 style={{
+                  fontSize: 'var(--text-sm)',
+                  fontWeight: 600,
+                  color: 'var(--ink-light)',
+                  marginBottom: 'var(--space-3)',
+                  margin: '0 0 var(--space-3) 0'
+                }}>Completed</h3>
+                <div style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 'var(--space-2)',
+                  opacity: 0.6
+                }}>
                   {completedTodos.map((todo) => (
-                    <div key={todo.id} className="flex items-start gap-3 opacity-60">
+                    <div key={todo.id} style={{
+                      display: 'flex',
+                      alignItems: 'flex-start',
+                      gap: 'var(--space-3)'
+                    }}>
                       <input
                         type="checkbox"
                         checked={true}
                         onChange={() => handleToggleTodo(todo)}
-                        className="mt-1 w-4 h-4 cursor-pointer"
+                        style={{
+                          marginTop: 'var(--space-1)',
+                          width: '16px',
+                          height: '16px',
+                          cursor: 'pointer',
+                          accentColor: 'var(--success)'
+                        }}
                       />
-                      <div className="flex-1">
-                        <p className="text-sm text-slate-500 line-through">{todo.content}</p>
+                      <div style={{ flex: 1 }}>
+                        <p style={{
+                          fontSize: 'var(--text-sm)',
+                          color: 'var(--ink-lighter)',
+                          margin: 0,
+                          textDecoration: 'line-through'
+                        }}>{todo.content}</p>
                       </div>
                       <button
                         onClick={() => handleDeleteTodo(todo.id)}
-                        className="text-slate-400 hover:text-red-600 text-sm"
+                        style={{
+                          backgroundColor: 'transparent',
+                          border: 'none',
+                          color: 'var(--ink-lighter)',
+                          fontSize: 'var(--text-sm)',
+                          cursor: 'pointer',
+                          padding: 0,
+                          transition: 'color var(--transition-base)'
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.color = 'var(--error)'}
+                        onMouseLeave={(e) => e.currentTarget.style.color = 'var(--ink-lighter)'}
                       >
                         ✕
                       </button>

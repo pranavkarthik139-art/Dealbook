@@ -158,7 +158,7 @@ export function ContactForm({ dealId, contact, onSave, onCancel, isLoading }: Co
         <button
           type="button"
           onClick={onCancel}
-          className="px-4 py-2 rounded-lg border border-line text-ink text-sm hover:bg-slate-50 transition-colors"
+          className="px-4 py-2 rounded-lg border border-line text-ink text-sm hover:bg-paper-alt transition-colors"
         >
           Cancel
         </button>
