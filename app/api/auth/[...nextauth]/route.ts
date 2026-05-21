@@ -7,9 +7,9 @@ const DEMO_USERS = [
   { id: 'admin', email: 'admin@dealbook.com', password: 'admin123', name: 'Admin User', role: 'admin' },
 ];
 
-// Get auth secret - use a default for build time
+// Get auth secret - required for signing JWT tokens
 const getAuthSecret = () => {
-  const secret = process.env.NEXTAUTH_SECRET || 'build-time-secret-do-not-use';
+  const secret = process.env.NEXTAUTH_SECRET || 'fallback-secret-32-characters-long';
   return secret;
 };
 
@@ -24,6 +24,7 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         try {
           if (!credentials?.email || !credentials?.password) {
+            console.warn('Missing email or password');
             return null;
           }
 
@@ -33,14 +34,16 @@ export const authOptions: NextAuthOptions = {
           );
 
           if (user) {
+            console.log(`Auth successful for user: ${user.email}`);
             return {
               id: user.id,
               email: user.email,
               name: user.name,
               role: user.role,
-            };
+            } as any;
           }
 
+          console.warn(`Auth failed: no user found for ${credentials.email}`);
           return null;
         } catch (error) {
           console.error('Auth error:', error);
@@ -55,18 +58,22 @@ export const authOptions: NextAuthOptions = {
   },
 
   callbacks: {
-    async jwt({ token, user }: { token: JWT; user?: any }) {
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        token.role = user.role || 'sales_engineer';
+        token.role = user.role;
+        token.email = user.email;
+        token.name = user.name;
       }
       return token;
     },
 
-    async session({ session, token }: { session: Session; token: JWT }) {
+    async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
         session.user.role = (token.role as string) || 'sales_engineer';
+        session.user.email = token.email as string;
+        session.user.name = token.name as string;
       }
       return session;
     },
