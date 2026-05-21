@@ -5,10 +5,19 @@ import { Topbar } from './Topbar';
 import { CommandBar } from '@/components/common/CommandBar';
 import { getTheme } from '@/lib/themes';
 import { useTheme } from '@/lib/ThemeContext';
+import { usePathname } from 'next/navigation';
 
 export function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const theme = useTheme();
   const themeConfig = getTheme(theme);
+  const pathname = usePathname();
+
+  // Don't show sidebar/topbar on auth pages
+  const isAuthPage = pathname?.startsWith('/auth');
+
+  if (isAuthPage) {
+    return <>{children}</>;
+  }
 
   return (
     <div style={{

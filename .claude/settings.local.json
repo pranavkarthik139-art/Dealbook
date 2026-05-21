@@ -199,7 +199,16 @@
       "Bash(curl -s -X POST http://localhost:3000/api/todos -H 'Content-Type: application/json' -d '{ *)",
       "Bash(curl -s \"http://localhost:3000/api/activity?limit=5\")",
       "Bash(curl -s -X PATCH http://localhost:3000/api/todos/34 -H 'Content-Type: application/json' -d '{\"completed\": true}')",
-      "Bash(curl -s http://localhost:3000/api/deals/62/intelligence)"
+      "Bash(curl -s http://localhost:3000/api/deals/62/intelligence)",
+      "Bash(tail -50 /tmp/dev.log 2>/dev/null || echo \"Dev server still starting...\")",
+      "Bash(awk '{print $2}')",
+      "Bash(curl -s http://localhost:3000/auth/signin)",
+      "Bash([ -d \"app/$file\" ])",
+      "Bash(awk '{print $NF}')",
+      "Bash([ -d \"app/$folder\" ])",
+      "Bash(powershell -NoProfile -Command 'Get-Process | Where-Object { $_.Id -eq 29908 } | Stop-Process -Force')",
+      "Bash(curl -s -X POST http://localhost:3000/api/auth/callback/credentials -H 'Content-Type: application/json' -H 'Accept: application/json' -d '{\"email\":\"demo@dealbook.com\",\"password\":\"demo123\"}')",
+      "Bash(\n# Kill any running servers\nsleep 1\nnpm run dev > /tmp/dev.log 2>&1 &\nsleep 5\necho \"Dev server started\"\n\n# Test 1: Sign-in page should NOT have sidebar\necho \"Test 1: Checking if sidebar is on sign-in page...\"\ncurl -s http://localhost:3000/auth/signin 2>&1 | grep -o \"<aside\\\\|Sidebar\" && echo \"❌ SIDEBAR FOUND\" || echo \"✓ NO SIDEBAR\"\n\n# Test 2: Check form elements exist\necho \"\"\necho \"Test 2: Checking form elements...\"\ncurl -s http://localhost:3000/auth/signin 2>&1 | grep -o \"Email\\\\|Password\\\\|Try Demo\" && echo \"✓ FORM ELEMENTS FOUND\" || echo \"❌ NO FORM\"\n)"
     ]
   }
 }
