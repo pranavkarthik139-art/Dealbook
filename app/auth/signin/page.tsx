@@ -4,6 +4,9 @@ import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+// Don't pre-render this page - render it on-demand
+export const dynamic = 'force-dynamic';
+
 export default function SignInPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

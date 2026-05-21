@@ -7,6 +7,12 @@ const DEMO_USERS = [
   { id: 'admin', email: 'admin@dealbook.com', password: 'admin123', name: 'Admin User', role: 'admin' },
 ];
 
+// Get auth secret - use a default for build time
+const getAuthSecret = () => {
+  const secret = process.env.NEXTAUTH_SECRET || 'build-time-secret-do-not-use';
+  return secret;
+};
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -67,14 +73,15 @@ export const authOptions: NextAuthOptions = {
   },
 
   session: {
-    strategy: 'jwt', // Use JWT instead of database sessions
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    strategy: 'jwt',
+    maxAge: 30 * 24 * 60 * 60,
   },
 
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: getAuthSecret(),
 };
 
 const handler = NextAuth(authOptions);
 
 export const GET = handler;
 export const POST = handler;
+export const dynamic = 'force-dynamic';
