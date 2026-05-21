@@ -1,75 +1,45 @@
-import NextAuth, { NextAuthOptions, type Session } from 'next-auth';
+import NextAuth, { NextAuthOptions, type Session, JWT } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { PrismaAdapter } from '@auth/prisma-adapter';
-import { prisma } from '@/lib/db';
 
-// Demo credentials
-const DEMO_USER = {
-  email: 'demo@dealbook.com',
-  password: 'demo123',
-};
+// Demo/test users - hardcoded for MVP
+const DEMO_USERS = [
+  { id: 'demo', email: 'demo@dealbook.com', password: 'demo123', name: 'Demo User', role: 'admin' },
+  { id: 'admin', email: 'admin@dealbook.com', password: 'admin123', name: 'Admin User', role: 'admin' },
+];
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
-
   providers: [
     CredentialsProvider({
       name: 'Credentials',
       credentials: {
-        email: { label: 'Email', type: 'email' },
-        password: { label: 'Password', type: 'password' },
+        email: { label: 'Email', type: 'email', placeholder: 'demo@dealbook.com' },
+        password: { label: 'Password', type: 'password', placeholder: 'demo123' },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          return null;
-        }
-
-        // Check demo account
-        if (
-          credentials.email === DEMO_USER.email &&
-          credentials.password === DEMO_USER.password
-        ) {
-          // Get or create demo user
-          let user = await prisma.user.findUnique({
-            where: { email: DEMO_USER.email },
-          });
-
-          if (!user) {
-            user = await prisma.user.create({
-              data: {
-                email: DEMO_USER.email,
-                name: 'Demo User',
-                role: 'admin',
-              },
-            });
+        try {
+          if (!credentials?.email || !credentials?.password) {
+            return null;
           }
 
-          return {
-            id: user.id.toString(),
-            email: user.email,
-            name: user.name,
-            role: user.role,
-          };
+          // Check against demo users (no database dependency)
+          const user = DEMO_USERS.find(
+            (u) => u.email === credentials.email && u.password === credentials.password
+          );
+
+          if (user) {
+            return {
+              id: user.id,
+              email: user.email,
+              name: user.name,
+              role: user.role,
+            };
+          }
+
+          return null;
+        } catch (error) {
+          console.error('Auth error:', error);
+          return null;
         }
-
-        // For basic MVP, also check for any user in database
-        // In production, you'd want proper password hashing (bcrypt)
-        const user = await prisma.user.findUnique({
-          where: { email: credentials.email },
-        });
-
-        if (user) {
-          // For MVP: simple password check (in production use bcrypt)
-          // Store passwords hashed in real implementation
-          return {
-            id: user.id.toString(),
-            email: user.email,
-            name: user.name,
-            role: user.role,
-          };
-        }
-
-        return null;
       },
     }),
   ],
@@ -79,19 +49,29 @@ export const authOptions: NextAuthOptions = {
   },
 
   callbacks: {
-    async session({ session, user }: any): Promise<Session> {
+    async jwt({ token, user }: { token: JWT; user?: any }) {
+      if (user) {
+        token.id = user.id;
+        token.role = user.role || 'sales_engineer';
+      }
+      return token;
+    },
+
+    async session({ session, token }: { session: Session; token: JWT }) {
       if (session.user) {
-        session.user.id = user.id;
-        session.user.role = user.role || 'sales_engineer';
+        session.user.id = token.id as string;
+        session.user.role = (token.role as string) || 'sales_engineer';
       }
       return session;
     },
   },
 
   session: {
-    strategy: 'database',
+    strategy: 'jwt', // Use JWT instead of database sessions
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
+
+  secret: process.env.NEXTAUTH_SECRET,
 };
 
 const handler = NextAuth(authOptions);
