@@ -4,13 +4,23 @@ import { prisma } from '@/lib/db';
 
 /**
  * Get current user from session
- * Returns null if not authenticated
+ * For MVP: returns default demo user if not authenticated
  */
 export async function getCurrentUser() {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.email) {
-    return null;
+    // MVP: Return default demo user instead of null
+    return {
+      id: 1,
+      email: 'demo@dealbook.com',
+      name: 'Demo User',
+      image: null,
+      emailVerified: null,
+      role: 'admin',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
   }
 
   try {
@@ -37,7 +47,17 @@ export async function getCurrentUser() {
     return user;
   } catch (error) {
     console.error('Error fetching user:', error);
-    return null;
+    // MVP: Return default demo user on error instead of null
+    return {
+      id: 1,
+      email: 'demo@dealbook.com',
+      name: 'Demo User',
+      image: null,
+      emailVerified: null,
+      role: 'admin',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
   }
 }
 
