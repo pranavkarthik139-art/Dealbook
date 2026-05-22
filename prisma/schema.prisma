@@ -54,6 +54,9 @@ model User {
   // Deal Assignments (Manager side - deals assigned BY this user)
   dealAssignmentsAssignedBy DealAssignment[] @relation("dealAssignmentsAssignedBy")
 
+  // Product Feedback
+  feedbackResponses ProductFeedback[]
+
   createdAt         DateTime          @default(now()) @map("created_at")
   updatedAt         DateTime          @updatedAt @map("updated_at")
 
@@ -648,5 +651,53 @@ model ContactEngagementLog {
   @@index([dealId])
   @@index([eventDate])
   @@map("contact_engagement_logs")
+}
+
+model ProductFeedback {
+  id                    Int       @id @default(autoincrement())
+  userId                Int       @map("user_id")
+  respondentName        String?   @map("respondent_name")
+  respondentEmail       String?   @map("respondent_email")
+  respondentRole        String?   @map("respondent_role") // SE, Manager, Admin, etc.
+
+  // Overall impression (1-5 scale)
+  overallRating         Int?      @map("overall_rating")
+  likelyRecommend       Int?      @map("likely_recommend") // NPS: 0-10
+
+  // What they liked
+  likedFeatures         String[]  @map("liked_features") // JSON array
+  likedReasons          String?   @map("liked_reasons")   // Open text
+
+  // What they'd like to see
+  missingFeatures       String[]  @map("missing_features") // JSON array
+  featureRequests       String?   @map("feature_requests")  // Open text
+
+  // Pain points
+  painPoints            String?   @map("pain_points")
+
+  // Usability & design (1-5 scale)
+  easeOfUse             Int?      @map("ease_of_use")
+  designFeedback        String?   @map("design_feedback")
+
+  // Comparison to other tools
+  comparingTo           String?   @map("comparing_to") // e.g., "Salesforce", "HubSpot"
+  advantages            String?   @map("advantages")
+  disadvantages         String?   @map("disadvantages")
+
+  // Open-ended feedback
+  additionalSuggestions String?   @map("additional_suggestions")
+
+  // Metadata
+  ipAddress             String?   @map("ip_address")
+  userAgent             String?   @map("user_agent")
+
+  createdAt             DateTime  @default(now()) @map("created_at")
+  updatedAt             DateTime  @updatedAt @map("updated_at")
+
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt])
+  @@map("product_feedback")
 }
 
