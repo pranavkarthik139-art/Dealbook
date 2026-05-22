@@ -28,8 +28,11 @@ export function TodaysFocus() {
         const endDate = new Date(startDate);
         endDate.setUTCDate(endDate.getUTCDate() + 1);
 
-        // First sync with Google Calendar
+        // First sync with Google Calendar (with 3 second timeout)
         try {
+          const abortController = new AbortController();
+          const timeoutId = setTimeout(() => abortController.abort(), 3000);
+
           const syncResponse = await fetch('/api/calendar/sync', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -37,8 +40,10 @@ export function TodaysFocus() {
               startDate: startDate.toISOString(),
               endDate: endDate.toISOString(),
             }),
+            signal: abortController.signal,
           });
 
+          clearTimeout(timeoutId);
           if (syncResponse.ok) {
             const syncData = await syncResponse.json();
             setSynced(syncData.success === true);
@@ -48,21 +53,22 @@ export function TodaysFocus() {
           setSynced(false);
         }
 
-        // Then fetch events
+        // Then fetch events (with 3 second timeout)
         const startISO = startDate.toISOString();
         const endISO = endDate.toISOString();
-        console.log('🔍 Calendar query:', { startISO, endISO });
+
+        const abortController = new AbortController();
+        const timeoutId = setTimeout(() => abortController.abort(), 3000);
 
         const response = await fetch(
-          `/api/calendar/events?start=${startISO}&end=${endISO}`
+          `/api/calendar/events?start=${startISO}&end=${endISO}`,
+          { signal: abortController.signal }
         );
 
+        clearTimeout(timeoutId);
         if (response.ok) {
           const data = await response.json();
-          console.log('📅 Calendar API response:', data);
-          // Handle both array and object responses
           const eventsList = Array.isArray(data) ? data : (data.events || []);
-          console.log('📌 Parsed events:', eventsList);
           setEvents(eventsList);
         }
       } catch (error) {
