@@ -12,27 +12,11 @@ export async function POST() {
     // Auth disabled - use default user ID 1
     const USER_ID = 1;
 
-    // Get or create the demo user
-    let user = await prisma.user.findUnique({
-      where: { id: USER_ID },
-    });
-
-    if (!user) {
-      user = await prisma.user.create({
-        data: {
-          id: USER_ID,
-          email: 'demo@dealbook.com',
-          name: 'Demo User',
-          role: 'admin',
-        },
-      });
-    }
-
     // Create test deals
     const deals = await Promise.all([
       prisma.deal.create({
         data: {
-          userId: user.id,
+          userId: USER_ID,
           name: 'Acme Corp - POC',
           email: 'john@acmecorp.com',
           amount: 250000,
@@ -45,7 +29,7 @@ export async function POST() {
       }),
       prisma.deal.create({
         data: {
-          userId: user.id,
+          userId: USER_ID,
           name: 'TechStart - Enterprise Deal',
           email: 'sarah@techstart.com',
           amount: 500000,
@@ -58,7 +42,7 @@ export async function POST() {
       }),
       prisma.deal.create({
         data: {
-          userId: user.id,
+          userId: USER_ID,
           name: 'Global Industries - Demo',
           email: 'mike@globalind.com',
           amount: 100000,
@@ -71,7 +55,7 @@ export async function POST() {
       }),
       prisma.deal.create({
         data: {
-          userId: user.id,
+          userId: USER_ID,
           name: 'Innovate Labs - Closed',
           email: 'emma@innovatelabs.com',
           amount: 350000,
@@ -89,7 +73,7 @@ export async function POST() {
       const deal = deals[i];
       await prisma.contact.create({
         data: {
-          userId: user.id,
+          userId: USER_ID,
           dealId: deal.id,
           name: deal.email?.split('@')[0].replace('.', ' ').toUpperCase() || 'Contact',
           email: deal.email || 'contact@example.com',
@@ -104,7 +88,7 @@ export async function POST() {
     for (const deal of deals) {
       await prisma.activityLog.create({
         data: {
-          userId: user.id,
+          userId: USER_ID,
           dealId: deal.id,
           action: 'deal_created',
           description: `Deal "${deal.name}" created`,
@@ -116,9 +100,9 @@ export async function POST() {
       success: true,
       message: 'Test data seeded successfully',
       user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
+        id: USER_ID,
+        email: 'demo@dealbook.com',
+        name: 'Demo User',
       },
       dealsCreated: deals.length,
       deals: deals.map(d => ({
