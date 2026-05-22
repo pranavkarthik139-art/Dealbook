@@ -66,9 +66,21 @@ export const config = {
     '/team/:path*',
     '/forecasting/:path*',
     '/templates/:path*',
-    // Protect API routes (auth routes excluded via negative lookahead below)
-    '/api/(?!auth).*',
-    // Exclude next.js static files and root index
-    '/((?!_next/static|_next/image|favicon.ico|api/auth).*)',
+    '/forecast:path*',
+    // Protect all API routes except auth
+    '/api/activity/:path*',
+    '/api/automations/:path*',
+    '/api/calls/:path*',
+    '/api/calendar/:path*',
+    '/api/contacts/:path*',
+    '/api/deals/:path*',
+    '/api/email/:path*',
+    '/api/emails/:path*',
+    '/api/forecasting/:path*',
+    '/api/preferences/:path*',
+    '/api/reports/:path*',
+    '/api/sharing/:path*',
+    '/api/templates/:path*',
+    '/api/todos/:path*',
   ],
 };
