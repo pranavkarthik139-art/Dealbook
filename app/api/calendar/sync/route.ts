@@ -1,10 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { syncCalendarEvents } from '@/lib/google-calendar';
 import { prisma } from '@/lib/db';
+import { getCurrentUser } from '@/lib/auth-utils';
 
 export async function POST(request: NextRequest) {
   try {
-    const userId = 1; // Hardcoded for prototype
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const userId = parseInt(user.id);
+    // TODO: Get calendarId from user preferences (OAuth integration)
     const calendarId = 'pranavkarthik139@gmail.com'; // Hardcoded for now
     const { startDate: startDateStr, endDate: endDateStr } = await request.json().catch(() => ({}));
 

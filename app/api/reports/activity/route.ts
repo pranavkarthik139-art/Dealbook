@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { differenceInDays, startOfDay, subDays } from 'date-fns';
-
-const USER_ID = 1;
+import { getCurrentUser } from '@/lib/auth-utils';
 
 export async function GET(request: NextRequest) {
   try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const days = request.nextUrl.searchParams.get('days') || '30';
     const daysNum = parseInt(days);
 
@@ -14,7 +18,7 @@ export async function GET(request: NextRequest) {
 
     const activities = await prisma.activityLog.findMany({
       where: {
-        userId: USER_ID,
+        userId: parseInt(user.id),
         createdAt: { gte: startDate },
       },
       select: {

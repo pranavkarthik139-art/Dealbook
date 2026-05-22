@@ -1,13 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
-
-const USER_ID = 1;
+import { getCurrentUser } from '@/lib/auth-utils';
 
 export async function GET(request: NextRequest) {
   try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     // Get all deals grouped by stage
     const deals = await prisma.deal.findMany({
-      where: { userId: USER_ID },
+      where: { userId: parseInt(user.id) },
       select: {
         id: true,
         name: true,

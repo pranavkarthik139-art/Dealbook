@@ -1,8 +1,7 @@
 import { prisma } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
 import { renderTemplate, emailTemplates } from '@/lib/emailTemplates';
-
-const USER_ID = 1; // Hardcoded for prototype
+import { getCurrentUser } from '@/lib/auth-utils';
 
 interface SendEmailRequest {
   dealIds: number[];
@@ -24,11 +23,11 @@ interface EmailRecipient {
  * Fetch all contacts for specified deals
  * Deduplicates by email address (takes last occurrence by deal)
  */
-async function getRecipientsForDeals(dealIds: number[]): Promise<EmailRecipient[]> {
+async function getRecipientsForDeals(userId: number, dealIds: number[]): Promise<EmailRecipient[]> {
   const deals = await prisma.deal.findMany({
     where: {
       id: { in: dealIds },
-      userId: USER_ID,
+      userId,
     },
     select: {
       id: true,
@@ -105,6 +104,12 @@ async function sendEmailViaResend(
 
 export async function POST(request: NextRequest) {
   try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const userId = parseInt(user.id);
     const body: SendEmailRequest = await request.json();
     const { dealIds, subject, body: emailBody, template } = body;
 
@@ -123,7 +128,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get all recipients for these deals
-    const recipients = await getRecipientsForDeals(dealIds);
+    const recipients = await getRecipientsForDeals(userId, dealIds);
 
     if (recipients.length === 0) {
       return NextResponse.json(
@@ -165,7 +170,7 @@ export async function POST(request: NextRequest) {
           // Create engagement log entry
           await prisma.contactEngagementLog.create({
             data: {
-              userId: USER_ID,
+              userId,
               contactId: recipient.contactId,
               dealId: recipient.dealId,
               eventType: 'email_sent',
@@ -194,7 +199,7 @@ export async function POST(request: NextRequest) {
           // Log activity
           await prisma.activityLog.create({
             data: {
-              userId: USER_ID,
+              userId,
               dealId: recipient.dealId,
               action: 'batch_email_sent',
               description: `Batch email sent to ${recipient.contactName}: "${finalSubject}"`,

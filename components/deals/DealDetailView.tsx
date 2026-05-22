@@ -13,6 +13,8 @@ import { GongInsightCard } from './GongInsightCard';
 import { CallLogModal } from './CallLogModal';
 import { PulseAlert } from './PulseAlert';
 import { EmailThread } from './EmailThread';
+import { DealDetailHeader } from './DealDetailHeader';
+import { DealDetailSkeleton } from '@/components/common/SkeletonLoader';
 import { calculateDealPulse, type PulseSignal } from '@/lib/dealPulse';
 import type { CompanyData, ContactData } from '@/lib/apollo';
 
@@ -441,230 +443,42 @@ export function DealDetailView({ dealId }: { dealId: number }) {
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-96">
-        <div className="animate-spin h-8 w-8 border-4 border-cobalt border-t-transparent rounded-full"></div>
-      </div>
-    );
+    return <DealDetailSkeleton />;
   }
 
   if (!deal) {
-    return <div className="text-center text-ink-lighter py-8">Deal not found</div>;
+    return (
+      <div className="flex flex-col items-center justify-center h-96 text-center">
+        <div className="text-6xl mb-4">📭</div>
+        <h2 className="text-2xl font-bold text-ink mb-2">Deal Not Found</h2>
+        <p className="text-ink-lighter mb-6">This deal no longer exists or you don't have access to it.</p>
+        <a
+          href="/deals"
+          className="px-4 py-2 rounded-lg bg-cobalt text-white text-sm hover:opacity-90 transition-opacity"
+        >
+          ← Back to Deals
+        </a>
+      </div>
+    );
   }
-
-  const getStageColor = (stage?: string) => {
-    switch (stage) {
-      case 'demo':
-        return 'bg-blue-100 text-blue-900';
-      case 'poc':
-        return 'bg-purple-100 text-purple-900';
-      case 'validation':
-        return 'bg-indigo-100 text-indigo-900';
-      case 'closed':
-        return 'bg-green-light text-green';
-      default:
-        return 'bg-paper-alt text-ink';
-    }
-  };
-
-  const getStatusColor = (status?: string) => {
-    switch (status) {
-      case 'active':
-        return 'bg-green-light text-green';
-      case 'on_hold':
-        return 'bg-amber-light text-amber';
-      case 'lost':
-        return 'bg-red-light text-red';
-      case 'closed':
-        return 'bg-paper-alt text-ink';
-      default:
-        return 'bg-paper-alt text-ink';
-    }
-  };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
       {/* Main Column */}
       <div className="lg:col-span-2 space-y-12">
-        {/* Header Section */}
-        <div className="pt-2">
-          <div className="flex items-start justify-between mb-6">
-            <div className="flex-1">
-              {editing ? (
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="font-serif text-3xl font-bold text-ink w-full border-b border-cobalt focus:outline-none"
-                />
-              ) : (
-                <h1 className="font-serif text-3xl font-bold text-ink">{deal.name}</h1>
-              )}
-            </div>
-            {!editing && (
-              <button
-                onClick={() => setEditing(true)}
-                className="px-4 py-2 rounded-lg border border-line text-ink text-sm hover:bg-paper-alt transition-colors"
-              >
-                Edit
-              </button>
-            )}
-          </div>
-
-          {/* Amount */}
-          <div className="mb-4">
-            {editing ? (
-              <input
-                type="number"
-                value={formData.amount}
-                onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                placeholder="Amount"
-                className="text-xl font-bold text-ink-light border-b border-cobalt focus:outline-none"
-              />
-            ) : (
-              <p className="text-xl font-bold text-ink-light">
-                {deal.amount ? `$${(deal.amount / 1000).toFixed(1)}k` : '—'}
-              </p>
-            )}
-          </div>
-
-          {/* Primary Metrics Grid - 4 columns */}
-          <div className="grid grid-cols-4 gap-6 mb-4 pb-4 border-b border-line">
-            {/* Stage */}
-            <div>
-              <p className="text-xs font-semibold text-ink-lighter uppercase mb-2 tracking-wider">Stage</p>
-              {deal.stage ? (
-                <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${getStageColor(deal.stage)}`}>
-                  {deal.stage.charAt(0).toUpperCase() + deal.stage.slice(1)}
-                </span>
-              ) : (
-                <p className="text-sm text-ink-lighter">—</p>
-              )}
-            </div>
-
-            {/* Status */}
-            <div>
-              <p className="text-xs font-semibold text-ink-lighter uppercase mb-2 tracking-wider">Status</p>
-              {editing ? (
-                <select
-                  value={formData.status}
-                  onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                  className={`text-xs font-medium px-1 py-0.5 rounded ${getStatusColor(formData.status)}`}
-                >
-                  <option value="active">Active</option>
-                  <option value="on_hold">On Hold</option>
-                  <option value="lost">Lost</option>
-                  <option value="closed">Closed</option>
-                </select>
-              ) : deal.status ? (
-                <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${getStatusColor(deal.status)}`}>
-                  {deal.status.replace('_', ' ').charAt(0).toUpperCase() + deal.status.slice(1).replace(/_/g, ' ')}
-                </span>
-              ) : (
-                <p className="text-sm text-ink-lighter">—</p>
-              )}
-            </div>
-
-            {/* Probability */}
-            <div>
-              <p className="text-xs font-semibold text-ink-lighter uppercase mb-2 tracking-wider">Probability</p>
-              {editing ? (
-                <div className="flex items-center gap-1">
-                  <input
-                    type="number"
-                    min="0"
-                    max="100"
-                    value={formData.probability}
-                    onChange={(e) => setFormData({ ...formData, probability: parseInt(e.target.value) || 50 })}
-                    className="w-12 border-b border-cobalt focus:outline-none text-sm font-bold"
-                  />
-                  <span className="text-sm text-ink-lighter">%</span>
-                </div>
-              ) : (
-                <p className="text-sm font-bold text-ink">{deal.probability || 50}%</p>
-              )}
-            </div>
-
-            {/* Expected Close */}
-            <div>
-              <p className="text-xs font-semibold text-ink-lighter uppercase mb-2 tracking-wider">Expected Close</p>
-              {editing ? (
-                <input
-                  type="date"
-                  value={formData.expectedCloseDate}
-                  onChange={(e) => setFormData({ ...formData, expectedCloseDate: e.target.value })}
-                  className="border-b border-cobalt focus:outline-none text-sm w-full"
-                />
-              ) : (
-                <p className="text-sm font-medium text-ink">
-                  {deal.expectedCloseDate ? new Date(deal.expectedCloseDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) : '—'}
-                </p>
-              )}
-            </div>
-          </div>
-
-          {/* Secondary Metrics Grid - Timeline & Activity */}
-          <div className="grid grid-cols-4 gap-6 text-sm">
-            {/* Days in Stage */}
-            <div>
-              <p className="text-xs font-semibold text-ink-lighter uppercase mb-2 tracking-wider">Days in Stage</p>
-              <p className="font-medium text-ink">
-                {(() => {
-                  const now = new Date();
-                  const updated = new Date(deal.updatedAt);
-                  const days = Math.floor((now.getTime() - updated.getTime()) / (1000 * 60 * 60 * 24));
-                  return days;
-                })()}
-              </p>
-            </div>
-
-            {/* Last Activity */}
-            <div>
-              <p className="text-xs font-semibold text-ink-lighter uppercase mb-2 tracking-wider">Last Activity</p>
-              <p className="font-medium text-ink">
-                {deal.lastActivityAt ? formatDistanceToNow(new Date(deal.lastActivityAt), { addSuffix: false }) : 'None'}
-              </p>
-            </div>
-
-            {/* Deal Age */}
-            <div>
-              <p className="text-xs font-semibold text-ink-lighter uppercase mb-2 tracking-wider">Deal Age</p>
-              <p className="font-medium text-ink">
-                {deal.createdAt ? Math.floor((Date.now() - new Date(deal.createdAt).getTime()) / (1000 * 60 * 60 * 24)) + 'd' : '—'}
-              </p>
-            </div>
-
-            {/* Days to Close */}
-            <div>
-              <p className="text-xs font-semibold text-ink-lighter uppercase mb-2 tracking-wider">Days to Close</p>
-              <p className="font-medium text-ink">
-                {deal.expectedCloseDate
-                  ? Math.max(0, Math.floor((new Date(deal.expectedCloseDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24))) + 'd'
-                  : '—'}
-              </p>
-            </div>
-          </div>
-
-          {editing && (
-            <div className="flex gap-3 mt-6 pt-6 border-t border-line">
-              <button
-                onClick={() => setEditing(false)}
-                className="px-4 py-2 rounded-lg border border-line text-ink text-sm hover:bg-paper-alt transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSave}
-                className="px-4 py-2 rounded-lg bg-cobalt text-white text-sm hover:opacity-90 transition-opacity"
-              >
-                Save
-              </button>
-            </div>
-          )}
-        </div>
+        {/* Enhanced Deal Header */}
+        <DealDetailHeader
+          deal={deal}
+          isEditing={editing}
+          editValues={formData}
+          onEdit={() => setEditing(true)}
+          onEditChange={(field, value) => setFormData({ ...formData, [field]: value })}
+          onSave={handleSave}
+          onCancel={() => setEditing(false)}
+        />
 
         {/* Divider */}
-        <div className="border-b border-line mt-8 mb-8" />
+        <div className="border-b border-line" />
 
         {/* Email Display Section */}
         <div>

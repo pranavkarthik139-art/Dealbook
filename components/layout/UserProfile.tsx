@@ -2,19 +2,55 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
 
-interface UserProfileProps {
-  userName?: string;
-  userRole?: string;
-  userEmail?: string;
-}
-
-export function UserProfile({
-  userName = 'Pranav',
-  userRole = 'Presales Lead',
-  userEmail = 'pranav@example.com'
-}: UserProfileProps) {
+export function UserProfile() {
   const [isOpen, setIsOpen] = useState(false);
+  const { data: session, status } = useSession();
+
+  // Get user data from session
+  const userName = session?.user?.name || 'User';
+  const userRole = (session?.user as any)?.role || 'Team Member';
+  const userEmail = session?.user?.email || 'user@example.com';
+
+  // Show loading state while session is loading
+  if (status === 'loading') {
+    return (
+      <div style={{
+        width: '100%',
+        display: 'flex',
+        alignItems: 'center',
+        padding: '10px 12px',
+        borderRadius: '6px',
+        gap: '10px',
+      }}>
+        <div
+          style={{
+            width: '32px',
+            height: '32px',
+            borderRadius: '50%',
+            backgroundColor: 'rgba(255, 255, 255, 0.15)',
+            animation: 'pulse 2s infinite'
+          }}
+        />
+        <div style={{ flex: 1 }}>
+          <div style={{
+            height: '12px',
+            backgroundColor: 'rgba(255, 255, 255, 0.15)',
+            borderRadius: '4px',
+            marginBottom: '4px',
+            width: '80px'
+          }} />
+          <div style={{
+            height: '10px',
+            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+            borderRadius: '4px',
+            width: '60px'
+          }} />
+        </div>
+      </div>
+    );
+  }
 
   const menuItems = [
     { label: 'Profile Settings', icon: '👤', href: '#', section: 'profile' },

@@ -80,7 +80,7 @@ export function Topbar() {
             </button>
           )}
 
-          {/* Auth Button */}
+          {/* Auth Status & Profile */}
           {status === 'loading' ? (
             <div style={{
               padding: '8px 12px',
@@ -90,29 +90,73 @@ export function Topbar() {
               Loading...
             </div>
           ) : session ? (
-            <button
-              onClick={() => signOut()}
-              type="button"
-              style={{
-                padding: '8px 14px',
-                backgroundColor: 'var(--ink-light)',
-                color: 'var(--paper)',
-                border: 'none',
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '12px'
+            }}>
+              {/* User Profile Indicator */}
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '8px 12px',
+                backgroundColor: 'var(--paper-alt)',
                 borderRadius: '7px',
-                fontSize: '13px',
-                fontWeight: 500,
-                cursor: 'pointer',
-                transition: 'all 150ms ease'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.opacity = '0.8';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.opacity = '1';
-              }}
-            >
-              {session.user?.email || 'Sign Out'}
-            </button>
+                borderLeft: '3px solid var(--success)'
+              }}>
+                <span style={{ fontSize: '14px' }}>✓</span>
+                <div style={{ textAlign: 'right' }}>
+                  <p style={{
+                    fontSize: '11px',
+                    color: 'var(--ink-lighter)',
+                    textTransform: 'uppercase',
+                    fontWeight: 600,
+                    letterSpacing: '0.3px',
+                    margin: 0
+                  }}>
+                    Synced
+                  </p>
+                  <p style={{
+                    fontSize: '13px',
+                    color: 'var(--ink)',
+                    fontWeight: 500,
+                    margin: 0
+                  }}>
+                    {session.user?.name || session.user?.email?.split('@')[0] || 'User'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Sign Out Button */}
+              <button
+                onClick={() => signOut()}
+                type="button"
+                style={{
+                  padding: '6px 12px',
+                  backgroundColor: 'transparent',
+                  color: 'var(--ink-lighter)',
+                  border: '1px solid var(--line)',
+                  borderRadius: '7px',
+                  fontSize: '12px',
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  transition: 'all 150ms ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'var(--error-light)';
+                  e.currentTarget.style.color = 'var(--error)';
+                  e.currentTarget.style.borderColor = 'var(--error)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.color = 'var(--ink-lighter)';
+                  e.currentTarget.style.borderColor = 'var(--line)';
+                }}
+              >
+                Sign Out
+              </button>
+            </div>
           ) : (
             <button
               onClick={() => signIn('google')}

@@ -23,11 +23,11 @@ export const THEMES: Record<ThemeName, ThemeConfig> = {
   dark: {
     name: 'dark',
     label: 'Dark',
-    sidebarColor: '#1A1F35',    // Dark slate sidebar
+    sidebarColor: '#1E293B',    // Darker slate sidebar (improved contrast with text)
     mainColor: '#0F172A',       // Dark ink background
-    accentColor: '#6366F1',     // Cobalt accent
-    textColor: '#F1F5F9',       // Light text
-    description: 'Dark theme with professional appearance',
+    accentColor: '#818CF8',     // Lighter cobalt for better contrast on dark bg
+    textColor: '#F8FAFC',       // Slightly lighter text for WCAG AA compliance
+    description: 'Dark theme with professional appearance and accessible contrast',
   },
   cobalt: {
     name: 'cobalt',

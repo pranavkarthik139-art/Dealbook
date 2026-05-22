@@ -115,6 +115,41 @@
   --transition-slower: 300ms ease;
 }
 
+/* Dark Mode - WCAG AA Compliant Colors */
+[data-theme="dark"] {
+  /* Dark theme with improved contrast for accessibility */
+  --paper: #0f172a;
+  --paper-bg: #0a0f1a;
+  --paper-alt: #1e293b;
+  --ink: #f8fafc;
+  --ink-light: #cbd5e1;
+  --ink-lighter: #94a3b8;
+
+  /* Adjusted brand colors for dark mode readability */
+  --cobalt: #818cf8;
+  --cobalt-light: #4c1d95;
+  --cobalt-hover: #a5b4fc;
+
+  /* Semantic colors adjusted for dark theme */
+  --success: #4ade80;
+  --success-light: #166534;
+  --warning: #fbbf24;
+  --warning-light: #78350f;
+  --error: #f87171;
+  --error-light: #7f1d1d;
+  --info: #60a5fa;
+  --info-light: #1e3a8a;
+
+  /* Dark mode neutral colors */
+  --line: #334155;
+  --line-light: #1e293b;
+  --line-lighter: #0f172a;
+  --border: #475569;
+  --border-light: #334155;
+
+  color-scheme: dark;
+}
+
 * {
   color-scheme: light;
 }

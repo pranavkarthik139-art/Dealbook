@@ -2,7 +2,9 @@
 
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
+import { MobileMenu } from './MobileMenu';
 import { CommandBar } from '@/components/common/CommandBar';
+import { ThemeApplier } from '@/components/ThemeApplier';
 import { getTheme } from '@/lib/themes';
 import { useTheme } from '@/lib/ThemeContext';
 import { usePathname } from 'next/navigation';
@@ -20,20 +22,32 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div style={{
-      display: 'flex',
-      minHeight: '100vh',
-      backgroundColor: themeConfig.mainColor,
-      transition: 'background-color 300ms ease'
-    }}>
-      {/* Sidebar */}
-      <Sidebar key={theme} />
+    <>
+      {/* Apply current theme to document */}
+      <ThemeApplier />
+
+      <div style={{
+        display: 'flex',
+        minHeight: '100vh',
+        backgroundColor: themeConfig.mainColor,
+        transition: 'background-color 300ms ease'
+      }}>
+        {/* Sidebar - hidden on mobile */}
+        <div className="hidden lg:block" style={{ flexShrink: 0 }}>
+          <Sidebar key={theme} />
+        </div>
+
+        {/* Mobile Menu - only visible on mobile */}
+        <div className="lg:hidden">
+          <MobileMenu />
+        </div>
 
       {/* Main area with topbar + content */}
       <div style={{
         flex: 1,
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        minWidth: 0  // Prevent flex overflow issues
       }}>
         <Topbar />
         <CommandBar />
@@ -43,11 +57,12 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
           flex: 1,
           overflowY: 'auto',
           backgroundColor: themeConfig.mainColor,
-          transition: 'background-color 300ms ease'
+          transition: 'background-color 300ms ease',
+          padding: 'clamp(16px, 5vw, 32px)' // Responsive padding
         }}>
           {children}
         </main>
       </div>
-    </div>
+    </>
   );
 }

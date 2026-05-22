@@ -4,12 +4,16 @@ import { getCurrentUser } from '@/lib/auth-utils';
 
 export async function GET(req: NextRequest) {
   try {
-    const USER_ID = 1;
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { searchParams } = new URL(req.url);
     const limit = parseInt(searchParams.get('limit') || '20');
 
     const activities = await prisma.activityLog.findMany({
-      where: { userId: USER_ID },
+      where: { userId: parseInt(user.id) },
       include: { deal: true },
       orderBy: { createdAt: 'desc' },
       take: limit,

@@ -1,14 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { fetchEmailsForContact } from '@/lib/gmail-fetch';
-
-const USER_ID = 1; // Demo mode
+import { getCurrentUser } from '@/lib/auth-utils';
 
 export async function GET(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const { id } = await params;
     const dealId = parseInt(id);
 
@@ -20,7 +24,7 @@ export async function GET(
       },
     });
 
-    if (!deal) {
+    if (!deal || deal.userId !== parseInt(user.id)) {
       return NextResponse.json(
         { error: 'Deal not found' },
         { status: 404 }
@@ -40,7 +44,7 @@ export async function GET(
 
     // Get Gmail token from user preferences
     const userPref = await prisma.userPreference.findUnique({
-      where: { userId: USER_ID },
+      where: { userId: parseInt(user.id) },
     });
 
     if (!userPref?.gmailToken) {

@@ -2,11 +2,17 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { prisma } from '@/lib/db';
 import { fetchGmailEmails, matchEmailToDeal } from '@/lib/gmail';
-
-const USER_ID = 1; // hardcoded for prototype
+import { getCurrentUser } from '@/lib/auth-utils';
 
 export async function POST(request: NextRequest) {
   try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const userId = parseInt(user.id);
+
     // Get user session (NextAuth stores OAuth tokens here)
     const session = await getServerSession() as any;
 
@@ -17,14 +23,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    console.log('📧 Starting email sync for user:', USER_ID);
+    console.log('📧 Starting email sync for user:', userId);
 
     // Fetch emails from Gmail using OAuth token
     const { emails } = await fetchGmailEmails(session.accessToken, 50);
 
     // Fetch all contacts for matching (email-based)
     const contacts = await prisma.contact.findMany({
-      where: { userId: USER_ID },
+      where: { userId },
       select: { dealId: true, email: true },
     });
 
@@ -64,7 +70,7 @@ export async function POST(request: NextRequest) {
         // Create activity log
         const activity = await prisma.activityLog.create({
           data: {
-            userId: USER_ID,
+            userId,
             dealId: email.dealId,
             action: 'email_received',
             description: `Email from ${email.from}: "${email.subject}"`,
@@ -113,7 +119,7 @@ export async function POST(request: NextRequest) {
 
     // Update last sync time
     await prisma.userPreference.update({
-      where: { userId: USER_ID },
+      where: { userId },
       data: { lastGmailSyncAt: new Date() },
     });
 

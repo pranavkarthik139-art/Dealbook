@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
-
-const USER_ID = 1; // Hardcoded for prototype
+import { getCurrentUser } from '@/lib/auth-utils';
 
 export async function POST(request: NextRequest) {
   try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const userId = parseInt(user.id);
+
     // Get dealId from query parameters (optional)
     const url = new URL(request.url);
     const dealIdParam = url.searchParams.get('dealId');
@@ -12,7 +18,7 @@ export async function POST(request: NextRequest) {
 
     // Get user's Gong token (optional - we'll work without it using test data)
     const userPrefs = await prisma.userPreference.findUnique({
-      where: { userId: USER_ID },
+      where: { userId },
     });
 
     // Call Gong API to fetch recent calls
@@ -40,7 +46,7 @@ export async function POST(request: NextRequest) {
       // Use provided dealId or try to match
       let dealMatch = dealId;
       if (!dealMatch) {
-        dealMatch = await matchCallToDeal(USER_ID, gongCall);
+        dealMatch = await matchCallToDeal(userId, gongCall);
       }
 
       if (!dealMatch) {
@@ -63,7 +69,7 @@ export async function POST(request: NextRequest) {
       // Create call record
       const call = await prisma.call.create({
         data: {
-          userId: USER_ID,
+          userId,
           dealId: dealMatch,
           title: gongCall.title || 'Gong Call',
           callDate: new Date(gongCall.startTime),
@@ -79,7 +85,7 @@ export async function POST(request: NextRequest) {
       // Log activity
       await prisma.activityLog.create({
         data: {
-          userId: USER_ID,
+          userId,
           dealId: dealMatch,
           action: 'call_synced_gong',
           description: `Call synced from Gong: ${gongCall.title}`,
@@ -104,7 +110,7 @@ export async function POST(request: NextRequest) {
     // Update last sync time (optional - doesn't block if fails)
     try {
       await prisma.userPreference.update({
-        where: { userId: USER_ID },
+        where: { userId },
         data: { lastGongSyncAt: new Date() },
       });
     } catch (e) {

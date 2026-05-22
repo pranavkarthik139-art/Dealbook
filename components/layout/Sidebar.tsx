@@ -229,11 +229,7 @@ export function Sidebar() {
         padding: '12px 12px',
         borderTop: '1px solid rgba(255, 255, 255, 0.15)'
       }}>
-        <UserProfile
-          userName="Pranav"
-          userRole="Presales Lead"
-          userEmail="pranav@example.com"
-        />
+        <UserProfile />
       </div>
     </aside>
   );

@@ -1,13 +1,18 @@
 import { prisma } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
-
-const USER_ID = 1; // Hardcoded for prototype
+import { getCurrentUser } from '@/lib/auth-utils';
 
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const user = await getCurrentUser();
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const userId = parseInt(user.id);
     const { id } = await params;
     const contactId = parseInt(id);
     const {
@@ -50,7 +55,7 @@ export async function POST(
       include: { deal: true },
     });
 
-    if (!contact || contact.userId !== USER_ID) {
+    if (!contact || contact.userId !== userId) {
       return NextResponse.json(
         { error: 'Contact not found or unauthorized' },
         { status: 404 }
@@ -68,7 +73,7 @@ export async function POST(
     // Create engagement log entry
     const engagement = await prisma.contactEngagementLog.create({
       data: {
-        userId: USER_ID,
+        userId,
         contactId,
         dealId,
         eventType,
@@ -94,7 +99,7 @@ export async function POST(
     // Create activity log for this engagement
     await prisma.activityLog.create({
       data: {
-        userId: USER_ID,
+        userId,
         dealId,
         action: `contact_engaged_${eventType}`,
         description: `${contact.name} - ${eventDescription || eventType}`,
