@@ -26,6 +26,11 @@ export function Sidebar() {
 
   const themeConfig = getTheme(theme);
 
+  // Determine text color based on sidebar background
+  const isDarkSidebar = theme === 'dark';
+  const textColor = isDarkSidebar ? '#FFFFFF' : '#0F172A';
+  const borderColor = isDarkSidebar ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.08)';
+
   return (
     <aside style={{
       width: '236px',
@@ -40,13 +45,13 @@ export function Sidebar() {
       {/* Brand */}
       <div style={{
         padding: '32px 24px',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.15)'
+        borderBottom: borderColor
       }}>
         <h1 style={{
           fontSize: '32px',
           fontWeight: 700,
           fontFamily: '"Playfair Display", serif',
-          color: '#FFFFFF',
+          color: textColor,
           margin: 0,
           letterSpacing: '-0.8px',
           lineHeight: 1.1
@@ -71,7 +76,7 @@ export function Sidebar() {
               textDecoration: 'none',
               transition: 'all 150ms ease',
               backgroundColor: isActive('/dashboard') ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
-              color: '#FFFFFF',
+              color: textColor,
               opacity: isActive('/dashboard') ? 1 : 0.85,
               cursor: 'pointer'
             }}
@@ -105,7 +110,7 @@ export function Sidebar() {
               textDecoration: 'none',
               transition: 'all 150ms ease',
               backgroundColor: isActive('/deals') ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
-              color: '#FFFFFF',
+              color: textColor,
               opacity: isActive('/deals') ? 1 : 0.85,
               cursor: 'pointer'
             }}
@@ -134,7 +139,7 @@ export function Sidebar() {
                 minWidth: '20px',
                 borderRadius: '50%',
                 backgroundColor: 'rgba(255, 255, 255, 0.3)',
-                color: '#FFFFFF',
+                color: textColor,
                 fontSize: '11px',
                 fontWeight: 700,
                 padding: '0 4px'
@@ -162,7 +167,7 @@ export function Sidebar() {
               textDecoration: 'none',
               transition: 'all 150ms ease',
               backgroundColor: isActive('/automations') ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
-              color: '#FFFFFF',
+              color: textColor,
               opacity: isActive('/automations') ? 1 : 0.85,
               cursor: 'pointer'
             }}
@@ -196,7 +201,7 @@ export function Sidebar() {
               textDecoration: 'none',
               transition: 'all 150ms ease',
               backgroundColor: isActive('/settings') ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
-              color: '#FFFFFF',
+              color: textColor,
               opacity: isActive('/settings') ? 1 : 0.85,
               cursor: 'pointer'
             }}
