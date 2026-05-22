@@ -27,7 +27,7 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
       transition: 'background-color 300ms ease'
     }}>
       {/* Sidebar */}
-      <Sidebar />
+      <Sidebar key={theme} />
 
       {/* Main area with topbar + content */}
       <div style={{

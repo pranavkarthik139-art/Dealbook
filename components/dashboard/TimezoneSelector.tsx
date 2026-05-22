@@ -132,31 +132,18 @@ export function TimezoneSelector() {
           <polyline points="12 6 12 12 16 14" />
         </svg>
 
-        {/* Time Display */}
+        {/* Time Display - Primary Timezone Only */}
         <div style={{ textAlign: 'left', flex: 1 }}>
           {times.length > 0 && (
-            <div>
-              <div style={{
-                fontSize: '16px',
-                fontWeight: '700',
-                letterSpacing: '0.2px',
-                color: '#1a202c',
-                fontFamily: '"DM Mono", "Courier New", monospace',
-                lineHeight: '1.2'
-              }}>
-                {times[0].time}
-              </div>
-              {times[1] && (
-                <div style={{
-                  fontSize: '12px',
-                  opacity: 0.65,
-                  fontWeight: '500',
-                  color: '#718096',
-                  fontFamily: '"DM Mono", "Courier New", monospace'
-                }}>
-                  {times[1].time}
-                </div>
-              )}
+            <div style={{
+              fontSize: '16px',
+              fontWeight: '700',
+              letterSpacing: '0.2px',
+              color: '#1a202c',
+              fontFamily: '"DM Mono", "Courier New", monospace',
+              lineHeight: '1.2'
+            }}>
+              {times[0].time}
             </div>
           )}
         </div>
