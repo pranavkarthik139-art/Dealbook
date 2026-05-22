@@ -220,7 +220,10 @@
       "Bash(curl -s https://dealbook.vercel.app/api/health)",
       "Bash(curl -s -I https://dealbook.vercel.app/dashboard)",
       "Bash(git restore *)",
-      "Bash(curl -X POST https://dealbook.vercel.app/api/seed-test-data -H \"Content-Type: application/json\")"
+      "Bash(curl -X POST https://dealbook.vercel.app/api/seed-test-data -H \"Content-Type: application/json\")",
+      "Bash(curl -X POST https://dealbook.vercel.app/api/seed-test-data)",
+      "Bash(git reset *)",
+      "Bash(TaskStop braiq5scm *)"
     ]
   }
 }

@@ -701,3 +701,21 @@ model ProductFeedback {
   @@map("product_feedback")
 }
 
+model GongSyncLog {
+  id                    Int       @id @default(autoincrement())
+  userId                Int       @map("user_id")
+  syncType              String    @default("incremental") // 'incremental', 'full', 'manual'
+  callsFetched          Int       @default(0) @map("calls_fetched")
+  callsMatched          Int       @default(0) @map("calls_matched")
+  apiCallsUsed          Int       @default(0) @map("api_calls_used")
+  status                String    @default("pending") // 'pending', 'success', 'failed', 'success_no_calls'
+  errorMessage          String?   @map("error_message")
+
+  syncedAt              DateTime  @default(now()) @map("synced_at")
+  nextSyncScheduled     DateTime? @map("next_sync_scheduled")
+
+  @@index([userId])
+  @@index([syncedAt])
+  @@map("gong_sync_logs")
+}
+
