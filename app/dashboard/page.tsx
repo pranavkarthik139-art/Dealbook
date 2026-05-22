@@ -1,7 +1,6 @@
 'use client';
 
 import { Header } from '@/components/dashboard/Header';
-import { TimezoneSelector } from '@/components/dashboard/TimezoneSelector';
 import { ThemeSelector } from '@/components/dashboard/ThemeSelector';
 import { TodaysFocus } from '@/components/dashboard/TodaysFocus';
 import { DealsSnapshot } from '@/components/dashboard/DealsSnapshot';
@@ -28,7 +27,7 @@ export default function DashboardPage() {
         maxWidth: '1440px',
         margin: '0 auto'
       }}>
-        {/* Header with timezone selector and theme selector */}
+        {/* Header with theme selector only */}
         <div style={{
           display: 'flex',
           alignItems: 'flex-start',
@@ -43,7 +42,6 @@ export default function DashboardPage() {
             alignItems: 'center'
           }}>
             <ThemeSelector />
-            <TimezoneSelector />
           </div>
         </div>
 
