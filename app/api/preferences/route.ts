@@ -4,20 +4,17 @@ import { getCurrentUser } from '@/lib/auth-utils';
 
 export async function GET() {
   try {
-    const user = await getCurrentUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
+    const USER_ID = 1;
 
     let prefs = await prisma.userPreference.findUnique({
-      where: { userId: user.id },
+      where: { userId: USER_ID },
     });
 
     // If not found, return default
     if (!prefs) {
-      console.log(`No preferences found for user ${user.id}, using defaults`);
+      console.log(`No preferences found for user ${USER_ID}, using defaults`);
       return NextResponse.json({
-        userId: user.id,
+        userId: USER_ID,
         timezonePrimary: 'Asia/Kolkata',
         timezoneSecondary: 'America/New_York',
         cardColorMetric: 'stall_severity',
@@ -42,27 +39,23 @@ export async function GET() {
 
 export async function PATCH(req: NextRequest) {
   try {
-    const user = await getCurrentUser();
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
+    const USER_ID = 1;
     const body = await req.json();
 
     let prefs = await prisma.userPreference.findUnique({
-      where: { userId: user.id },
+      where: { userId: USER_ID },
     });
 
     if (!prefs) {
       prefs = await prisma.userPreference.create({
         data: {
-          userId: user.id,
+          userId: USER_ID,
           ...body,
         } as any,
       });
     } else {
       prefs = await prisma.userPreference.update({
-        where: { userId: user.id },
+        where: { userId: USER_ID },
         data: body as any,
       });
     }

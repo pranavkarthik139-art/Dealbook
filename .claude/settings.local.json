@@ -218,7 +218,9 @@
       "Bash(psql -h aws-1-ap-northeast-1.pooler.supabase.com -U postgres -d postgres -p 6543 -c \"SELECT 1\")",
       "Bash(node -e \"console.log\\('NEXTAUTH_URL:', process.env.NEXTAUTH_URL\\); console.log\\('NEXTAUTH_SECRET:', process.env.NEXTAUTH_SECRET\\);\")",
       "Bash(curl -s https://dealbook.vercel.app/api/health)",
-      "Bash(curl -s -I https://dealbook.vercel.app/dashboard)"
+      "Bash(curl -s -I https://dealbook.vercel.app/dashboard)",
+      "Bash(git restore *)",
+      "Bash(curl -X POST https://dealbook.vercel.app/api/seed-test-data -H \"Content-Type: application/json\")"
     ]
   }
 }

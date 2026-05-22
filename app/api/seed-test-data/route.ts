@@ -4,32 +4,23 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
 /**
- * Seed test data for the demo account
- * Only works when authenticated as demo@dealbook.com
+ * Seed test data for the demo
+ * Auth disabled for MVP
  */
 export async function POST() {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    if (session.user.email !== 'demo@dealbook.com') {
-      return NextResponse.json(
-        { error: 'Only demo account can seed test data' },
-        { status: 403 }
-      );
-    }
+    // Auth disabled - use default user ID 1
+    const USER_ID = 1;
 
     // Get or create the demo user
     let user = await prisma.user.findUnique({
-      where: { email: 'demo@dealbook.com' },
+      where: { id: USER_ID },
     });
 
     if (!user) {
       user = await prisma.user.create({
         data: {
+          id: USER_ID,
           email: 'demo@dealbook.com',
           name: 'Demo User',
           role: 'admin',
@@ -155,31 +146,16 @@ export async function POST() {
  */
 export async function GET() {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-    });
-
-    if (!user) {
-      return NextResponse.json({
-        hasTestData: false,
-        message: 'User not found',
-      });
-    }
+    const USER_ID = 1;
 
     const dealCount = await prisma.deal.count({
-      where: { userId: user.id },
+      where: { userId: USER_ID },
     });
 
     return NextResponse.json({
       hasTestData: dealCount > 0,
       dealCount,
-      email: session.user.email,
+      email: 'demo@dealbook.com',
     });
   } catch (error) {
     return NextResponse.json(

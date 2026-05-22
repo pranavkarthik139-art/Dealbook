@@ -5,29 +5,11 @@ import { getCurrentUser } from '@/lib/auth-utils';
 
 export async function GET() {
   try {
-    const user = await getCurrentUser();
+    // Auth disabled for MVP - use default user
+    const USER_ID = 1;
 
-    if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    // Build where clause based on user role
+    // Build where clause - show all deals for demo
     let whereClause: any = {};
-
-    if (user.role === 'sales_engineer') {
-      // Sales engineers only see deals assigned to them
-      const assignedDealIds = (
-        await prisma.dealAssignment.findMany({
-          where: { seUserId: user.id },
-          select: { dealId: true },
-        })
-      ).map(a => a.dealId);
-
-      whereClause = { id: { in: assignedDealIds } };
-    } else {
-      // Managers and admins see all deals
-      whereClause = {};
-    }
 
     const deals = await prisma.deal.findMany({
       where: whereClause,
