@@ -11,7 +11,7 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<ThemeName>('cobalt');
+  const [theme, setThemeState] = useState<ThemeName>('light');
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -26,7 +26,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     saveThemePreference(newTheme);
   };
 
-  // Always render - use 'cobalt' as default on SSR, update on client mount
+  // Always render - use 'light' as default on SSR, update on client mount
   return (
     <ThemeContext.Provider value={{ theme, setTheme }}>
       {children}

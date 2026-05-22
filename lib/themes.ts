@@ -1,4 +1,4 @@
-export type ThemeName = 'cobalt' | 'emerald' | 'slate' | 'sunset' | 'ocean' | 'forest';
+export type ThemeName = 'light' | 'dark' | 'cobalt' | 'emerald' | 'slate';
 
 export interface ThemeConfig {
   name: ThemeName;
@@ -11,64 +11,55 @@ export interface ThemeConfig {
 }
 
 export const THEMES: Record<ThemeName, ThemeConfig> = {
+  light: {
+    name: 'light',
+    label: 'Light (Default)',
+    sidebarColor: '#FFFFFF',    // Clean white sidebar (Paper)
+    mainColor: '#F9F9F7',       // Paper alt background
+    accentColor: '#6366F1',     // Cobalt accent
+    textColor: '#0F172A',       // Ink text
+    description: 'Clean, minimal light theme with neutral sidebar',
+  },
+  dark: {
+    name: 'dark',
+    label: 'Dark',
+    sidebarColor: '#1A1F35',    // Dark slate sidebar
+    mainColor: '#0F172A',       // Dark ink background
+    accentColor: '#6366F1',     // Cobalt accent
+    textColor: '#F1F5F9',       // Light text
+    description: 'Dark theme with professional appearance',
+  },
   cobalt: {
     name: 'cobalt',
-    label: 'Cobalt Pro',
-    sidebarColor: '#0047FF',    // Deep cobalt
-    mainColor: '#F0F4FB',       // Light blue
-    accentColor: '#0047FF',
-    textColor: '#FFFFFF',
-    description: 'Professional cobalt sidebar with light blue content',
+    label: 'Cobalt',
+    sidebarColor: '#FFFFFF',    // White sidebar with cobalt accents
+    mainColor: '#F9F9F7',       // Paper background
+    accentColor: '#6366F1',     // Cobalt accent
+    textColor: '#0F172A',       // Ink text
+    description: 'Modern cobalt accent with neutral sidebar',
   },
   emerald: {
     name: 'emerald',
     label: 'Emerald',
-    sidebarColor: '#047857',    // Rich emerald
-    mainColor: '#F0FBF7',       // Soft mint
-    accentColor: '#047857',
-    textColor: '#FFFFFF',
-    description: 'Fresh emerald sidebar with mint content',
+    sidebarColor: '#FFFFFF',    // White sidebar
+    mainColor: '#F9F9F7',       // Paper background
+    accentColor: '#10B981',     // Emerald accent
+    textColor: '#0F172A',       // Ink text
+    description: 'Emerald accent with neutral sidebar',
   },
   slate: {
     name: 'slate',
     label: 'Slate',
-    sidebarColor: '#1F2937',    // Dark slate
-    mainColor: '#F9FAFB',       // Light gray
-    accentColor: '#374151',
-    textColor: '#FFFFFF',
-    description: 'Modern slate sidebar with neutral content',
-  },
-  sunset: {
-    name: 'sunset',
-    label: 'Sunset',
-    sidebarColor: '#EA580C',    // Warm orange
-    mainColor: '#FEF5E7',       // Soft cream
-    accentColor: '#EA580C',
-    textColor: '#FFFFFF',
-    description: 'Warm sunset sidebar with cream content',
-  },
-  ocean: {
-    name: 'ocean',
-    label: 'Ocean',
-    sidebarColor: '#0369A1',    // Ocean blue
-    mainColor: '#E0F2FE',       // Sky blue
-    accentColor: '#0369A1',
-    textColor: '#FFFFFF',
-    description: 'Deep ocean sidebar with sky blue content',
-  },
-  forest: {
-    name: 'forest',
-    label: 'Forest',
-    sidebarColor: '#15803D',    // Forest green
-    mainColor: '#F0FDF4',       // Pale green
-    accentColor: '#15803D',
-    textColor: '#FFFFFF',
-    description: 'Deep forest sidebar with pale green content',
+    sidebarColor: '#FFFFFF',    // White sidebar
+    mainColor: '#F9F9F7',       // Paper background
+    accentColor: '#64748B',     // Slate accent
+    textColor: '#0F172A',       // Ink text
+    description: 'Slate accent with neutral sidebar',
   },
 };
 
 export function getTheme(themeName?: ThemeName): ThemeConfig {
-  return THEMES[themeName || 'cobalt'];
+  return THEMES[themeName || 'light'];
 }
 
 export function saveThemePreference(themeName: ThemeName): void {
@@ -84,5 +75,5 @@ export function getThemePreference(): ThemeName {
       return saved as ThemeName;
     }
   }
-  return 'cobalt'; // Default to Cobalt Pro theme
+  return 'light'; // Default to Light theme
 }
