@@ -132,7 +132,7 @@ export function TimezoneSelector() {
           <polyline points="12 6 12 12 16 14" />
         </svg>
 
-        {/* Time Display - Primary Timezone Only */}
+        {/* Time Display - Primary & Secondary Timezones */}
         <div style={{ textAlign: 'left', flex: 1 }}>
           {times.length > 0 && (
             <div style={{
@@ -144,6 +144,12 @@ export function TimezoneSelector() {
               lineHeight: '1.2'
             }}>
               {times[0].time}
+              {times.length > 1 && (
+                <>
+                  <span style={{ color: '#cbd5e0', margin: '0 6px' }}>|</span>
+                  {times[1].time}
+                </>
+              )}
             </div>
           )}
         </div>
