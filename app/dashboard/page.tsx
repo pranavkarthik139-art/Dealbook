@@ -1,7 +1,6 @@
 'use client';
 
 import { Header } from '@/components/dashboard/Header';
-import { ThemeSelector } from '@/components/dashboard/ThemeSelector';
 import { TodaysFocus } from '@/components/dashboard/TodaysFocus';
 import { DealsSnapshot } from '@/components/dashboard/DealsSnapshot';
 import { StageAnalytics } from '@/components/dashboard/StageAnalytics';
@@ -27,23 +26,8 @@ export default function DashboardPage() {
         maxWidth: '1440px',
         margin: '0 auto'
       }}>
-        {/* Header with theme selector only */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'flex-start',
-          justifyContent: 'space-between',
-          marginBottom: 'var(--space-10)',
-          gap: 'var(--space-6)'
-        }}>
-          <Header userName="Pranav" />
-          <div style={{
-            display: 'flex',
-            gap: '12px',
-            alignItems: 'center'
-          }}>
-            <ThemeSelector />
-          </div>
-        </div>
+        {/* Header */}
+        <Header userName="Pranav" style={{ marginBottom: 'var(--space-10)' }} />
 
         {/* Main Grid: Left (2/3) + Right (1/3) */}
         <div style={{

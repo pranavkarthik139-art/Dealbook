@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { ThemeSelector } from '@/components/dashboard/ThemeSelector';
 
 interface DealAssignment {
   id: number;
@@ -62,8 +63,13 @@ export default function SettingsPage() {
   return (
     <div className="min-h-screen bg-slate-50 p-8">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-slate-900 mb-2">Settings & Delegation</h1>
-        <p className="text-slate-600 mb-8">Assign deals to your Sales Engineers</p>
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-slate-900 mb-2">Settings & Delegation</h1>
+            <p className="text-slate-600">Assign deals to your Sales Engineers</p>
+          </div>
+          <ThemeSelector />
+        </div>
 
         <div className="bg-white rounded-lg border border-slate-200 p-6">
           <div className="space-y-4">
