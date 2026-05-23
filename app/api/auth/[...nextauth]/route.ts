@@ -36,9 +36,17 @@ export const authOptions: NextAuthOptions = {
   providers: [
     // Google OAuth - Production auth method
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID || '',
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+      clientId: process.env.GOOGLE_OAUTH_CLIENT_ID || '',
+      clientSecret: process.env.GOOGLE_OAUTH_CLIENT_SECRET || '',
       allowDangerousEmailAccountLinking: true,
+      // Request scopes for calendar and Gmail access
+      authorization: {
+        params: {
+          scope: 'openid email profile https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/gmail.readonly',
+          access_type: 'offline',
+          prompt: 'consent',
+        },
+      },
     }),
 
     // Credentials for development/testing
@@ -105,16 +113,31 @@ export const authOptions: NextAuthOptions = {
         token.name = user.name;
       }
 
+      // Store Google OAuth tokens for API access
+      if (account?.provider === 'google' && account?.access_token) {
+        token.googleAccessToken = account.access_token;
+        token.googleRefreshToken = account.refresh_token;
+      }
+
       // Fetch user from database to get latest role/metadata
       if (token.email && !user) {
         const dbUser = await prisma.user.findUnique({
           where: { email: token.email },
+          include: { accounts: true },
         });
 
         if (dbUser) {
           token.id = dbUser.id;
           token.role = dbUser.role;
           token.image = dbUser.image;
+
+          // Get Google access token from database if not in JWT
+          if (!token.googleAccessToken && dbUser.accounts.length > 0) {
+            const googleAccount = dbUser.accounts.find((a) => a.provider === 'google');
+            if (googleAccount?.access_token) {
+              token.googleAccessToken = googleAccount.access_token;
+            }
+          }
         }
       }
 
@@ -131,6 +154,8 @@ export const authOptions: NextAuthOptions = {
         session.user.role = token.role as string;
         session.user.email = token.email as string;
         session.user.name = token.name as string;
+        // Include Google access token for API calls
+        (session.user as any).googleAccessToken = token.googleAccessToken;
       }
       return session;
     },

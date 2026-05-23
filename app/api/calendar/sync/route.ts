@@ -11,8 +11,19 @@ export async function POST(request: NextRequest) {
     }
 
     const userId = parseInt(user.id);
-    // TODO: Get calendarId from user preferences (OAuth integration)
-    const calendarId = 'pranavkarthik139@gmail.com'; // Hardcoded for now
+
+    // Get user's Google OAuth account with access token
+    const googleAccount = await prisma.account.findFirst({
+      where: { userId, provider: 'google' },
+    });
+
+    if (!googleAccount?.access_token) {
+      return NextResponse.json(
+        { error: 'Google account not connected. Please sign in with Google.' },
+        { status: 400 }
+      );
+    }
+
     const { startDate: startDateStr, endDate: endDateStr } = await request.json().catch(() => ({}));
 
     // Default to today through end of week
@@ -37,8 +48,14 @@ export async function POST(request: NextRequest) {
       select: { id: true, name: true, email: true },
     });
 
-    // Sync calendar and match deals
-    const eventsWithDeals = await syncCalendarEvents(calendarId, startDate, endDate, deals);
+    // Sync calendar and match deals (using user's primary calendar with their OAuth token)
+    const eventsWithDeals = await syncCalendarEvents(
+      'primary', // Use user's primary calendar
+      startDate,
+      endDate,
+      deals,
+      googleAccount.access_token
+    );
 
     // Log activities for calendar events and update deals
     let activitiesLogged = 0;

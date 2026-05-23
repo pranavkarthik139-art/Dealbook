@@ -19,15 +19,25 @@ export async function GET() {
       whereClause = {};
     }
 
+    // OPTIMIZED: Only fetch essential deal data, no related records
     const deals = await prisma.deal.findMany({
       where: whereClause,
-      include: {
-        calendarEvents: true,
-        todos: { where: { completed: false } },
-        activityLogs: { orderBy: { createdAt: 'desc' }, take: 5 },
-        // assignments: { include: { seUser: true } }, // TODO: Add DealAssignment table
+      select: {
+        id: true,
+        userId: true,
+        name: true,
+        email: true,
+        amount: true,
+        status: true,
+        stage: true,
+        probability: true,
+        expectedCloseDate: true,
+        createdAt: true,
+        updatedAt: true,
+        lastActivityAt: true,
       },
       orderBy: { createdAt: 'desc' },
+      take: 100, // Add pagination limit
     });
 
     const dealsWithMetadata = deals.map((deal) => {
@@ -76,8 +86,27 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { name, email, amount, status = 'active', stage = 'demo', leadSource } = body;
+    const {
+      name,
+      company,
+      email,
+      amount,
+      status = 'active',
+      stage = 'demo',
+      leadSource,
+      closeDate,
+      // Enriched contact data
+      contactFirstName,
+      contactLastName,
+      contactTitle,
+      contactLinkedIn,
+      // Enriched company data
+      companyIndustry,
+      companySize,
+      companyWebsite,
+    } = body;
 
+    // Validation
     if (!name) {
       return NextResponse.json(
         { error: 'Deal name is required' },
@@ -85,25 +114,73 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    if (!email) {
+      return NextResponse.json(
+        { error: 'Contact email is required' },
+        { status: 400 }
+      );
+    }
+
+    if (!amount || parseFloat(amount) <= 0) {
+      return NextResponse.json(
+        { error: 'Deal amount must be greater than 0' },
+        { status: 400 }
+      );
+    }
+
+    // Create deal
     const deal = await prisma.deal.create({
       data: {
         userId: user.id,
         name,
         email: email || null,
-        amount: amount ? parseFloat(amount) : null,
+        amount: parseFloat(amount),
         status,
         stage,
         leadSource: leadSource || null,
+        expectedCloseDate: closeDate ? new Date(closeDate) : null,
       },
     });
 
-    // Log activity
+    // Create primary contact with the provided email and enriched data
+    const contactName = contactFirstName && contactLastName
+      ? `${contactFirstName} ${contactLastName}`
+      : (contactFirstName || contactLastName || company || name);
+
+    await prisma.contact.create({
+      data: {
+        userId: user.id,
+        dealId: deal.id,
+        name: contactName,
+        email: email,
+        title: contactTitle || null,
+        company: company || null,
+        linkedinUrl: contactLinkedIn || null,
+        role: 'decision_maker', // Default role for first contact
+      },
+    });
+
+    // Log activity with enriched data
     await prisma.activityLog.create({
       data: {
         userId: user.id,
         dealId: deal.id,
         action: 'deal_created',
-        description: `Deal "${name}" created`,
+        description: `Deal "${name}" created for ${company || 'Unknown Company'} - ${contactName}`,
+        metadata: {
+          company: company || null,
+          email: email,
+          amount: amount,
+          // Enriched contact data
+          contactFirstName: contactFirstName || null,
+          contactLastName: contactLastName || null,
+          contactTitle: contactTitle || null,
+          contactLinkedIn: contactLinkedIn || null,
+          // Enriched company data
+          companyIndustry: companyIndustry || null,
+          companySize: companySize || null,
+          companyWebsite: companyWebsite || null,
+        },
       },
     });
 

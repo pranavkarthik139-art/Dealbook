@@ -10,13 +10,29 @@ import { useTheme } from '@/lib/ThemeContext';
 export function Sidebar() {
   const pathname = usePathname();
   const [dealCount, setDealCount] = useState(0);
+  const [userRole, setUserRole] = useState<string | null>(null);
   const theme = useTheme();
 
   useEffect(() => {
-    fetch('/api/deals')
-      .then(res => res.json())
-      .then(data => setDealCount(data.summary?.total || 0))
-      .catch(() => setDealCount(0));
+    const fetchData = async () => {
+      try {
+        const dealsResponse = await fetch('/api/deals');
+        if (dealsResponse.ok) {
+          const dealsData = await dealsResponse.json();
+          setDealCount(dealsData.summary?.total || 0);
+        }
+
+        const userResponse = await fetch('/api/setup/check-user');
+        if (userResponse.ok) {
+          const userData = await userResponse.json();
+          setUserRole(userData.role);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    fetchData();
   }, []);
 
   const isActive = (href: string) => {
@@ -150,6 +166,42 @@ export function Sidebar() {
           </Link>
 
           {/* Note: Intelligence, Templates, Forecasting are now accessible as tabs within Deals & Insights */}
+
+          {/* Team Management (Managers Only) */}
+          {userRole === 'presales_lead' || userRole === 'admin' ? (
+            <Link
+              href="/team"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                padding: '10px 12px',
+                borderRadius: '6px',
+                fontSize: '13px',
+                fontWeight: 500,
+                textDecoration: 'none',
+                transition: 'all 150ms ease',
+                backgroundColor: isActive('/team') ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
+                color: textColor,
+                opacity: isActive('/team') ? 1 : 0.85,
+                cursor: 'pointer'
+              }}
+              onMouseEnter={(e) => {
+                if (!isActive('/team')) {
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.12)';
+                  e.currentTarget.style.opacity = '1';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (!isActive('/team')) {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.opacity = '0.85';
+                }
+              }}
+            >
+              <span style={{ marginRight: '10px', fontSize: '16px' }}>👥</span>
+              Team
+            </Link>
+          ) : null}
 
           {/* Divider */}
           <div style={{ height: '1px', backgroundColor: 'rgba(255, 255, 255, 0.12)', margin: '8px 0' }} />

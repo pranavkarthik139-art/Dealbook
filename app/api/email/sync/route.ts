@@ -13,10 +13,12 @@ export async function POST(request: NextRequest) {
 
     const userId = parseInt(user.id);
 
-    // Get user session (NextAuth stores OAuth tokens here)
-    const session = await getServerSession() as any;
+    // Get user's Google OAuth account with access token
+    const googleAccount = await prisma.account.findFirst({
+      where: { userId, provider: 'google' },
+    });
 
-    if (!session?.accessToken) {
+    if (!googleAccount?.access_token) {
       return NextResponse.json(
         { error: 'Gmail not connected. Please log in with Google first.' },
         { status: 400 }
@@ -26,7 +28,7 @@ export async function POST(request: NextRequest) {
     console.log('📧 Starting email sync for user:', userId);
 
     // Fetch emails from Gmail using OAuth token
-    const { emails } = await fetchGmailEmails(session.accessToken, 50);
+    const { emails } = await fetchGmailEmails(googleAccount.access_token, 50);
 
     // Fetch all contacts for matching (email-based)
     const contacts = await prisma.contact.findMany({

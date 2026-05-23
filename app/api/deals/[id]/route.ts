@@ -20,13 +20,25 @@ export async function GET(
         calendarEvents: { orderBy: { startTime: 'asc' } },
         todos: { orderBy: { createdAt: 'desc' } },
         activityLogs: { orderBy: { createdAt: 'desc' }, take: 20 },
+        contacts: true,
       },
     });
 
-    if (!deal || deal.userId !== user.id) {
+    if (!deal) {
       return NextResponse.json(
         { error: 'Deal not found' },
         { status: 404 }
+      );
+    }
+
+    // Authorization check: User can see their own deals, or managers/admins can see all
+    const isOwner = deal.userId === user.id;
+    const isManager = user.role === 'presales_lead' || user.role === 'admin';
+
+    if (!isOwner && !isManager) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 403 }
       );
     }
 

@@ -43,31 +43,40 @@ function fuzzyMatch(eventTitle: string, dealName: string): number {
 export async function fetchCalendarEvents(
   calendarId: string,
   startTime: Date,
-  endTime: Date
+  endTime: Date,
+  accessToken?: string
 ): Promise<CalendarEvent[]> {
   try {
-    // Use service account authentication
-    const privateKey = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n').trim();
+    let auth;
 
-    if (!privateKey || !process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL) {
-      throw new Error('Missing Google credentials in environment');
+    if (accessToken) {
+      // Use OAuth token from user's authenticated session
+      auth = new google.auth.OAuth2();
+      auth.setCredentials({ access_token: accessToken });
+    } else {
+      // Fallback to service account (for backward compatibility)
+      const privateKey = process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n').trim();
+
+      if (!privateKey || !process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL) {
+        throw new Error('Missing Google credentials in environment');
+      }
+
+      const credentials = {
+        type: 'service_account',
+        project_id: process.env.GOOGLE_PROJECT_ID,
+        private_key_id: 'key-id',
+        private_key: privateKey,
+        client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+        client_id: 'client-id',
+        auth_uri: 'https://accounts.google.com/o/oauth2/auth',
+        token_uri: 'https://oauth2.googleapis.com/token',
+      };
+
+      auth = new google.auth.GoogleAuth({
+        credentials: credentials as any,
+        scopes: ['https://www.googleapis.com/auth/calendar.readonly'],
+      });
     }
-
-    const credentials = {
-      type: 'service_account',
-      project_id: process.env.GOOGLE_PROJECT_ID,
-      private_key_id: 'key-id',
-      private_key: privateKey,
-      client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-      client_id: 'client-id',
-      auth_uri: 'https://accounts.google.com/o/oauth2/auth',
-      token_uri: 'https://oauth2.googleapis.com/token',
-    };
-
-    const auth = new google.auth.GoogleAuth({
-      credentials: credentials as any,
-      scopes: ['https://www.googleapis.com/auth/calendar.readonly'],
-    });
 
     const calendar = google.calendar({ version: 'v3', auth: auth as any });
 
@@ -151,8 +160,9 @@ export async function syncCalendarEvents(
   calendarId: string,
   startTime: Date,
   endTime: Date,
-  deals: { id: number; name: string; email?: string | null }[]
+  deals: { id: number; name: string; email?: string | null }[],
+  accessToken?: string
 ): Promise<CalendarEventWithDeal[]> {
-  const events = await fetchCalendarEvents(calendarId, startTime, endTime);
+  const events = await fetchCalendarEvents(calendarId, startTime, endTime, accessToken);
   return matchDealsToEvents(events, deals);
 }

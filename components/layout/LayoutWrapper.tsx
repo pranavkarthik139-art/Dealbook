@@ -14,10 +14,11 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
   const themeConfig = getTheme(theme);
   const pathname = usePathname();
 
-  // Don't show sidebar/topbar on auth pages
+  // Don't show sidebar/topbar on auth pages or landing page
   const isAuthPage = pathname?.startsWith('/auth');
+  const isLandingPage = pathname === '/';
 
-  if (isAuthPage) {
+  if (isAuthPage || isLandingPage) {
     return <>{children}</>;
   }
 
@@ -62,6 +63,7 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
         }}>
           {children}
         </main>
+      </div>
       </div>
     </>
   );
