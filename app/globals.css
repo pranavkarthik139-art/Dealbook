@@ -3,6 +3,12 @@
 @import "tailwindcss";
 
 :root {
+  /* ========== THEME COLORS (Applied by ThemeApplier) ========== */
+  --theme-sidebar-color: #ffffff;
+  --theme-main-color: #f9f9f7;
+  --theme-accent-color: #6366f1;
+  --theme-text-color: #0f172a;
+
   /* ========== COLOR PALETTE ========== */
   /* Primary Colors */
   --paper: #ffffff;

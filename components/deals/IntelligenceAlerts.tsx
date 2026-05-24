@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTheme } from '@/lib/ThemeContext';
 import { Spinner } from '../common/Spinner';
 
 interface IntelligenceAlertsProps {
@@ -13,6 +14,7 @@ interface IntelligenceAlertsProps {
  * Clean, minimal design that integrates with deal metadata
  */
 export function IntelligenceAlerts({ dealId }: IntelligenceAlertsProps) {
+  const theme = useTheme();
   const [intelligence, setIntelligence] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -57,19 +59,23 @@ export function IntelligenceAlerts({ dealId }: IntelligenceAlertsProps) {
     (c: any) => c.engagementLevel === 'engaged'
   );
 
+  const textColor = theme === 'dark' ? '#f8fafc' : '#0f172a';
+  const labelColor = theme === 'dark' ? '#cbd5e1' : '#64748b';
+  const borderColor = theme === 'dark' ? 'rgba(255, 255, 255, 0.1)' : 'var(--line)';
+
   return (
     <div className="space-y-4">
 
       {/* Risk Attribute */}
       <div>
-        <p className="text-xs font-semibold text-ink-lighter uppercase tracking-wide mb-1">Risk</p>
-        <p className="text-sm text-ink font-medium">{intelligence.riskLevel.charAt(0).toUpperCase() + intelligence.riskLevel.slice(1)} • {intelligence.riskScore}/100</p>
+        <p style={{ color: labelColor }} className="text-xs font-semibold uppercase tracking-wide mb-1">Risk</p>
+        <p style={{ color: textColor }} className="text-sm font-medium">{intelligence.riskLevel.charAt(0).toUpperCase() + intelligence.riskLevel.slice(1)} • {intelligence.riskScore}/100</p>
       </div>
 
       {/* Momentum Attribute */}
       <div>
-        <p className="text-xs font-semibold text-ink-lighter uppercase tracking-wide mb-1">Momentum</p>
-        <p className="text-sm text-ink font-medium">
+        <p style={{ color: labelColor }} className="text-xs font-semibold uppercase tracking-wide mb-1">Momentum</p>
+        <p style={{ color: textColor }} className="text-sm font-medium">
           {intelligence.momentum === 'positive'
             ? '📈 Accelerating'
             : intelligence.momentum === 'negative'
@@ -80,26 +86,26 @@ export function IntelligenceAlerts({ dealId }: IntelligenceAlertsProps) {
 
       {/* Velocity Attribute */}
       <div>
-        <p className="text-xs font-semibold text-ink-lighter uppercase tracking-wide mb-1">Activity Velocity</p>
-        <p className="text-sm text-ink font-medium">{intelligence.signals.activityTrend.last7DaysAverage.toFixed(1)} activities/day</p>
+        <p style={{ color: labelColor }} className="text-xs font-semibold uppercase tracking-wide mb-1">Activity Velocity</p>
+        <p style={{ color: textColor }} className="text-sm font-medium">{intelligence.signals.activityTrend.last7DaysAverage.toFixed(1)} activities/day</p>
       </div>
 
       {/* Engagement Attribute */}
       <div>
-        <p className="text-xs font-semibold text-ink-lighter uppercase tracking-wide mb-1">Engagement</p>
-        <p className="text-sm text-ink font-medium">{engagedContacts.length}/{intelligence.signals.contactEngagement.length} stakeholders engaged</p>
+        <p style={{ color: labelColor }} className="text-xs font-semibold uppercase tracking-wide mb-1">Engagement</p>
+        <p style={{ color: textColor }} className="text-sm font-medium">{engagedContacts.length}/{intelligence.signals.contactEngagement.length} stakeholders engaged</p>
         {silentContacts.length > 0 && (
-          <p className="text-xs text-ink-lighter mt-1">⚠️ {silentContacts.length} silent stakeholder{silentContacts.length > 1 ? 's' : ''}</p>
+          <p style={{ color: labelColor }} className="text-xs mt-1">⚠️ {silentContacts.length} silent stakeholder{silentContacts.length > 1 ? 's' : ''}</p>
         )}
       </div>
 
       {/* Key Insights - Compact */}
       {intelligence.reasoning.keyInsights && intelligence.reasoning.keyInsights.length > 0 && (
-        <div className="pt-2 border-t border-line">
-          <p className="text-xs font-semibold text-ink-lighter uppercase tracking-wide mb-2">Insights</p>
+        <div style={{ borderTopColor: borderColor }} className="pt-2 border-t">
+          <p style={{ color: labelColor }} className="text-xs font-semibold uppercase tracking-wide mb-2">Insights</p>
           <ul className="space-y-1">
             {intelligence.reasoning.keyInsights.slice(0, 2).map((insight: string, idx: number) => (
-              <li key={idx} className="text-xs text-ink-lighter">{insight}</li>
+              <li key={idx} style={{ color: labelColor }} className="text-xs">{insight}</li>
             ))}
           </ul>
         </div>

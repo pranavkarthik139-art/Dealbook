@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
+import { useTheme } from '@/lib/ThemeContext';
 import { analyzeDeal, DealIntelligence as DealIntelligenceType } from '@/lib/dealIntelligence';
 
 interface DealIntelligenceProps {
@@ -36,6 +37,7 @@ const PRIORITY_COLORS: Record<string, string> = {
 };
 
 export function DealIntelligence({ deal, health }: DealIntelligenceProps) {
+  const theme = useTheme();
   const analysis = useMemo(() => {
     return analyzeDeal({
       id: deal.id,
@@ -109,8 +111,21 @@ export function DealIntelligence({ deal, health }: DealIntelligenceProps) {
 
       {/* Next Actions */}
       {analysis.nextActions.length > 0 && (
-        <div className="bg-white rounded-lg border border-line p-6">
-          <h3 className="font-semibold text-ink mb-4">Recommended Next Steps</h3>
+        <div
+          className="rounded-lg border border-line p-6"
+          style={{
+            backgroundColor: theme === 'dark' ? '#1e293b' : '#ffffff',
+            transition: 'background-color 300ms ease'
+          }}
+        >
+          <h3
+            className="font-semibold mb-4"
+            style={{
+              color: theme === 'dark' ? '#f8fafc' : '#0f172a'
+            }}
+          >
+            Recommended Next Steps
+          </h3>
           <div className="space-y-3">
             {analysis.nextActions.map((action, i) => (
               <div
@@ -152,10 +167,36 @@ export function DealIntelligence({ deal, health }: DealIntelligenceProps) {
       )}
 
       {/* Follow-Up Timing */}
-      <div className="bg-paper-alt rounded-lg border border-line p-4">
-        <p className="text-sm text-ink-lighter">
-          <span className="font-medium text-ink">Suggested follow-up:</span> In{' '}
-          <span className="font-medium text-ink">{analysis.suggestedFollowUpDays} day{analysis.suggestedFollowUpDays > 1 ? 's' : ''}</span>
+      <div
+        className="rounded-lg border border-line p-4"
+        style={{
+          backgroundColor: theme === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'var(--paper-alt)',
+          transition: 'background-color 300ms ease'
+        }}
+      >
+        <p
+          className="text-sm"
+          style={{
+            color: theme === 'dark' ? '#cbd5e1' : 'var(--ink-lighter)'
+          }}
+        >
+          <span
+            className="font-medium"
+            style={{
+              color: theme === 'dark' ? '#f8fafc' : 'var(--ink)'
+            }}
+          >
+            Suggested follow-up:
+          </span>{' '}
+          In{' '}
+          <span
+            className="font-medium"
+            style={{
+              color: theme === 'dark' ? '#f8fafc' : 'var(--ink)'
+            }}
+          >
+            {analysis.suggestedFollowUpDays} day{analysis.suggestedFollowUpDays > 1 ? 's' : ''}
+          </span>
         </p>
       </div>
     </div>

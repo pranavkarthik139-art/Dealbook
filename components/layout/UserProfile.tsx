@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
+import { ThemeSelector } from '@/components/common/ThemeSelector';
 
 export function UserProfile() {
   const [isOpen, setIsOpen] = useState(false);
@@ -205,6 +206,11 @@ export function UserProfile() {
             >
               {userEmail}
             </p>
+          </div>
+
+          {/* Theme Selector */}
+          <div style={{ padding: '12px 12px', borderBottom: '1px solid var(--line-light)' }}>
+            <ThemeSelector />
           </div>
 
           {/* Menu Items */}

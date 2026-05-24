@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { formatDistanceToNow } from 'date-fns';
+import { getTheme } from '@/lib/themes';
+import { useTheme } from '@/lib/ThemeContext';
 import { DealHealthScore } from './DealHealthScore';
 import { DealTimeline } from './DealTimeline';
 import { CompanyEnrichment } from './CompanyEnrichment';
@@ -113,6 +115,8 @@ function generateGongInsight(dealId: number, dealName: string): GongInsight {
 }
 
 export function DealDetailView({ dealId }: { dealId: number }) {
+  const theme = useTheme();
+  const themeConfig = getTheme(theme);
   const [deal, setDeal] = useState<Deal | null>(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
@@ -669,8 +673,19 @@ export function DealDetailView({ dealId }: { dealId: number }) {
       <div className="space-y-12">
         {/* Intelligence Alerts */}
         <div className="sticky top-8">
-          <div className="bg-white rounded-lg border border-line p-6 space-y-6">
-            <h3 className="font-semibold text-slate-900 flex items-center gap-2">
+          <div
+            className="rounded-lg border border-line p-6 space-y-6"
+            style={{
+              backgroundColor: theme === 'dark' ? '#1e293b' : '#ffffff',
+              transition: 'background-color 300ms ease'
+            }}
+          >
+            <h3
+              className="font-semibold flex items-center gap-2"
+              style={{
+                color: themeConfig.textColor,
+              }}
+            >
               <span className="text-lg">⚡</span>
               Intelligence Alerts
             </h3>
@@ -691,11 +706,25 @@ export function DealDetailView({ dealId }: { dealId: number }) {
 
         {/* To-Dos */}
         {deal.todos && deal.todos.length > 0 && (
-          <div className="bg-white rounded-lg border border-line p-6">
-            <h3 className="font-medium text-ink mb-4">To-Dos</h3>
+          <div
+            className="rounded-lg border border-line p-6"
+            style={{
+              backgroundColor: theme === 'dark' ? '#1e293b' : '#ffffff',
+              transition: 'background-color 300ms ease'
+            }}
+          >
+            <h3 className="font-medium mb-4" style={{ color: themeConfig.textColor }}>
+              To-Dos
+            </h3>
             <div className="space-y-2">
               {deal.todos.map((todo) => (
-                <label key={todo.id} className="flex items-center gap-3 cursor-pointer hover:bg-paper-alt p-2 rounded">
+                <label
+                  key={todo.id}
+                  className="flex items-center gap-3 cursor-pointer p-2 rounded"
+                  style={{
+                    backgroundColor: theme === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
+                  }}
+                >
                   <input
                     type="checkbox"
                     checked={todo.completed}
@@ -713,8 +742,16 @@ export function DealDetailView({ dealId }: { dealId: number }) {
 
         {/* Calendar Events */}
         {deal.calendarEvents && deal.calendarEvents.length > 0 && (
-          <div className="bg-white rounded-lg border border-line p-6">
-            <h3 className="font-medium text-ink mb-4">Upcoming Calls</h3>
+          <div
+            className="rounded-lg border border-line p-6"
+            style={{
+              backgroundColor: theme === 'dark' ? '#1e293b' : '#ffffff',
+              transition: 'background-color 300ms ease'
+            }}
+          >
+            <h3 className="font-medium mb-4" style={{ color: themeConfig.textColor }}>
+              Upcoming Calls
+            </h3>
             <div className="space-y-3">
               {deal.calendarEvents.map((event) => (
                 <div key={event.id} className="text-sm">

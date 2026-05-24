@@ -35,9 +35,16 @@ export function TimezoneSelector() {
         if (response.ok) {
           const data = await response.json();
           setPrefs(data);
+        } else {
+          // If response not ok, use defaults
+          setPrefs({
+            timezonePrimary: 'Asia/Kolkata',
+            timezoneSecondary: 'America/New_York',
+          });
         }
       } catch (error) {
         console.error('Failed to fetch preferences:', error);
+        // Use default preferences on error
         setPrefs({
           timezonePrimary: 'Asia/Kolkata',
           timezoneSecondary: 'America/New_York',
@@ -95,73 +102,71 @@ export function TimezoneSelector() {
 
   return (
     <div style={{ position: 'relative' }}>
-      {/* Main Button with Professional Styling */}
+      {/* Minimal Time Display - Blends with background */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '12px',
-          padding: '14px 18px',
-          backgroundColor: 'rgba(255, 255, 255, 0.95)',
-          border: '1px solid rgba(0, 0, 0, 0.08)',
-          borderRadius: '10px',
+          gap: '10px',
+          padding: '8px 12px',
+          backgroundColor: 'transparent',
+          border: 'none',
+          borderRadius: '6px',
           cursor: 'pointer',
-          transition: 'all 180ms cubic-bezier(0.4, 0, 0.2, 1)',
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-          fontFamily: 'DM Sans, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+          transition: 'background-color 150ms ease',
+          fontFamily: '"Courier Prime", "SF Mono", monospace',
           fontSize: '13px',
           fontWeight: '500',
-          color: '#1a202c',
-          minWidth: '200px'
+          color: 'var(--ink-light)',
+          minWidth: 'auto'
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.12)';
-          e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.12)';
-          e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.98)';
+          e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.04)';
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.08)';
-          e.currentTarget.style.borderColor = 'rgba(0, 0, 0, 0.08)';
-          e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.95)';
+          e.currentTarget.style.backgroundColor = 'transparent';
         }}
+        title="Click to configure timezones"
       >
-        {/* Clock Icon */}
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: '#0047FF', flexShrink: 0 }}>
-          <circle cx="12" cy="12" r="10" />
-          <polyline points="12 6 12 12 16 14" />
-        </svg>
-
         {/* Time Display - Primary & Secondary Timezones */}
-        <div style={{ textAlign: 'left', flex: 1 }}>
-          {times.length > 0 && (
+        {times.length > 0 && (
+          <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', gap: '2px' }}>
+            {/* Primary Timezone - Larger */}
             <div style={{
-              fontSize: '16px',
-              fontWeight: '700',
-              letterSpacing: '0.2px',
-              color: '#1a202c',
-              fontFamily: '"DM Mono", "Courier New", monospace',
-              lineHeight: '1.2'
+              fontSize: '14px',
+              fontWeight: '600',
+              letterSpacing: '0.3px',
+              color: 'var(--ink)',
+              fontFamily: '"Courier Prime", "SF Mono", monospace',
+              lineHeight: '1.1'
             }}>
               {times[0].time}
-              {times.length > 1 && (
-                <>
-                  <span style={{ color: '#cbd5e0', margin: '0 6px' }}>|</span>
-                  {times[1].time}
-                </>
-              )}
             </div>
-          )}
-        </div>
+            {/* Secondary Timezone - Smaller */}
+            {times.length > 1 && (
+              <div style={{
+                fontSize: '11px',
+                fontWeight: '400',
+                color: 'var(--ink-lighter)',
+                fontFamily: '"Courier Prime", "SF Mono", monospace',
+                lineHeight: '1',
+                opacity: 0.8
+              }}>
+                {times[1].time}
+              </div>
+            )}
+          </div>
+        )}
 
-        {/* Chevron */}
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{
-          color: '#cbd5e0',
-          transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-          transition: 'transform 180ms cubic-bezier(0.4, 0, 0.2, 1)',
-          flexShrink: 0
+        {/* Small clock icon */}
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{
+          color: 'var(--ink-lighter)',
+          flexShrink: 0,
+          opacity: 0.6
         }}>
-          <polyline points="18 15 12 9 6 15" />
+          <circle cx="12" cy="12" r="10" />
+          <polyline points="12 6 12 12 16 14" />
         </svg>
       </button>
 

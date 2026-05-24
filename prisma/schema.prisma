@@ -268,18 +268,16 @@ model UserPreference {
   timezoneSecondary       String?   @db.VarChar(50) @map("timezone_secondary")
   googleCalendarToken     String?   @db.Text @map("google_calendar_token")
   googleCalendarRefreshToken String? @db.Text @map("google_calendar_refresh_token")
-  gmailToken              String?   @db.Text @map("gmail_token")
-  gmailRefreshToken       String?   @db.Text @map("gmail_refresh_token")
-  lastGmailSyncAt         DateTime? @map("last_gmail_sync_at")
-  gongAccessToken         String?   @db.Text @map("gong_access_token")     // NEW: Gong API token
-  gongRefreshToken        String?   @db.Text @map("gong_refresh_token")    // NEW: Gong refresh token
-  lastGongSyncAt          DateTime? @map("last_gong_sync_at")              // NEW: Last Gong sync
-  cardColorMetric         String    @default("stall_severity") @db.VarChar(50) @map("card_color_metric") // 'stall_severity', 'deal_health', 'critical_data'
   createdAt               DateTime  @default(now()) @map("created_at")
   updatedAt               DateTime  @updatedAt @map("updated_at")
 
   // Relations
   user                    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // TODO: Add in future migrations:
+  // - gmailToken, gmailRefreshToken, lastGmailSyncAt (Phase 3: Email sync)
+  // - gongAccessToken, gongRefreshToken, lastGongSyncAt (Phase 5: Gong integration)
+  // - cardColorMetric (UI preferences)
 
   @@map("user_preferences")
 }

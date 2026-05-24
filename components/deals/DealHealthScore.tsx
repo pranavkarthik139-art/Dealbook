@@ -1,5 +1,7 @@
 'use client';
 
+import { useTheme } from '@/lib/ThemeContext';
+import { getTheme } from '@/lib/themes';
 import { calculateDealHealth, getHealthStatus, getHealthReason } from '@/lib/dealHealth';
 
 interface Deal {
@@ -14,13 +16,23 @@ interface Deal {
 }
 
 export function DealHealthScore({ deal }: { deal: Deal }) {
+  const theme = useTheme();
+  const themeConfig = getTheme(theme);
   const health = calculateDealHealth(deal);
   const status = getHealthStatus(health);
   const reason = getHealthReason(deal);
 
   return (
-    <div className="bg-white rounded-lg border border-line p-6">
-      <h3 className="font-medium text-ink mb-6">Deal Health</h3>
+    <div
+      className="rounded-lg border border-line p-6"
+      style={{
+        backgroundColor: theme === 'dark' ? '#1e293b' : '#ffffff',
+        transition: 'background-color 300ms ease'
+      }}
+    >
+      <h3 className="font-medium mb-6" style={{ color: themeConfig.textColor }}>
+        Deal Health
+      </h3>
 
       {/* Health Score Circle */}
       <div className="flex items-center justify-center mb-6">

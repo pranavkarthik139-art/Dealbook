@@ -3,6 +3,7 @@ import GoogleProvider from 'next-auth/providers/google';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { PrismaAdapter } from '@auth/prisma-adapter';
 import { prisma } from '@/lib/db';
+import { ensureUserExists } from '@/lib/auth';
 
 /**
  * Multi-User Authentication with NextAuth + Prisma Adapter
@@ -17,6 +18,7 @@ import { prisma } from '@/lib/db';
 
 // Demo/test credentials (for local development)
 const DEMO_USERS = [
+  { email: 'pranavkarthikofcl@gmail.com', password: 'admin123', name: 'Pranav Karthik', role: 'admin' },
   { email: 'demo@dealbook.com', password: 'demo123', name: 'Demo User', role: 'presales_lead' },
   { email: 'se@dealbook.com', password: 'se123', name: 'Sales Engineer', role: 'sales_engineer' },
 ];
@@ -168,20 +170,30 @@ export const authOptions: NextAuthOptions = {
       try {
         // User was just created by the adapter or already exists
         if (user && user.email) {
-          // Ensure user has required fields set
-          const dbUser = await prisma.user.findUnique({
-            where: { email: user.email },
+          // Check if any admin users exist
+          const adminCount = await prisma.user.count({
+            where: { role: 'admin' },
           });
 
-          if (dbUser && !dbUser.role) {
-            // Set default role on first login
-            await prisma.user.update({
-              where: { id: dbUser.id },
-              data: { role: 'sales_engineer' }, // Default role for new users
-            });
+          // First user to sign in via Google OAuth becomes admin
+          const defaultRole = adminCount === 0 ? 'admin' : 'sales_engineer';
 
-            console.log(`[Auth] New user onboarded: ${user.email} (ID: ${dbUser.id})`);
-          }
+          // Upsert user with appropriate role
+          const dbUser = await prisma.user.upsert({
+            where: { email: user.email },
+            update: {
+              name: user.name || undefined,
+              // Don't change role if user already exists
+            },
+            create: {
+              email: user.email,
+              name: user.name || user.email.split('@')[0],
+              role: defaultRole,
+              emailVerified: new Date(),
+            },
+          });
+
+          console.log(`[Auth] User signed in: ${user.email} (ID: ${dbUser.id}, Role: ${dbUser.role})`);
 
           // TODO: Add organization assignment logic here if needed
           // const organization = await assignUserToOrganization(user.email);

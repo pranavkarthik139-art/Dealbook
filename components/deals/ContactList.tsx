@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { useTheme } from '@/lib/ThemeContext';
+import { getTheme } from '@/lib/themes';
 import { LogEngagementModal } from './LogEngagementModal';
 
 interface Contact {
@@ -34,6 +36,8 @@ export function ContactList({
   onEngagementLogged,
   isLoading,
 }: ContactListProps) {
+  const theme = useTheme();
+  const themeConfig = getTheme(theme);
   const [deleting, setDeleting] = useState<number | null>(null);
   const [loggingEngagement, setLoggingEngagement] = useState<number | null>(null);
 
@@ -74,11 +78,14 @@ export function ContactList({
             {contacts.map((contact) => (
               <div
                 key={contact.id}
-                className={`p-4 rounded-lg border ${
-                  primaryContactEmail === contact.email
-                    ? 'border-cobalt bg-blue-50'
-                    : 'border-line bg-white'
-                } hover:shadow-sm transition-shadow`}
+                className="p-4 rounded-lg border hover:shadow-sm transition-shadow"
+                style={{
+                  borderColor: primaryContactEmail === contact.email ? 'var(--cobalt)' : 'var(--line)',
+                  backgroundColor: primaryContactEmail === contact.email
+                    ? 'var(--cobalt-light)'
+                    : theme === 'dark' ? '#1e293b' : '#ffffff',
+                  transition: 'background-color 300ms ease, border-color 300ms ease'
+                }}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
