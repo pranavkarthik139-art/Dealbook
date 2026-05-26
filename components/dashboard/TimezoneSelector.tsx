@@ -93,7 +93,7 @@ export function TimezoneSelector() {
       <div style={{
         height: '56px',
         width: '200px',
-        backgroundColor: 'var(--paper-alt)',
+        backgroundColor: 'var(--theme-card-bg)',
         borderRadius: '12px',
         animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
       }} />
@@ -118,11 +118,11 @@ export function TimezoneSelector() {
           fontFamily: '"Courier Prime", "SF Mono", monospace',
           fontSize: '13px',
           fontWeight: '500',
-          color: 'var(--ink-light)',
+          color: 'var(--theme-text-secondary)',
           minWidth: 'auto'
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.backgroundColor = 'rgba(0, 0, 0, 0.04)';
+          e.currentTarget.style.backgroundColor = 'var(--theme-hover-bg)';
         }}
         onMouseLeave={(e) => {
           e.currentTarget.style.backgroundColor = 'transparent';
@@ -137,7 +137,7 @@ export function TimezoneSelector() {
               fontSize: '14px',
               fontWeight: '600',
               letterSpacing: '0.3px',
-              color: 'var(--ink)',
+              color: 'var(--theme-text-primary)',
               fontFamily: '"Courier Prime", "SF Mono", monospace',
               lineHeight: '1.1'
             }}>
@@ -148,7 +148,7 @@ export function TimezoneSelector() {
               <div style={{
                 fontSize: '11px',
                 fontWeight: '400',
-                color: 'var(--ink-lighter)',
+                color: 'var(--theme-text-tertiary)',
                 fontFamily: '"Courier Prime", "SF Mono", monospace',
                 lineHeight: '1',
                 opacity: 0.8
@@ -161,7 +161,7 @@ export function TimezoneSelector() {
 
         {/* Small clock icon */}
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{
-          color: 'var(--ink-lighter)',
+          color: 'var(--theme-text-tertiary)',
           flexShrink: 0,
           opacity: 0.6
         }}>
@@ -177,8 +177,8 @@ export function TimezoneSelector() {
           right: 0,
           marginTop: '6px',
           width: '320px',
-          backgroundColor: '#FFFFFF',
-          border: '1px solid rgba(0, 0, 0, 0.08)',
+          backgroundColor: 'var(--theme-card-bg)',
+          border: '1px solid var(--theme-border)',
           borderRadius: '10px',
           boxShadow: '0 12px 32px rgba(0, 0, 0, 0.12)',
           zIndex: 50,
@@ -188,14 +188,14 @@ export function TimezoneSelector() {
           {/* Primary Timezone */}
           <div style={{
             padding: '14px 16px',
-            borderBottom: '1px solid rgba(0, 0, 0, 0.06)',
-            backgroundColor: 'rgba(0, 71, 255, 0.02)'
+            borderBottom: '1px solid var(--theme-border)',
+            backgroundColor: 'var(--theme-hover-bg)'
           }}>
             <label style={{
               display: 'block',
               fontSize: '11px',
               fontWeight: '700',
-              color: '#4a5568',
+              color: 'var(--theme-text-secondary)',
               marginBottom: '8px',
               textTransform: 'uppercase',
               letterSpacing: '0.5px',
@@ -209,11 +209,11 @@ export function TimezoneSelector() {
               style={{
                 width: '100%',
                 padding: '9px 11px',
-                border: '1px solid rgba(0, 0, 0, 0.08)',
+                border: '1px solid var(--theme-border)',
                 borderRadius: '7px',
                 fontSize: '13px',
-                color: '#1a202c',
-                backgroundColor: '#FFFFFF',
+                color: 'var(--theme-text-primary)',
+                backgroundColor: 'var(--theme-main-bg)',
                 cursor: 'pointer',
                 fontFamily: 'DM Sans, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
                 fontWeight: '500',
@@ -229,7 +229,7 @@ export function TimezoneSelector() {
             <p style={{
               margin: '7px 0 0 0',
               fontSize: '11px',
-              color: '#718096',
+              color: 'var(--theme-text-tertiary)',
               fontWeight: '500',
               fontFamily: 'DM Sans, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
             }}>
@@ -243,7 +243,7 @@ export function TimezoneSelector() {
               display: 'block',
               fontSize: '11px',
               fontWeight: '700',
-              color: '#4a5568',
+              color: 'var(--theme-text-secondary)',
               marginBottom: '8px',
               textTransform: 'uppercase',
               letterSpacing: '0.5px',
@@ -257,11 +257,11 @@ export function TimezoneSelector() {
               style={{
                 width: '100%',
                 padding: '9px 11px',
-                border: '1px solid rgba(0, 0, 0, 0.08)',
+                border: '1px solid var(--theme-border)',
                 borderRadius: '7px',
                 fontSize: '13px',
-                color: '#1a202c',
-                backgroundColor: '#FFFFFF',
+                color: 'var(--theme-text-primary)',
+                backgroundColor: 'var(--theme-main-bg)',
                 cursor: 'pointer',
                 fontFamily: 'DM Sans, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
                 fontWeight: '500',
@@ -279,7 +279,7 @@ export function TimezoneSelector() {
               <p style={{
                 margin: '7px 0 0 0',
                 fontSize: '11px',
-                color: '#718096',
+                color: 'var(--theme-text-tertiary)',
                 fontWeight: '500',
                 fontFamily: 'DM Sans, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif'
               }}>

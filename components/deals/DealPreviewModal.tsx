@@ -71,13 +71,13 @@ export function DealPreviewModal({ deal, onClose, onViewDetails }: DealPreviewMo
           bottom: 0,
           left: 0,
           right: 0,
-          backgroundColor: 'var(--paper)',
+          backgroundColor: 'var(--theme-main-bg)',
           borderRadius: 'var(--radius-xl) var(--radius-xl) 0 0',
-          padding: 'var(--space-6)',
+          padding: '24px',
           maxHeight: '80vh',
           overflowY: 'auto',
           zIndex: 50,
-          boxShadow: 'var(--shadow-xl)',
+          boxShadow: '0 20px 25px rgba(0, 0, 0, 0.15)',
           animation: 'slideUp 300ms ease',
         }}
       >
@@ -86,27 +86,27 @@ export function DealPreviewModal({ deal, onClose, onViewDetails }: DealPreviewMo
           onClick={onClose}
           style={{
             position: 'absolute',
-            top: 'var(--space-4)',
-            right: 'var(--space-4)',
+            top: '16px',
+            right: '16px',
             background: 'transparent',
             border: 'none',
             fontSize: '24px',
             cursor: 'pointer',
-            color: 'var(--ink-lighter)',
-            padding: 'var(--space-2)',
+            color: 'var(--theme-text-tertiary)',
+            padding: '8px',
           }}
         >
           ×
         </button>
 
         {/* Header */}
-        <div style={{ marginBottom: 'var(--space-6)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 'var(--space-3)' }}>
+        <div style={{ marginBottom: '24px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
             <h2
               style={{
                 fontSize: 'var(--text-2xl)',
                 fontWeight: 700,
-                color: 'var(--ink)',
+                color: 'var(--theme-text-primary)',
                 margin: 0,
                 flex: 1,
               }}
@@ -117,12 +117,12 @@ export function DealPreviewModal({ deal, onClose, onViewDetails }: DealPreviewMo
               <span
                 style={{
                   display: 'inline-block',
-                  padding: 'var(--space-2) var(--space-3)',
+                  padding: '8px 12px',
                   borderRadius: 'var(--radius)',
                   fontSize: 'var(--text-xs)',
                   fontWeight: 600,
-                  backgroundColor: 'var(--cobalt-light)',
-                  color: 'var(--cobalt)',
+                  backgroundColor: 'var(--theme-accent-light)',
+                  color: 'var(--theme-accent)',
                   textTransform: 'capitalize',
                   whiteSpace: 'nowrap',
                 }}
@@ -137,8 +137,8 @@ export function DealPreviewModal({ deal, onClose, onViewDetails }: DealPreviewMo
             style={{
               fontSize: 'var(--text-3xl)',
               fontWeight: 700,
-              color: 'var(--cobalt)',
-              marginBottom: 'var(--space-2)',
+              color: 'var(--theme-accent)',
+              marginBottom: '8px',
             }}
           >
             {formatAmount(deal.amount)}
@@ -151,7 +151,7 @@ export function DealPreviewModal({ deal, onClose, onViewDetails }: DealPreviewMo
                 fontSize: 'var(--text-sm)',
                 color: deal.status === 'active' ? '#065f46' : '#7f1d1d',
                 backgroundColor: deal.status === 'active' ? '#d1fae5' : '#fee2e2',
-                padding: 'var(--space-2) var(--space-3)',
+                padding: '8px 12px',
                 borderRadius: 'var(--radius)',
                 display: 'inline-block',
                 fontWeight: 600,
@@ -168,18 +168,18 @@ export function DealPreviewModal({ deal, onClose, onViewDetails }: DealPreviewMo
           style={{
             display: 'grid',
             gridTemplateColumns: '1fr 1fr',
-            gap: 'var(--space-4)',
-            marginBottom: 'var(--space-6)',
-            paddingBottom: 'var(--space-6)',
-            borderBottom: '1px solid var(--line)',
+            gap: '16px',
+            marginBottom: '24px',
+            paddingBottom: '24px',
+            borderBottom: '1px solid var(--theme-border)',
           }}
         >
           {/* Health */}
           <div>
-            <p style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-lighter)', margin: 0, marginBottom: 'var(--space-2)', fontWeight: 500 }}>
+            <p style={{ fontSize: 'var(--text-xs)', color: 'var(--theme-text-tertiary)', margin: 0, marginBottom: '8px', fontWeight: 500 }}>
               HEALTH
             </p>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <div
                 style={{
                   width: '48px',
@@ -197,7 +197,7 @@ export function DealPreviewModal({ deal, onClose, onViewDetails }: DealPreviewMo
                 {Math.round(deal.healthScore || 0)}
               </div>
               <div>
-                <p style={{ fontSize: 'var(--text-sm)', fontWeight: 600, color: 'var(--ink)', margin: 0 }}>
+                <p style={{ fontSize: 'var(--text-sm)', fontWeight: 600, color: 'var(--theme-text-primary)', margin: 0 }}>
                   {getHealthStatus(deal.healthScore)}
                 </p>
               </div>
@@ -207,12 +207,12 @@ export function DealPreviewModal({ deal, onClose, onViewDetails }: DealPreviewMo
           {/* Stall Status */}
           {deal.stall ? (
             <div>
-              <p style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-lighter)', margin: 0, marginBottom: 'var(--space-2)', fontWeight: 500 }}>
+              <p style={{ fontSize: 'var(--text-xs)', color: 'var(--theme-text-tertiary)', margin: 0, marginBottom: '8px', fontWeight: 500 }}>
                 STALL STATUS
               </p>
               <div
                 style={{
-                  padding: 'var(--space-2) var(--space-3)',
+                  padding: '8px 12px',
                   borderRadius: 'var(--radius)',
                   backgroundColor:
                     deal.stall.risk === 'critical'
@@ -235,10 +235,10 @@ export function DealPreviewModal({ deal, onClose, onViewDetails }: DealPreviewMo
             </div>
           ) : (
             <div>
-              <p style={{ fontSize: 'var(--text-xs)', color: 'var(--ink-lighter)', margin: 0, marginBottom: 'var(--space-2)', fontWeight: 500 }}>
+              <p style={{ fontSize: 'var(--text-xs)', color: 'var(--theme-text-tertiary)', margin: 0, marginBottom: '8px', fontWeight: 500 }}>
                 LAST ACTIVITY
               </p>
-              <p style={{ fontSize: 'var(--text-sm)', color: 'var(--ink)', margin: 0, fontWeight: 600 }}>
+              <p style={{ fontSize: 'var(--text-sm)', color: 'var(--theme-text-primary)', margin: 0, fontWeight: 600 }}>
                 {deal.lastActivityAt
                   ? new Date(deal.lastActivityAt).toLocaleDateString()
                   : 'No activity'}
@@ -248,13 +248,13 @@ export function DealPreviewModal({ deal, onClose, onViewDetails }: DealPreviewMo
         </div>
 
         {/* Action Buttons */}
-        <div style={{ display: 'flex', gap: 'var(--space-3)' }}>
+        <div style={{ display: 'flex', gap: '12px' }}>
           <button
             onClick={() => onViewDetails(deal.id)}
             style={{
               flex: 1,
-              padding: 'var(--space-3) var(--space-4)',
-              backgroundColor: 'var(--cobalt)',
+              padding: '12px 16px',
+              backgroundColor: 'var(--theme-accent)',
               color: 'white',
               border: 'none',
               borderRadius: 'var(--radius)',
@@ -264,11 +264,11 @@ export function DealPreviewModal({ deal, onClose, onViewDetails }: DealPreviewMo
               transition: 'all var(--transition-base)',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--cobalt-hover)';
+              e.currentTarget.style.backgroundColor = 'var(--theme-accent-dark)';
               e.currentTarget.style.transform = 'translateY(-2px)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--cobalt)';
+              e.currentTarget.style.backgroundColor = 'var(--theme-accent)';
               e.currentTarget.style.transform = 'translateY(0)';
             }}
           >
@@ -277,10 +277,10 @@ export function DealPreviewModal({ deal, onClose, onViewDetails }: DealPreviewMo
           <button
             onClick={onClose}
             style={{
-              padding: 'var(--space-3) var(--space-4)',
-              backgroundColor: 'var(--paper-alt)',
-              color: 'var(--ink)',
-              border: '1px solid var(--line)',
+              padding: '12px 16px',
+              backgroundColor: 'var(--theme-card-bg)',
+              color: 'var(--theme-text-primary)',
+              border: '1px solid var(--theme-border)',
               borderRadius: 'var(--radius)',
               fontSize: 'var(--text-sm)',
               fontWeight: 600,
@@ -288,10 +288,10 @@ export function DealPreviewModal({ deal, onClose, onViewDetails }: DealPreviewMo
               transition: 'all var(--transition-base)',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--line-light)';
+              e.currentTarget.style.backgroundColor = 'var(--theme-border)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--paper-alt)';
+              e.currentTarget.style.backgroundColor = 'var(--theme-card-bg)';
             }}
           >
             Close

@@ -84,64 +84,64 @@ export function CardColorSettings() {
 
   if (isLoading) {
     return (
-      <div style={{ padding: 'var(--space-5)' }}>
-        <p style={{ color: 'var(--ink-lighter)' }}>Loading preferences...</p>
+      <div style={{ padding: '20px' }}>
+        <p style={{ color: 'var(--theme-text-tertiary)' }}>Loading preferences...</p>
       </div>
     );
   }
 
   return (
-    <div style={{ padding: 'var(--space-5)', maxWidth: '600px' }}>
-      <h2 style={{ fontSize: 'var(--text-2xl)', fontWeight: 700, marginBottom: 'var(--space-4)', color: 'var(--ink)' }}>
+    <div style={{ padding: '20px', maxWidth: '600px' }}>
+      <h2 style={{ fontSize: 'var(--text-2xl)', fontWeight: 700, marginBottom: '16px', color: 'var(--theme-text-primary)' }}>
         Deal Card Color Preference
       </h2>
 
-      <p style={{ color: 'var(--ink-lighter)', marginBottom: 'var(--space-5)', lineHeight: 1.6 }}>
+      <p style={{ color: 'var(--theme-text-tertiary)', marginBottom: '20px', lineHeight: 1.6 }}>
         Choose what metric determines the back-side color of deal cards when you flip them:
       </p>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-3)' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
         {COLOR_METRIC_OPTIONS.map((option) => (
           <div
             key={option.value}
             onClick={() => handleSave(option.value)}
             style={{
-              padding: 'var(--space-4)',
-              border: selectedMetric === option.value ? '2px solid var(--cobalt)' : '1px solid var(--line)',
+              padding: '16px',
+              border: selectedMetric === option.value ? '2px solid var(--theme-accent)' : '1px solid var(--theme-border)',
               borderRadius: 'var(--radius-md)',
               cursor: 'pointer',
-              backgroundColor: selectedMetric === option.value ? 'var(--cobalt-light)' : 'var(--paper-alt)',
+              backgroundColor: selectedMetric === option.value ? 'var(--theme-accent-light)' : 'var(--theme-card-bg)',
               transition: 'all 0.2s ease',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = 'var(--cobalt)';
-              e.currentTarget.style.boxShadow = 'var(--shadow-sm)';
+              e.currentTarget.style.borderColor = 'var(--theme-accent)';
+              e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.08)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = selectedMetric === option.value ? 'var(--cobalt)' : 'var(--line)';
+              e.currentTarget.style.borderColor = selectedMetric === option.value ? 'var(--theme-accent)' : 'var(--theme-border)';
               e.currentTarget.style.boxShadow = 'none';
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-3)', marginBottom: 'var(--space-2)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
               <div
                 style={{
                   width: '20px',
                   height: '20px',
                   borderRadius: '50%',
-                  border: selectedMetric === option.value ? '3px solid var(--cobalt)' : '2px solid var(--line)',
-                  backgroundColor: selectedMetric === option.value ? 'var(--cobalt)' : 'transparent',
+                  border: selectedMetric === option.value ? '3px solid var(--theme-accent)' : '2px solid var(--theme-border)',
+                  backgroundColor: selectedMetric === option.value ? 'var(--theme-accent)' : 'transparent',
                 }}
               />
-              <h3 style={{ margin: 0, fontSize: 'var(--text-base)', fontWeight: 600, color: 'var(--ink)' }}>
+              <h3 style={{ margin: 0, fontSize: 'var(--text-base)', fontWeight: 600, color: 'var(--theme-text-primary)' }}>
                 {option.label}
               </h3>
             </div>
 
-            <p style={{ margin: '0 0 var(--space-2) 28px', fontSize: 'var(--text-sm)', color: 'var(--ink-lighter)' }}>
+            <p style={{ margin: '0 0 8px 28px', fontSize: 'var(--text-sm)', color: 'var(--theme-text-tertiary)' }}>
               {option.description}
             </p>
 
-            <p style={{ margin: '0 0 0 28px', fontSize: 'var(--text-xs)', color: 'var(--ink-lighter)', fontStyle: 'italic' }}>
+            <p style={{ margin: '0 0 0 28px', fontSize: 'var(--text-xs)', color: 'var(--theme-text-tertiary)', fontStyle: 'italic' }}>
               {option.example}
             </p>
           </div>
@@ -151,10 +151,10 @@ export function CardColorSettings() {
       {saveMessage && (
         <p
           style={{
-            marginTop: 'var(--space-4)',
-            padding: 'var(--space-3)',
-            backgroundColor: saveMessage.includes('✓') ? 'var(--success-light)' : 'var(--error-light)',
-            color: saveMessage.includes('✓') ? 'var(--success)' : 'var(--error)',
+            marginTop: '16px',
+            padding: '12px',
+            backgroundColor: saveMessage.includes('✓') ? 'var(--success-light)' : 'rgba(239, 68, 68, 0.1)',
+            color: saveMessage.includes('✓') ? 'var(--theme-success)' : 'var(--theme-error)',
             borderRadius: 'var(--radius-md)',
             fontSize: 'var(--text-sm)',
             fontWeight: 600,
@@ -165,7 +165,7 @@ export function CardColorSettings() {
       )}
 
       {isSaving && (
-        <p style={{ marginTop: 'var(--space-4)', color: 'var(--ink-lighter)', fontSize: 'var(--text-sm)' }}>
+        <p style={{ marginTop: '16px', color: 'var(--theme-text-tertiary)', fontSize: 'var(--text-sm)' }}>
           Saving...
         </p>
       )}

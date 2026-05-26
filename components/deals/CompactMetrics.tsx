@@ -66,10 +66,10 @@ export function CompactMetrics({ deals }: CompactMetricsProps) {
       <div
         style={{
           padding: '16px',
-          backgroundColor: 'var(--paper)',
-          border: '1px solid var(--line)',
+          backgroundColor: 'var(--theme-main-bg)',
+          border: '1px solid var(--theme-border)',
           borderRadius: 'var(--radius-lg)',
-          boxShadow: 'var(--shadow-sm)',
+          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.08)',
         }}
       >
         <p
@@ -77,7 +77,7 @@ export function CompactMetrics({ deals }: CompactMetricsProps) {
             margin: '0 0 8px 0',
             fontSize: '11px',
             fontWeight: 600,
-            color: 'var(--ink-lighter)',
+            color: 'var(--theme-text-tertiary)',
             textTransform: 'uppercase',
             letterSpacing: '0.5px',
           }}
@@ -89,7 +89,7 @@ export function CompactMetrics({ deals }: CompactMetricsProps) {
             margin: 0,
             fontSize: '24px',
             fontWeight: 700,
-            color: 'var(--cobalt)',
+            color: 'var(--theme-accent)',
           }}
         >
           {formatValue(totalPipelineValue)}
@@ -98,7 +98,7 @@ export function CompactMetrics({ deals }: CompactMetricsProps) {
           style={{
             margin: '4px 0 0 0',
             fontSize: '12px',
-            color: 'var(--ink-lighter)',
+            color: 'var(--theme-text-tertiary)',
           }}
         >
           {deals.length} total deals
@@ -109,10 +109,10 @@ export function CompactMetrics({ deals }: CompactMetricsProps) {
       <div
         style={{
           padding: '16px',
-          backgroundColor: 'var(--paper)',
-          border: '1px solid var(--line)',
+          backgroundColor: 'var(--theme-main-bg)',
+          border: '1px solid var(--theme-border)',
           borderRadius: 'var(--radius-lg)',
-          boxShadow: 'var(--shadow-sm)',
+          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.08)',
         }}
       >
         <p
@@ -120,7 +120,7 @@ export function CompactMetrics({ deals }: CompactMetricsProps) {
             margin: '0 0 8px 0',
             fontSize: '11px',
             fontWeight: 600,
-            color: 'var(--ink-lighter)',
+            color: 'var(--theme-text-tertiary)',
             textTransform: 'uppercase',
             letterSpacing: '0.5px',
           }}
@@ -132,7 +132,7 @@ export function CompactMetrics({ deals }: CompactMetricsProps) {
             margin: 0,
             fontSize: '24px',
             fontWeight: 700,
-            color: 'var(--success)',
+            color: 'var(--theme-success)',
           }}
         >
           {activeDealCount}
@@ -141,7 +141,7 @@ export function CompactMetrics({ deals }: CompactMetricsProps) {
           style={{
             margin: '4px 0 0 0',
             fontSize: '12px',
-            color: 'var(--ink-lighter)',
+            color: 'var(--theme-text-tertiary)',
           }}
         >
           {Math.round((activeDealCount / deals.length) * 100) || 0}% of pipeline
@@ -152,10 +152,10 @@ export function CompactMetrics({ deals }: CompactMetricsProps) {
       <div
         style={{
           padding: '16px',
-          backgroundColor: 'var(--paper)',
-          border: '1px solid var(--line)',
+          backgroundColor: 'var(--theme-main-bg)',
+          border: '1px solid var(--theme-border)',
           borderRadius: 'var(--radius-lg)',
-          boxShadow: 'var(--shadow-sm)',
+          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.08)',
         }}
       >
         <p
@@ -163,7 +163,7 @@ export function CompactMetrics({ deals }: CompactMetricsProps) {
             margin: '0 0 8px 0',
             fontSize: '11px',
             fontWeight: 600,
-            color: 'var(--ink-lighter)',
+            color: 'var(--theme-text-tertiary)',
             textTransform: 'uppercase',
             letterSpacing: '0.5px',
           }}
@@ -175,7 +175,7 @@ export function CompactMetrics({ deals }: CompactMetricsProps) {
             margin: 0,
             fontSize: '24px',
             fontWeight: 700,
-            color: 'var(--warning)',
+            color: 'var(--theme-warning)',
           }}
         >
           {winRate}%
@@ -184,7 +184,7 @@ export function CompactMetrics({ deals }: CompactMetricsProps) {
           style={{
             margin: '4px 0 0 0',
             fontSize: '12px',
-            color: 'var(--ink-lighter)',
+            color: 'var(--theme-text-tertiary)',
           }}
         >
           {closedDeals} deals closed
@@ -195,10 +195,10 @@ export function CompactMetrics({ deals }: CompactMetricsProps) {
       <div
         style={{
           padding: '16px',
-          backgroundColor: 'var(--paper)',
-          border: '1px solid var(--line)',
+          backgroundColor: 'var(--theme-main-bg)',
+          border: '1px solid var(--theme-border)',
           borderRadius: 'var(--radius-lg)',
-          boxShadow: 'var(--shadow-sm)',
+          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.08)',
         }}
       >
         <p
@@ -206,7 +206,7 @@ export function CompactMetrics({ deals }: CompactMetricsProps) {
             margin: '0 0 8px 0',
             fontSize: '11px',
             fontWeight: 600,
-            color: 'var(--ink-lighter)',
+            color: 'var(--theme-text-tertiary)',
             textTransform: 'uppercase',
             letterSpacing: '0.5px',
           }}
@@ -221,10 +221,10 @@ export function CompactMetrics({ deals }: CompactMetricsProps) {
                 width: '8px',
                 height: '8px',
                 borderRadius: '50%',
-                backgroundColor: 'var(--success)',
+                backgroundColor: 'var(--theme-success)',
               }}
             />
-            <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--success)' }}>
+            <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--theme-success)' }}>
               {healthyDeals}
             </span>
           </div>
@@ -235,10 +235,10 @@ export function CompactMetrics({ deals }: CompactMetricsProps) {
                 width: '8px',
                 height: '8px',
                 borderRadius: '50%',
-                backgroundColor: 'var(--warning)',
+                backgroundColor: 'var(--theme-warning)',
               }}
             />
-            <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--warning)' }}>
+            <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--theme-warning)' }}>
               {needsAttentionDeals}
             </span>
           </div>
@@ -249,10 +249,10 @@ export function CompactMetrics({ deals }: CompactMetricsProps) {
                 width: '8px',
                 height: '8px',
                 borderRadius: '50%',
-                backgroundColor: 'var(--error)',
+                backgroundColor: 'var(--theme-error)',
               }}
             />
-            <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--error)' }}>
+            <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--theme-error)' }}>
               {atRiskDeals}
             </span>
           </div>
@@ -261,7 +261,7 @@ export function CompactMetrics({ deals }: CompactMetricsProps) {
           style={{
             margin: 0,
             fontSize: '12px',
-            color: 'var(--ink-lighter)',
+            color: 'var(--theme-text-tertiary)',
           }}
         >
           On track / Attention / Risk

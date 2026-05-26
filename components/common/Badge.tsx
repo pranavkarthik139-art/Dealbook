@@ -8,10 +8,10 @@ interface BadgeProps {
 
 const variantStyles: Record<string, { bg: string; text: string }> = {
   active: { bg: 'var(--green-light)', text: 'var(--green)' },
-  closed: { bg: 'var(--paper-alt)', text: 'var(--ink-light)' },
+  closed: { bg: 'var(--theme-card-bg)', text: 'var(--theme-text-secondary)' },
   'on-hold': { bg: 'var(--amber-light)', text: 'var(--amber)' },
   lost: { bg: 'var(--red-light)', text: 'var(--red)' },
-  default: { bg: 'var(--paper-alt)', text: 'var(--ink-light)' },
+  default: { bg: 'var(--theme-card-bg)', text: 'var(--theme-text-secondary)' },
 };
 
 export function Badge({ children, variant = 'default', className = '' }: BadgeProps) {

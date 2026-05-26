@@ -56,18 +56,20 @@ export const middleware = withAuth(
 
 // Protected routes - these require authentication
 // Public routes are implicitly everything not listed here
+// Note: /api/links/public/:path* is NOT protected - it's publicly accessible via token
 export const config = {
   matcher: [
     // Protect all dashboard and app routes
     '/dashboard/:path*',
     '/deals/:path*',
+    '/links/:path*',
     '/automations/:path*',
     '/settings/:path*',
     '/team/:path*',
     '/forecasting/:path*',
     '/templates/:path*',
     '/forecast:path*',
-    // Protect all API routes except auth
+    // Protect all API routes except auth and public links
     '/api/activity/:path*',
     '/api/automations/:path*',
     '/api/calls/:path*',
@@ -77,6 +79,9 @@ export const config = {
     '/api/email/:path*',
     '/api/emails/:path*',
     '/api/forecasting/:path*',
+    // For links API: protect /api/links/* but NOT /api/links/public/*
+    // This is handled by the route matcher with negative lookahead
+    '/api/links/:path((?!public).*)',
     '/api/preferences/:path*',
     '/api/reports/:path*',
     '/api/sharing/:path*',

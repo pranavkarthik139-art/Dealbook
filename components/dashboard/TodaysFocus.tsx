@@ -20,66 +20,10 @@ export function TodaysFocus() {
   const [synced, setSynced] = useState(false);
 
   useEffect(() => {
-    const fetchCalendarEvents = async () => {
-      try {
-        // Get today and tomorrow in UTC to avoid timezone issues
-        const now = new Date();
-        const startDate = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 0, 0, 0, 0));
-        const endDate = new Date(startDate);
-        endDate.setUTCDate(endDate.getUTCDate() + 1);
-
-        // First sync with Google Calendar (with 3 second timeout)
-        try {
-          const abortController = new AbortController();
-          const timeoutId = setTimeout(() => abortController.abort(), 3000);
-
-          const syncResponse = await fetch('/api/calendar/sync', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              startDate: startDate.toISOString(),
-              endDate: endDate.toISOString(),
-            }),
-            signal: abortController.signal,
-          });
-
-          clearTimeout(timeoutId);
-          if (syncResponse.ok) {
-            const syncData = await syncResponse.json();
-            setSynced(syncData.success === true);
-          }
-        } catch (error) {
-          console.error('Failed to sync calendar:', error);
-          setSynced(false);
-        }
-
-        // Then fetch events (with 3 second timeout)
-        const startISO = startDate.toISOString();
-        const endISO = endDate.toISOString();
-
-        const abortController = new AbortController();
-        const timeoutId = setTimeout(() => abortController.abort(), 3000);
-
-        const response = await fetch(
-          `/api/calendar/events?start=${startISO}&end=${endISO}`,
-          { signal: abortController.signal }
-        );
-
-        clearTimeout(timeoutId);
-        if (response.ok) {
-          const data = await response.json();
-          const eventsList = Array.isArray(data) ? data : (data.events || []);
-          setEvents(eventsList);
-        }
-      } catch (error) {
-        console.error('Failed to fetch calendar events:', error);
-        setEvents([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCalendarEvents();
+    // TEMPORARY: Disable calendar fetching until we fix the API
+    // Just show empty state for now so dashboard loads
+    setEvents([]);
+    setLoading(false);
   }, []);
 
   if (loading) {

@@ -102,13 +102,13 @@ export function TemplateForm({
           margin: 0,
         }}
       >
-        <legend style={{ fontSize: '14px', fontWeight: 600, color: 'var(--ink)', marginBottom: '12px' }}>
+        <legend style={{ fontSize: '14px', fontWeight: 600, color: 'var(--theme-text-primary)', marginBottom: '12px' }}>
           Template Basics
         </legend>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           <div>
-            <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--ink)', marginBottom: '4px', display: 'block' }}>
+            <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--theme-text-primary)', marginBottom: '4px', display: 'block' }}>
               Template Name *
             </label>
             <input
@@ -119,7 +119,7 @@ export function TemplateForm({
               style={{
                 width: '100%',
                 padding: '10px 12px',
-                border: '1px solid var(--line)',
+                border: '1px solid var(--theme-border)',
                 borderRadius: '6px',
                 fontSize: '14px',
                 fontFamily: 'inherit',
@@ -130,7 +130,7 @@ export function TemplateForm({
           </div>
 
           <div>
-            <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--ink)', marginBottom: '4px', display: 'block' }}>
+            <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--theme-text-primary)', marginBottom: '4px', display: 'block' }}>
               Description
             </label>
             <textarea
@@ -140,7 +140,7 @@ export function TemplateForm({
               style={{
                 width: '100%',
                 padding: '10px 12px',
-                border: '1px solid var(--line)',
+                border: '1px solid var(--theme-border)',
                 borderRadius: '6px',
                 fontSize: '14px',
                 fontFamily: 'inherit',
@@ -153,7 +153,7 @@ export function TemplateForm({
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
             <div>
-              <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--ink)', marginBottom: '4px', display: 'block' }}>
+              <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--theme-text-primary)', marginBottom: '4px', display: 'block' }}>
                 Deal Type *
               </label>
               <select
@@ -162,7 +162,7 @@ export function TemplateForm({
                 style={{
                   width: '100%',
                   padding: '10px 12px',
-                  border: '1px solid var(--line)',
+                  border: '1px solid var(--theme-border)',
                   borderRadius: '6px',
                   fontSize: '14px',
                   fontFamily: 'inherit',
@@ -177,7 +177,7 @@ export function TemplateForm({
             </div>
 
             <div>
-              <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--ink)', marginBottom: '4px', display: 'block' }}>
+              <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--theme-text-primary)', marginBottom: '4px', display: 'block' }}>
                 Expected Duration (days)
               </label>
               <input
@@ -188,7 +188,7 @@ export function TemplateForm({
                 style={{
                   width: '100%',
                   padding: '10px 12px',
-                  border: '1px solid var(--line)',
+                  border: '1px solid var(--theme-border)',
                   borderRadius: '6px',
                   fontSize: '14px',
                   fontFamily: 'inherit',
@@ -199,7 +199,7 @@ export function TemplateForm({
           </div>
 
           <div>
-            <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--ink)', marginBottom: '4px', display: 'block' }}>
+            <label style={{ fontSize: '12px', fontWeight: 600, color: 'var(--theme-text-primary)', marginBottom: '4px', display: 'block' }}>
               Estimated Deal Value
             </label>
             <input
@@ -210,7 +210,7 @@ export function TemplateForm({
               style={{
                 width: '100%',
                 padding: '10px 12px',
-                border: '1px solid var(--line)',
+                border: '1px solid var(--theme-border)',
                 borderRadius: '6px',
                 fontSize: '14px',
                 fontFamily: 'inherit',
@@ -223,7 +223,7 @@ export function TemplateForm({
 
       {/* Pipeline Stages */}
       <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
-        <legend style={{ fontSize: '14px', fontWeight: 600, color: 'var(--ink)', marginBottom: '12px' }}>
+        <legend style={{ fontSize: '14px', fontWeight: 600, color: 'var(--theme-text-primary)', marginBottom: '12px' }}>
           Pipeline Stages
         </legend>
 
@@ -237,7 +237,7 @@ export function TemplateForm({
                 placeholder="Stage name"
                 style={{
                   padding: '10px 12px',
-                  border: '1px solid var(--line)',
+                  border: '1px solid var(--theme-border)',
                   borderRadius: '6px',
                   fontSize: '14px',
                   fontFamily: 'inherit',
@@ -252,7 +252,7 @@ export function TemplateForm({
                 placeholder="Expected days"
                 style={{
                   padding: '10px 12px',
-                  border: '1px solid var(--line)',
+                  border: '1px solid var(--theme-border)',
                   borderRadius: '6px',
                   fontSize: '14px',
                   fontFamily: 'inherit',
@@ -265,7 +265,7 @@ export function TemplateForm({
 
       {/* Milestones */}
       <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
-        <legend style={{ fontSize: '14px', fontWeight: 600, color: 'var(--ink)', marginBottom: '12px' }}>
+        <legend style={{ fontSize: '14px', fontWeight: 600, color: 'var(--theme-text-primary)', marginBottom: '12px' }}>
           Milestones & Checklist
         </legend>
 
@@ -275,7 +275,7 @@ export function TemplateForm({
               key={idx}
               style={{
                 padding: '12px',
-                backgroundColor: 'var(--paper-alt)',
+                backgroundColor: 'var(--theme-card-bg)',
                 borderRadius: '6px',
                 display: 'flex',
                 justifyContent: 'space-between',
@@ -283,11 +283,11 @@ export function TemplateForm({
               }}
             >
               <div style={{ flex: 1 }}>
-                <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink)', margin: '0 0 4px 0' }}>
+                <p style={{ fontSize: '13px', fontWeight: 600, color: 'var(--theme-text-primary)', margin: '0 0 4px 0' }}>
                   {milestone.title}
                 </p>
                 {milestone.description && (
-                  <p style={{ fontSize: '12px', color: 'var(--ink-lighter)', margin: 0 }}>
+                  <p style={{ fontSize: '12px', color: 'var(--theme-text-tertiary)', margin: 0 }}>
                     {milestone.description}
                   </p>
                 )}
@@ -316,7 +316,7 @@ export function TemplateForm({
           ))}
 
           {/* Add milestone form */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingTop: '12px', borderTop: '1px solid var(--line)' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingTop: '12px', borderTop: '1px solid var(--theme-border)' }}>
             <input
               type="text"
               value={newMilestone.title}
@@ -326,7 +326,7 @@ export function TemplateForm({
               placeholder="Milestone title (e.g., Send proposal)"
               style={{
                 padding: '10px 12px',
-                border: '1px solid var(--line)',
+                border: '1px solid var(--theme-border)',
                 borderRadius: '6px',
                 fontSize: '14px',
                 fontFamily: 'inherit',
@@ -340,7 +340,7 @@ export function TemplateForm({
               placeholder="Description (optional)"
               style={{
                 padding: '10px 12px',
-                border: '1px solid var(--line)',
+                border: '1px solid var(--theme-border)',
                 borderRadius: '6px',
                 fontSize: '14px',
                 fontFamily: 'inherit',
@@ -360,7 +360,7 @@ export function TemplateForm({
               placeholder="Days after deal start (optional)"
               style={{
                 padding: '10px 12px',
-                border: '1px solid var(--line)',
+                border: '1px solid var(--theme-border)',
                 borderRadius: '6px',
                 fontSize: '14px',
                 fontFamily: 'inherit',
@@ -371,8 +371,8 @@ export function TemplateForm({
               onClick={addMilestone}
               style={{
                 padding: '10px 12px',
-                backgroundColor: 'var(--line)',
-                color: 'var(--ink)',
+                backgroundColor: 'var(--theme-border)',
+                color: 'var(--theme-text-primary)',
                 border: 'none',
                 borderRadius: '6px',
                 fontSize: '13px',
@@ -381,12 +381,12 @@ export function TemplateForm({
                 transition: 'all 150ms ease',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = 'var(--cobalt)';
+                e.currentTarget.style.backgroundColor = 'var(--theme-accent)';
                 e.currentTarget.style.color = 'white';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'var(--line)';
-                e.currentTarget.style.color = 'var(--ink)';
+                e.currentTarget.style.backgroundColor = 'var(--theme-border)';
+                e.currentTarget.style.color = 'var(--theme-text-primary)';
               }}
             >
               + Add Milestone
@@ -396,7 +396,7 @@ export function TemplateForm({
       </fieldset>
 
       {/* Form Actions */}
-      <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', paddingTop: '12px', borderTop: '1px solid var(--line)' }}>
+      <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', paddingTop: '12px', borderTop: '1px solid var(--theme-border)' }}>
         <button
           type="button"
           onClick={onCancel}
@@ -404,8 +404,8 @@ export function TemplateForm({
           style={{
             padding: '10px 20px',
             backgroundColor: 'transparent',
-            color: 'var(--ink)',
-            border: '1px solid var(--line)',
+            color: 'var(--theme-text-primary)',
+            border: '1px solid var(--theme-border)',
             borderRadius: '6px',
             fontSize: '13px',
             fontWeight: 600,
@@ -420,7 +420,7 @@ export function TemplateForm({
           disabled={isLoading || !name}
           style={{
             padding: '10px 20px',
-            backgroundColor: 'var(--cobalt)',
+            backgroundColor: 'var(--theme-accent)',
             color: 'white',
             border: 'none',
             borderRadius: '6px',

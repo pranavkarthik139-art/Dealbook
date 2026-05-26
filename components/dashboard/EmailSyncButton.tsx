@@ -62,7 +62,7 @@ export function EmailSyncButton() {
     <div style={{
       display: 'flex',
       flexDirection: 'column',
-      gap: 'var(--space-3)'
+      gap: '12px'
     }}>
       <div style={{
         display: 'flex',
@@ -72,13 +72,13 @@ export function EmailSyncButton() {
         <div>
           <h3 style={{
             fontWeight: 500,
-            color: 'var(--ink)',
+            color: 'var(--theme-text-primary)',
             margin: 0,
             fontSize: 'var(--text-sm)'
           }}>Email Sync</h3>
           <p style={{
             fontSize: 'var(--text-xs)',
-            color: 'var(--ink-lighter)',
+            color: 'var(--theme-text-tertiary)',
             marginTop: 'var(--space-1)',
             margin: 'var(--space-1) 0 0 0'
           }}>
@@ -89,9 +89,9 @@ export function EmailSyncButton() {
           onClick={handleSync}
           disabled={syncing}
           style={{
-            padding: 'var(--space-2) var(--space-4)',
+            padding: '8px 16px',
             borderRadius: 'var(--radius)',
-            backgroundColor: syncing ? 'var(--ink-lighter)' : 'var(--cobalt)',
+            backgroundColor: syncing ? 'var(--theme-text-tertiary)' : 'var(--theme-accent)',
             color: 'white',
             border: 'none',
             fontSize: 'var(--text-sm)',
@@ -102,11 +102,11 @@ export function EmailSyncButton() {
           }}
           onMouseEnter={(e) => {
             if (!syncing) {
-              e.currentTarget.style.backgroundColor = 'var(--cobalt-hover)';
+              e.currentTarget.style.backgroundColor = 'var(--theme-accent-dark)';
             }
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'var(--cobalt)';
+            e.currentTarget.style.backgroundColor = 'var(--theme-accent)';
           }}
         >
           {syncing ? 'Syncing...' : 'Sync Gmail'}
@@ -115,23 +115,23 @@ export function EmailSyncButton() {
 
       {showResult && result && (
         <div style={{
-          padding: 'var(--space-3)',
+          padding: '12px',
           borderRadius: 'var(--radius)',
-          border: `1px solid ${result.success ? 'var(--success)' : 'var(--error)'}`,
-          backgroundColor: result.success ? 'var(--success-light)' : 'var(--error-light)',
+          border: `1px solid ${result.success ? 'var(--theme-success)' : 'var(--theme-error)'}`,
+          backgroundColor: result.success ? 'var(--success-light)' : 'rgba(239, 68, 68, 0.1)',
           fontSize: 'var(--text-sm)'
         }}>
           <p style={{
             fontWeight: 500,
-            color: result.success ? 'var(--success)' : 'var(--error)',
+            color: result.success ? 'var(--theme-success)' : 'var(--theme-error)',
             margin: 0
           }}>{result.message || result.error}</p>
           {result.success && (
             <p style={{
               fontSize: 'var(--text-xs)',
-              marginTop: 'var(--space-2)',
-              margin: 'var(--space-2) 0 0 0',
-              color: result.success ? 'var(--success)' : 'var(--error)'
+              marginTop: '8px',
+              margin: '8px 0 0 0',
+              color: result.success ? 'var(--theme-success)' : 'var(--theme-error)'
             }}>
               Matched: {result.matched} | Logged: {result.activitiesLogged}
             </p>

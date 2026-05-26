@@ -16,11 +16,11 @@ interface DealFiltersProps {
 const selectStyle = {
   padding: '8px 12px',
   borderRadius: 'var(--radius)',
-  border: '1px solid var(--line)',
+  border: '1px solid var(--theme-border)',
   fontSize: 'var(--text-sm)',
   cursor: 'pointer',
-  backgroundColor: 'var(--paper)',
-  color: 'var(--ink)',
+  backgroundColor: 'var(--theme-main-bg)',
+  color: 'var(--theme-text-primary)',
   fontFamily: 'inherit',
   transition: 'all 150ms ease',
 } as const;
@@ -40,10 +40,10 @@ export function DealFilters({
   return (
     <div
       style={{
-        backgroundColor: 'var(--paper)',
+        backgroundColor: 'var(--theme-main-bg)',
         padding: '12px 16px',
         borderRadius: 'var(--radius-lg)',
-        border: '1px solid var(--line)',
+        border: '1px solid var(--theme-border)',
         marginBottom: '24px',
         display: 'flex',
         gap: '12px',
@@ -53,7 +53,7 @@ export function DealFilters({
     >
       {/* Activity Filter */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <label style={{ fontSize: 'var(--text-xs)', fontWeight: 600, color: 'var(--ink-lighter)', textTransform: 'uppercase' }}>Activity:</label>
+        <label style={{ fontSize: 'var(--text-xs)', fontWeight: 600, color: 'var(--theme-text-tertiary)', textTransform: 'uppercase' }}>Activity:</label>
         <select
           value={activityValue}
           onChange={(e) => onActivityChange(e.target.value)}
@@ -69,7 +69,7 @@ export function DealFilters({
 
       {/* Deal Size Filter */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <label style={{ fontSize: 'var(--text-xs)', fontWeight: 600, color: 'var(--ink-lighter)', textTransform: 'uppercase' }}>Size:</label>
+        <label style={{ fontSize: 'var(--text-xs)', fontWeight: 600, color: 'var(--theme-text-tertiary)', textTransform: 'uppercase' }}>Size:</label>
         <select
           value={sizeValue}
           onChange={(e) => onSizeChange(e.target.value)}
@@ -84,7 +84,7 @@ export function DealFilters({
 
       {/* Stage Filter */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <label style={{ fontSize: 'var(--text-xs)', fontWeight: 600, color: 'var(--ink-lighter)', textTransform: 'uppercase' }}>Stage:</label>
+        <label style={{ fontSize: 'var(--text-xs)', fontWeight: 600, color: 'var(--theme-text-tertiary)', textTransform: 'uppercase' }}>Stage:</label>
         <select
           value={stageValue}
           onChange={(e) => onStageChange(e.target.value)}
@@ -101,7 +101,7 @@ export function DealFilters({
       {/* Stall Status Filter */}
       {onStallChange && (
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <label style={{ fontSize: 'var(--text-xs)', fontWeight: 600, color: 'var(--ink-lighter)', textTransform: 'uppercase' }}>Stall:</label>
+          <label style={{ fontSize: 'var(--text-xs)', fontWeight: 600, color: 'var(--theme-text-tertiary)', textTransform: 'uppercase' }}>Stall:</label>
           <select
             value={stallValue}
             onChange={(e) => onStallChange(e.target.value)}

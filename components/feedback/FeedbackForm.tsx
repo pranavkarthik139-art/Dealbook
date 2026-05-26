@@ -115,19 +115,19 @@ export function FeedbackForm() {
 
   return (
     <div style={{ maxWidth: '900px', margin: '0 auto', padding: 'var(--space-10)' }}>
-      <div style={{ marginBottom: 'var(--space-8)' }}>
+      <div style={{ marginBottom: '32px' }}>
         <h1
           style={{
             fontSize: '28px',
             fontWeight: 700,
             fontFamily: '"Playfair Display", serif',
-            margin: '0 0 var(--space-4) 0',
-            color: 'var(--ink)',
+            margin: '0 0 16px 0',
+            color: 'var(--theme-text-primary)',
           }}
         >
           📋 Dealbook Product Feedback
         </h1>
-        <p style={{ color: 'var(--ink-lighter)', margin: '0', fontSize: '14px' }}>
+        <p style={{ color: 'var(--theme-text-tertiary)', margin: '0', fontSize: '14px' }}>
           Help us improve! Share your thoughts on what you liked, what's missing, and what we should focus on.
         </p>
       </div>
@@ -135,11 +135,11 @@ export function FeedbackForm() {
       {submitted && (
         <div
           style={{
-            padding: 'var(--space-6)',
+            padding: '24px',
             backgroundColor: '#ECFDF5',
             border: '1px solid #10B981',
             borderRadius: '8px',
-            marginBottom: 'var(--space-6)',
+            marginBottom: '24px',
             color: '#047857',
             fontSize: '14px',
           }}
@@ -151,11 +151,11 @@ export function FeedbackForm() {
       {error && (
         <div
           style={{
-            padding: 'var(--space-6)',
+            padding: '24px',
             backgroundColor: '#FEF2F2',
             border: '1px solid #EF4444',
             borderRadius: '8px',
-            marginBottom: 'var(--space-6)',
+            marginBottom: '24px',
             color: '#B91C1C',
             fontSize: '14px',
           }}
@@ -167,14 +167,14 @@ export function FeedbackForm() {
       <form onSubmit={handleSubmit}>
         {/* Respondent Info */}
         <Card>
-          <h2 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--ink)', margin: '0 0 var(--space-4) 0' }}>
+          <h2 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--theme-text-primary)', margin: '0 0 16px 0' }}>
             👤 Your Information
           </h2>
           <div
             style={{
               display: 'grid',
               gridTemplateColumns: '1fr 1fr',
-              gap: 'var(--space-4)',
+              gap: '16px',
             }}
           >
             <input
@@ -222,12 +222,12 @@ export function FeedbackForm() {
 
         {/* Overall Impression */}
         <Card>
-          <h2 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--ink)', margin: '0 0 var(--space-4) 0' }}>
+          <h2 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--theme-text-primary)', margin: '0 0 16px 0' }}>
             ⭐ Overall Impression
           </h2>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 'var(--space-6)' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '24px' }}>
             <div>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: 'var(--space-3)' }}>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '12px' }}>
                 How would you rate Dealbook overall? (1-5)
               </label>
               <div style={{ display: 'flex', gap: '8px' }}>
@@ -255,7 +255,7 @@ export function FeedbackForm() {
             </div>
 
             <div>
-              <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: 'var(--space-3)' }}>
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '12px' }}>
                 How likely are you to recommend Dealbook? (0-10, 10 = very likely)
               </label>
               <input
@@ -266,7 +266,7 @@ export function FeedbackForm() {
                 onChange={(e) => setFormData((prev) => ({ ...prev, likelyRecommend: e.target.value }))}
                 style={{ width: '100%' }}
               />
-              <div style={{ fontSize: '12px', color: 'var(--ink-lighter)', marginTop: 'var(--space-2)' }}>
+              <div style={{ fontSize: '12px', color: 'var(--theme-text-tertiary)', marginTop: '8px' }}>
                 {formData.likelyRecommend ? `${formData.likelyRecommend}/10` : 'Select a score'}
               </div>
             </div>
@@ -275,14 +275,14 @@ export function FeedbackForm() {
 
         {/* What They Liked */}
         <Card>
-          <h2 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--ink)', margin: '0 0 var(--space-4) 0' }}>
+          <h2 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--theme-text-primary)', margin: '0 0 16px 0' }}>
             👍 What Did You Like?
           </h2>
-          <div style={{ marginBottom: 'var(--space-4)' }}>
-            <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: 'var(--space-3)' }}>
+          <div style={{ marginBottom: '16px' }}>
+            <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '12px' }}>
               Select features you liked (check all that apply):
             </label>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 'var(--space-3)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
               {FEATURES.map((feature) => (
                 <label key={feature} style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
                   <input
@@ -315,12 +315,12 @@ export function FeedbackForm() {
 
         {/* Ease of Use */}
         <Card>
-          <h2 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--ink)', margin: '0 0 var(--space-4) 0' }}>
+          <h2 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--theme-text-primary)', margin: '0 0 16px 0' }}>
             🎨 Usability & Design
           </h2>
 
-          <div style={{ marginBottom: 'var(--space-6)' }}>
-            <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: 'var(--space-3)' }}>
+          <div style={{ marginBottom: '24px' }}>
+            <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '12px' }}>
               How easy is it to use Dealbook? (1-5, 5 = very easy)
             </label>
             <div style={{ display: 'flex', gap: '8px' }}>
@@ -365,15 +365,15 @@ export function FeedbackForm() {
 
         {/* What's Missing */}
         <Card>
-          <h2 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--ink)', margin: '0 0 var(--space-4) 0' }}>
+          <h2 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--theme-text-primary)', margin: '0 0 16px 0' }}>
             💭 What's Missing?
           </h2>
 
-          <div style={{ marginBottom: 'var(--space-4)' }}>
-            <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: 'var(--space-3)' }}>
+          <div style={{ marginBottom: '16px' }}>
+            <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '12px' }}>
               Features you'd like to see (check all that apply):
             </label>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 'var(--space-3)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '12px' }}>
               {MISSING_FEATURES.map((feature) => (
                 <label key={feature} style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
                   <input
@@ -406,7 +406,7 @@ export function FeedbackForm() {
 
         {/* Pain Points */}
         <Card>
-          <h2 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--ink)', margin: '0 0 var(--space-4) 0' }}>
+          <h2 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--theme-text-primary)', margin: '0 0 16px 0' }}>
             ⚠️ Pain Points
           </h2>
           <textarea
@@ -427,12 +427,12 @@ export function FeedbackForm() {
 
         {/* Comparison */}
         <Card>
-          <h2 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--ink)', margin: '0 0 var(--space-4) 0' }}>
+          <h2 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--theme-text-primary)', margin: '0 0 16px 0' }}>
             🏆 How Does It Compare?
           </h2>
 
-          <div style={{ marginBottom: 'var(--space-4)' }}>
-            <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: 'var(--space-3)' }}>
+          <div style={{ marginBottom: '16px' }}>
+            <label style={{ display: 'block', fontSize: '13px', fontWeight: 500, marginBottom: '12px' }}>
               Are you comparing this to another tool? If yes, which one?
             </label>
             <input
@@ -450,7 +450,7 @@ export function FeedbackForm() {
             />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-4)' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
             <textarea
               placeholder="What advantages does Dealbook have over other tools?"
               value={formData.advantages}
@@ -482,7 +482,7 @@ export function FeedbackForm() {
 
         {/* Additional Suggestions */}
         <Card>
-          <h2 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--ink)', margin: '0 0 var(--space-4) 0' }}>
+          <h2 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--theme-text-primary)', margin: '0 0 16px 0' }}>
             💡 Additional Suggestions
           </h2>
           <textarea
@@ -502,13 +502,13 @@ export function FeedbackForm() {
         </Card>
 
         {/* Submit Button */}
-        <div style={{ marginTop: 'var(--space-8)' }}>
+        <div style={{ marginTop: '32px' }}>
           <button
             type="submit"
             disabled={isSubmitting}
             style={{
               width: '100%',
-              padding: 'var(--space-4)',
+              padding: '16px',
               backgroundColor: '#0047FF',
               color: '#FFFFFF',
               border: 'none',

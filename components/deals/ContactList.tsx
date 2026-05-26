@@ -1,8 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useTheme } from '@/lib/ThemeContext';
-import { getTheme } from '@/lib/themes';
 import { LogEngagementModal } from './LogEngagementModal';
 
 interface Contact {
@@ -80,9 +78,9 @@ export function ContactList({
                 key={contact.id}
                 className="p-4 rounded-lg border hover:shadow-sm transition-shadow"
                 style={{
-                  borderColor: primaryContactEmail === contact.email ? 'var(--cobalt)' : 'var(--line)',
+                  borderColor: primaryContactEmail === contact.email ? 'var(--theme-accent)' : 'var(--theme-border)',
                   backgroundColor: primaryContactEmail === contact.email
-                    ? 'var(--cobalt-light)'
+                    ? 'var(--theme-accent-light)'
                     : theme === 'dark' ? '#1e293b' : '#ffffff',
                   transition: 'background-color 300ms ease, border-color 300ms ease'
                 }}

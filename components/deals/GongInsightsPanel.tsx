@@ -44,9 +44,9 @@ export function GongInsightsPanel({ dealId }: GongInsightsPanelProps) {
   if (loading) {
     return (
       <div style={{
-        padding: 'var(--space-6)',
+        padding: '24px',
         textAlign: 'center',
-        color: 'var(--ink-lighter)',
+        color: 'var(--theme-text-tertiary)',
         fontSize: 'var(--text-sm)',
       }}>
         Loading Gong insights...
@@ -67,13 +67,13 @@ export function GongInsightsPanel({ dealId }: GongInsightsPanelProps) {
   };
 
   return (
-    <div style={{ marginBottom: 'var(--space-8)' }}>
+    <div style={{ marginBottom: '32px' }}>
       <h3 style={{
         fontSize: 'var(--text-lg)',
         fontFamily: '"Playfair Display", serif',
         fontWeight: 700,
-        color: 'var(--ink)',
-        margin: '0 0 var(--space-4) 0',
+        color: 'var(--theme-text-primary)',
+        margin: '0 0 16px 0',
       }}>
         🎯 Gong Insights to Review
       </h3>

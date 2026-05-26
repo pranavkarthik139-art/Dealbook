@@ -44,7 +44,7 @@ export function DealsKanban({
   const [localDeals, setLocalDeals] = useState<Deal[]>(deals);
 
   const stages = [
-    { id: 'demo', label: 'Demo', color: 'var(--cobalt)', deals: localDeals.filter(d => d.stage === 'demo') },
+    { id: 'demo', label: 'Demo', color: 'var(--theme-accent)', deals: localDeals.filter(d => d.stage === 'demo') },
     { id: 'poc', label: 'POC', color: 'var(--amber)', deals: localDeals.filter(d => d.stage === 'poc') },
     { id: 'validation', label: 'Validation', color: 'var(--green)', deals: localDeals.filter(d => d.stage === 'validation') },
     { id: 'closed', label: 'Closed', color: 'var(--green)', deals: localDeals.filter(d => d.stage === 'closed') },
@@ -117,7 +117,7 @@ export function DealsKanban({
         {stages.map(stage => (
           <div key={stage.id} style={{ display: 'flex', flexDirection: 'column' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px', paddingBottom: '12px', borderBottom: `3px solid ${stage.color}` }}>
-              <h3 style={{ fontSize: '16px', fontWeight: '700', color: 'var(--ink)', margin: 0 }}>{stage.label}</h3>
+              <h3 style={{ fontSize: '16px', fontWeight: '700', color: 'var(--theme-text-primary)', margin: 0 }}>{stage.label}</h3>
               <span style={{ backgroundColor: stage.color, color: 'white', borderRadius: '12px', padding: '4px 8px', fontSize: '12px', fontWeight: '600' }}>
                 {stage.deals.length}
               </span>
@@ -132,13 +132,13 @@ export function DealsKanban({
                 minHeight: '400px',
                 borderRadius: '8px',
                 padding: '12px',
-                backgroundColor: draggedCard ? 'var(--cobalt-light)' : 'var(--paper-alt)',
-                border: draggedCard ? '2px dashed var(--cobalt)' : '2px dashed var(--line)',
+                backgroundColor: draggedCard ? 'var(--theme-accent-light)' : 'var(--theme-card-bg)',
+                border: draggedCard ? '2px dashed var(--theme-accent)' : '2px dashed var(--theme-border)',
                 transition: 'all 150ms ease'
               }}
             >
               {stage.deals.length === 0 ? (
-                <div style={{ padding: '24px 16px', textAlign: 'center', color: 'var(--ink-lighter)', fontSize: '12px', backgroundColor: 'var(--paper)', borderRadius: '8px', border: '1px dashed var(--line)' }}>
+                <div style={{ padding: '24px 16px', textAlign: 'center', color: 'var(--theme-text-tertiary)', fontSize: '12px', backgroundColor: 'var(--theme-main-bg)', borderRadius: '8px', border: '1px dashed var(--theme-border)' }}>
                   No deals in this stage
                 </div>
               ) : (

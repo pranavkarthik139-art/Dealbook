@@ -1,5 +1,6 @@
 'use client';
 
+import { useSession } from 'next-auth/react';
 import { Header } from '@/components/dashboard/Header';
 import { TodaysFocus } from '@/components/dashboard/TodaysFocus';
 import { DealsSnapshot } from '@/components/dashboard/DealsSnapshot';
@@ -12,8 +13,22 @@ import { getTheme } from '@/lib/themes';
 import { useTheme } from '@/lib/ThemeContext';
 
 export default function DashboardPage() {
+  const { data: session } = useSession();
   const theme = useTheme();
   const themeConfig = getTheme(theme);
+
+  // Extract first name from email or use session name
+  const getFirstName = () => {
+    if (session?.user?.name) {
+      return session.user.name.split(' ')[0];
+    }
+    if (session?.user?.email) {
+      return session.user.email.split('@')[0].charAt(0).toUpperCase() + session.user.email.split('@')[0].slice(1);
+    }
+    return 'Engineer';
+  };
+
+  const firstName = getFirstName();
 
   return (
     <div style={{
@@ -27,7 +42,7 @@ export default function DashboardPage() {
         margin: '0 auto'
       }}>
         {/* Header */}
-        <Header userName="Pranav" style={{ marginBottom: 'var(--space-10)' }} />
+        <Header userName={firstName} style={{ marginBottom: 'var(--space-10)' }} />
 
         {/* Main Grid: Left (2/3) + Right (1/3) */}
         <div style={{

@@ -1,7 +1,6 @@
 'use client';
 
 import { useMemo } from 'react';
-import { useTheme } from '@/lib/ThemeContext';
 import { analyzeDeal, DealIntelligence as DealIntelligenceType } from '@/lib/dealIntelligence';
 
 interface DealIntelligenceProps {
@@ -170,20 +169,20 @@ export function DealIntelligence({ deal, health }: DealIntelligenceProps) {
       <div
         className="rounded-lg border border-line p-4"
         style={{
-          backgroundColor: theme === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'var(--paper-alt)',
+          backgroundColor: theme === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'var(--theme-card-bg)',
           transition: 'background-color 300ms ease'
         }}
       >
         <p
           className="text-sm"
           style={{
-            color: theme === 'dark' ? '#cbd5e1' : 'var(--ink-lighter)'
+            color: theme === 'dark' ? '#cbd5e1' : 'var(--theme-text-tertiary)'
           }}
         >
           <span
             className="font-medium"
             style={{
-              color: theme === 'dark' ? '#f8fafc' : 'var(--ink)'
+              color: theme === 'dark' ? '#f8fafc' : 'var(--theme-text-primary)'
             }}
           >
             Suggested follow-up:
@@ -192,7 +191,7 @@ export function DealIntelligence({ deal, health }: DealIntelligenceProps) {
           <span
             className="font-medium"
             style={{
-              color: theme === 'dark' ? '#f8fafc' : 'var(--ink)'
+              color: theme === 'dark' ? '#f8fafc' : 'var(--theme-text-primary)'
             }}
           >
             {analysis.suggestedFollowUpDays} day{analysis.suggestedFollowUpDays > 1 ? 's' : ''}

@@ -121,9 +121,9 @@ export function CreateDealModal({ onClose, onSuccess }: CreateDealModalProps) {
       zIndex: 9999
     }}>
       <div style={{
-        backgroundColor: 'var(--paper)',
+        backgroundColor: 'var(--theme-main-bg)',
         borderRadius: '10px',
-        boxShadow: 'var(--shadow-lg)',
+        boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)',
         width: '100%',
         maxWidth: '420px',
         padding: '32px',
@@ -131,7 +131,7 @@ export function CreateDealModal({ onClose, onSuccess }: CreateDealModalProps) {
         <h2 style={{
           fontSize: '22px',
           fontWeight: 700,
-          color: 'var(--ink)',
+          color: 'var(--theme-text-primary)',
           fontFamily: '"Playfair Display", serif',
           margin: '0 0 24px 0'
         }}>
@@ -145,7 +145,7 @@ export function CreateDealModal({ onClose, onSuccess }: CreateDealModalProps) {
               display: 'block',
               fontSize: '13px',
               fontWeight: 600,
-              color: 'var(--ink)',
+              color: 'var(--theme-text-primary)',
               marginBottom: '8px'
             }}>
               Company Name *
@@ -161,19 +161,19 @@ export function CreateDealModal({ onClose, onSuccess }: CreateDealModalProps) {
                 width: '100%',
                 padding: '11px 14px',
                 borderRadius: '7px',
-                border: '1px solid var(--line)',
-                color: 'var(--ink)',
+                border: '1px solid var(--theme-border)',
+                color: 'var(--theme-text-primary)',
                 fontSize: '14px',
                 outline: 'none',
                 boxSizing: 'border-box',
-                backgroundColor: 'var(--paper)',
+                backgroundColor: 'var(--theme-main-bg)',
                 transition: 'border-color 150ms ease',
               }}
               onFocus={(e) => {
-                e.currentTarget.style.borderColor = 'var(--cobalt)';
+                e.currentTarget.style.borderColor = 'var(--theme-accent)';
               }}
               onBlur={(e) => {
-                e.currentTarget.style.borderColor = 'var(--line)';
+                e.currentTarget.style.borderColor = 'var(--theme-border)';
               }}
             />
           </div>
@@ -184,7 +184,7 @@ export function CreateDealModal({ onClose, onSuccess }: CreateDealModalProps) {
               display: 'block',
               fontSize: '13px',
               fontWeight: 600,
-              color: 'var(--ink)',
+              color: 'var(--theme-text-primary)',
               marginBottom: '8px'
             }}>
               Contact Email
@@ -198,19 +198,19 @@ export function CreateDealModal({ onClose, onSuccess }: CreateDealModalProps) {
                 width: '100%',
                 padding: '11px 14px',
                 borderRadius: '7px',
-                border: '1px solid var(--line)',
-                color: 'var(--ink)',
+                border: '1px solid var(--theme-border)',
+                color: 'var(--theme-text-primary)',
                 fontSize: '14px',
                 outline: 'none',
                 boxSizing: 'border-box',
-                backgroundColor: 'var(--paper)',
+                backgroundColor: 'var(--theme-main-bg)',
                 transition: 'border-color 150ms ease',
               }}
               onFocus={(e) => {
-                e.currentTarget.style.borderColor = 'var(--cobalt)';
+                e.currentTarget.style.borderColor = 'var(--theme-accent)';
               }}
               onBlur={(e) => {
-                e.currentTarget.style.borderColor = 'var(--line)';
+                e.currentTarget.style.borderColor = 'var(--theme-border)';
               }}
             />
           </div>
@@ -221,7 +221,7 @@ export function CreateDealModal({ onClose, onSuccess }: CreateDealModalProps) {
               display: 'block',
               fontSize: '13px',
               fontWeight: 600,
-              color: 'var(--ink)',
+              color: 'var(--theme-text-primary)',
               marginBottom: '8px'
             }}>
               Deal Size *
@@ -238,19 +238,19 @@ export function CreateDealModal({ onClose, onSuccess }: CreateDealModalProps) {
                 width: '100%',
                 padding: '11px 14px',
                 borderRadius: '7px',
-                border: '1px solid var(--line)',
-                color: 'var(--ink)',
+                border: '1px solid var(--theme-border)',
+                color: 'var(--theme-text-primary)',
                 fontSize: '14px',
                 outline: 'none',
                 boxSizing: 'border-box',
-                backgroundColor: 'var(--paper)',
+                backgroundColor: 'var(--theme-main-bg)',
                 transition: 'border-color 150ms ease',
               }}
               onFocus={(e) => {
-                e.currentTarget.style.borderColor = 'var(--cobalt)';
+                e.currentTarget.style.borderColor = 'var(--theme-accent)';
               }}
               onBlur={(e) => {
-                e.currentTarget.style.borderColor = 'var(--line)';
+                e.currentTarget.style.borderColor = 'var(--theme-border)';
               }}
             />
           </div>
@@ -261,7 +261,7 @@ export function CreateDealModal({ onClose, onSuccess }: CreateDealModalProps) {
               display: 'block',
               fontSize: '13px',
               fontWeight: 600,
-              color: 'var(--ink)',
+              color: 'var(--theme-text-primary)',
               marginBottom: '8px'
             }}>
               Stage
@@ -273,19 +273,19 @@ export function CreateDealModal({ onClose, onSuccess }: CreateDealModalProps) {
                 width: '100%',
                 padding: '11px 14px',
                 borderRadius: '7px',
-                border: '1px solid var(--line)',
-                color: 'var(--ink)',
+                border: '1px solid var(--theme-border)',
+                color: 'var(--theme-text-primary)',
                 fontSize: '14px',
                 outline: 'none',
                 boxSizing: 'border-box',
-                backgroundColor: 'var(--paper)',
+                backgroundColor: 'var(--theme-main-bg)',
                 transition: 'border-color 150ms ease',
               }}
               onFocus={(e) => {
-                e.currentTarget.style.borderColor = 'var(--cobalt)';
+                e.currentTarget.style.borderColor = 'var(--theme-accent)';
               }}
               onBlur={(e) => {
-                e.currentTarget.style.borderColor = 'var(--line)';
+                e.currentTarget.style.borderColor = 'var(--theme-border)';
               }}
             >
               <option value="demo">Demo</option>
@@ -304,19 +304,19 @@ export function CreateDealModal({ onClose, onSuccess }: CreateDealModalProps) {
                 flex: 1,
                 padding: '11px 16px',
                 borderRadius: '7px',
-                border: '1px solid var(--line)',
-                color: 'var(--ink)',
+                border: '1px solid var(--theme-border)',
+                color: 'var(--theme-text-primary)',
                 fontWeight: 600,
                 fontSize: '13px',
-                backgroundColor: 'var(--paper)',
+                backgroundColor: 'var(--theme-main-bg)',
                 cursor: 'pointer',
                 transition: 'all 150ms ease'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = 'var(--line-light)';
+                e.currentTarget.style.backgroundColor = 'var(--theme-border)';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = 'var(--paper)';
+                e.currentTarget.style.backgroundColor = 'var(--theme-main-bg)';
               }}
             >
               Cancel
@@ -329,7 +329,7 @@ export function CreateDealModal({ onClose, onSuccess }: CreateDealModalProps) {
                 padding: '11px 16px',
                 borderRadius: '7px',
                 border: 'none',
-                backgroundColor: 'var(--cobalt)',
+                backgroundColor: 'var(--theme-accent)',
                 color: 'white',
                 fontWeight: 600,
                 fontSize: '13px',
@@ -339,12 +339,12 @@ export function CreateDealModal({ onClose, onSuccess }: CreateDealModalProps) {
               }}
               onMouseEnter={(e) => {
                 if (!loading) {
-                  e.currentTarget.style.backgroundColor = 'var(--cobalt-hover)';
+                  e.currentTarget.style.backgroundColor = 'var(--theme-accent-dark)';
                 }
               }}
               onMouseLeave={(e) => {
                 if (!loading) {
-                  e.currentTarget.style.backgroundColor = 'var(--cobalt)';
+                  e.currentTarget.style.backgroundColor = 'var(--theme-accent)';
                 }
               }}
             >

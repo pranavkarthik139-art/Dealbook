@@ -13,6 +13,30 @@ export interface CalendarEventWithDeal extends CalendarEvent {
   dealId?: number;
 }
 
+// Limit calendar events to max 4 per day
+function limitEventsPerDay(events: CalendarEvent[], maxPerDay: number = 4): CalendarEvent[] {
+  const eventsByDay = new Map<string, CalendarEvent[]>();
+
+  // Group events by day (YYYY-MM-DD format)
+  events.forEach(event => {
+    const dayKey = event.startTime.toISOString().split('T')[0];
+    if (!eventsByDay.has(dayKey)) {
+      eventsByDay.set(dayKey, []);
+    }
+    eventsByDay.get(dayKey)!.push(event);
+  });
+
+  // Sort events within each day by start time and limit to maxPerDay
+  const limitedEvents: CalendarEvent[] = [];
+  eventsByDay.forEach(dayEvents => {
+    const sorted = dayEvents.sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
+    limitedEvents.push(...sorted.slice(0, maxPerDay));
+  });
+
+  // Return in original chronological order
+  return limitedEvents.sort((a, b) => a.startTime.getTime() - b.startTime.getTime());
+}
+
 // Fuzzy match helper - finds if any deal name appears in the event title
 function fuzzyMatch(eventTitle: string, dealName: string): number {
   const eventLower = eventTitle.toLowerCase();
@@ -101,7 +125,7 @@ export async function fetchCalendarEvents(
       console.log(`  - ${e.summary}: ${e.start?.dateTime || e.start?.date}`);
     });
 
-    return events.map((event) => ({
+    const mappedEvents = events.map((event) => ({
       id: event.id || '',
       title: event.summary || 'Untitled',
       startTime: new Date(event.start?.dateTime || event.start?.date || ''),
@@ -109,6 +133,12 @@ export async function fetchCalendarEvents(
       attendees: event.attendees?.map((a) => a.email || '') || [],
       description: event.description || undefined,
     }));
+
+    // Limit to max 4 events per day
+    const limitedEvents = limitEventsPerDay(mappedEvents, 4);
+    console.log(`📅 After limiting to 4 per day: ${limitedEvents.length} events`);
+
+    return limitedEvents;
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : String(error);
     console.error('❌ Error fetching calendar events:', errorMsg);

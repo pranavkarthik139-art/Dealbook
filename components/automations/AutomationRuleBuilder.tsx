@@ -119,7 +119,7 @@ export function AutomationRuleBuilder({
           style={{
             fontSize: '14px',
             fontWeight: 600,
-            color: 'var(--ink)',
+            color: 'var(--theme-text-primary)',
             marginBottom: '12px',
           }}
         >
@@ -132,7 +132,7 @@ export function AutomationRuleBuilder({
               style={{
                 fontSize: '12px',
                 fontWeight: 600,
-                color: 'var(--ink)',
+                color: 'var(--theme-text-primary)',
                 marginBottom: '4px',
                 display: 'block',
               }}
@@ -147,7 +147,7 @@ export function AutomationRuleBuilder({
               style={{
                 width: '100%',
                 padding: '10px 12px',
-                border: '1px solid var(--line)',
+                border: '1px solid var(--theme-border)',
                 borderRadius: '6px',
                 fontSize: '14px',
                 fontFamily: 'inherit',
@@ -162,7 +162,7 @@ export function AutomationRuleBuilder({
               style={{
                 fontSize: '12px',
                 fontWeight: 600,
-                color: 'var(--ink)',
+                color: 'var(--theme-text-primary)',
                 marginBottom: '4px',
                 display: 'block',
               }}
@@ -176,7 +176,7 @@ export function AutomationRuleBuilder({
               style={{
                 width: '100%',
                 padding: '10px 12px',
-                border: '1px solid var(--line)',
+                border: '1px solid var(--theme-border)',
                 borderRadius: '6px',
                 fontSize: '14px',
                 fontFamily: 'inherit',
@@ -195,7 +195,7 @@ export function AutomationRuleBuilder({
           style={{
             fontSize: '14px',
             fontWeight: 600,
-            color: 'var(--ink)',
+            color: 'var(--theme-text-primary)',
             marginBottom: '12px',
           }}
         >
@@ -209,7 +209,7 @@ export function AutomationRuleBuilder({
             style={{
               width: '100%',
               padding: '10px 12px',
-              border: '1px solid var(--line)',
+              border: '1px solid var(--theme-border)',
               borderRadius: '6px',
               fontSize: '14px',
               fontFamily: 'inherit',
@@ -230,7 +230,7 @@ export function AutomationRuleBuilder({
                 style={{
                   fontSize: '12px',
                   fontWeight: 600,
-                  color: 'var(--ink)',
+                  color: 'var(--theme-text-primary)',
                   marginBottom: '4px',
                   display: 'block',
                 }}
@@ -243,7 +243,7 @@ export function AutomationRuleBuilder({
                 style={{
                   width: '100%',
                   padding: '10px 12px',
-                  border: '1px solid var(--line)',
+                  border: '1px solid var(--theme-border)',
                   borderRadius: '6px',
                   fontSize: '14px',
                   fontFamily: 'inherit',
@@ -265,7 +265,7 @@ export function AutomationRuleBuilder({
                 style={{
                   fontSize: '12px',
                   fontWeight: 600,
-                  color: 'var(--ink)',
+                  color: 'var(--theme-text-primary)',
                   marginBottom: '4px',
                   display: 'block',
                 }}
@@ -280,7 +280,7 @@ export function AutomationRuleBuilder({
                 style={{
                   width: '100%',
                   padding: '10px 12px',
-                  border: '1px solid var(--line)',
+                  border: '1px solid var(--theme-border)',
                   borderRadius: '6px',
                   fontSize: '14px',
                   fontFamily: 'inherit',
@@ -298,7 +298,7 @@ export function AutomationRuleBuilder({
           style={{
             fontSize: '14px',
             fontWeight: 600,
-            color: 'var(--ink)',
+            color: 'var(--theme-text-primary)',
             marginBottom: '12px',
           }}
         >
@@ -312,7 +312,7 @@ export function AutomationRuleBuilder({
             style={{
               width: '100%',
               padding: '10px 12px',
-              border: '1px solid var(--line)',
+              border: '1px solid var(--theme-border)',
               borderRadius: '6px',
               fontSize: '14px',
               fontFamily: 'inherit',
@@ -328,7 +328,7 @@ export function AutomationRuleBuilder({
 
           {/* Conditional fields based on action */}
           {action === 'create_todo' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingTop: '8px', borderTop: '1px solid var(--line)' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', paddingTop: '8px', borderTop: '1px solid var(--theme-border)' }}>
               <div style={{ display: 'flex', gap: '8px' }}>
                 <input
                   type="text"
@@ -338,7 +338,7 @@ export function AutomationRuleBuilder({
                   style={{
                     flex: 1,
                     padding: '10px 12px',
-                    border: '1px solid var(--line)',
+                    border: '1px solid var(--theme-border)',
                     borderRadius: '6px',
                     fontSize: '14px',
                     fontFamily: 'inherit',
@@ -350,8 +350,8 @@ export function AutomationRuleBuilder({
                   onClick={addTodo}
                   style={{
                     padding: '10px 16px',
-                    backgroundColor: 'var(--line)',
-                    color: 'var(--ink)',
+                    backgroundColor: 'var(--theme-border)',
+                    color: 'var(--theme-text-primary)',
                     border: 'none',
                     borderRadius: '6px',
                     fontSize: '13px',
@@ -371,11 +371,11 @@ export function AutomationRuleBuilder({
                     justifyContent: 'space-between',
                     alignItems: 'center',
                     padding: '10px',
-                    backgroundColor: 'var(--paper-alt)',
+                    backgroundColor: 'var(--theme-card-bg)',
                     borderRadius: '6px',
                   }}
                 >
-                  <span style={{ fontSize: '13px', color: 'var(--ink)' }}>
+                  <span style={{ fontSize: '13px', color: 'var(--theme-text-primary)' }}>
                     ✓ {todo}
                   </span>
                   <button
@@ -399,13 +399,13 @@ export function AutomationRuleBuilder({
           )}
 
           {action === 'update_field' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', paddingTop: '8px', borderTop: '1px solid var(--line)' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', paddingTop: '8px', borderTop: '1px solid var(--theme-border)' }}>
               <div>
                 <label
                   style={{
                     fontSize: '12px',
                     fontWeight: 600,
-                    color: 'var(--ink)',
+                    color: 'var(--theme-text-primary)',
                     marginBottom: '4px',
                     display: 'block',
                   }}
@@ -418,7 +418,7 @@ export function AutomationRuleBuilder({
                   style={{
                     width: '100%',
                     padding: '10px 12px',
-                    border: '1px solid var(--line)',
+                    border: '1px solid var(--theme-border)',
                     borderRadius: '6px',
                     fontSize: '14px',
                     fontFamily: 'inherit',
@@ -435,7 +435,7 @@ export function AutomationRuleBuilder({
                   style={{
                     fontSize: '12px',
                     fontWeight: 600,
-                    color: 'var(--ink)',
+                    color: 'var(--theme-text-primary)',
                     marginBottom: '4px',
                     display: 'block',
                   }}
@@ -450,7 +450,7 @@ export function AutomationRuleBuilder({
                   style={{
                     width: '100%',
                     padding: '10px 12px',
-                    border: '1px solid var(--line)',
+                    border: '1px solid var(--theme-border)',
                     borderRadius: '6px',
                     fontSize: '14px',
                     fontFamily: 'inherit',
@@ -462,12 +462,12 @@ export function AutomationRuleBuilder({
           )}
 
           {action === 'move_stage' && (
-            <div style={{ paddingTop: '8px', borderTop: '1px solid var(--line)' }}>
+            <div style={{ paddingTop: '8px', borderTop: '1px solid var(--theme-border)' }}>
               <label
                 style={{
                   fontSize: '12px',
                   fontWeight: 600,
-                  color: 'var(--ink)',
+                  color: 'var(--theme-text-primary)',
                   marginBottom: '4px',
                   display: 'block',
                 }}
@@ -480,7 +480,7 @@ export function AutomationRuleBuilder({
                 style={{
                   width: '100%',
                   padding: '10px 12px',
-                  border: '1px solid var(--line)',
+                  border: '1px solid var(--theme-border)',
                   borderRadius: '6px',
                   fontSize: '14px',
                   fontFamily: 'inherit',
@@ -508,14 +508,14 @@ export function AutomationRuleBuilder({
             width: '18px',
             height: '18px',
             cursor: 'pointer',
-            accentColor: 'var(--cobalt)',
+            accentColor: 'var(--theme-accent)',
           }}
         />
         <label
           style={{
             fontSize: '13px',
             fontWeight: 500,
-            color: 'var(--ink)',
+            color: 'var(--theme-text-primary)',
             cursor: 'pointer',
           }}
         >
@@ -524,7 +524,7 @@ export function AutomationRuleBuilder({
       </div>
 
       {/* Form Actions */}
-      <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', paddingTop: '12px', borderTop: '1px solid var(--line)' }}>
+      <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', paddingTop: '12px', borderTop: '1px solid var(--theme-border)' }}>
         <button
           type="button"
           onClick={onCancel}
@@ -532,8 +532,8 @@ export function AutomationRuleBuilder({
           style={{
             padding: '10px 20px',
             backgroundColor: 'transparent',
-            color: 'var(--ink)',
-            border: '1px solid var(--line)',
+            color: 'var(--theme-text-primary)',
+            border: '1px solid var(--theme-border)',
             borderRadius: '6px',
             fontSize: '13px',
             fontWeight: 600,
@@ -548,7 +548,7 @@ export function AutomationRuleBuilder({
           disabled={isLoading || !name}
           style={{
             padding: '10px 20px',
-            backgroundColor: 'var(--cobalt)',
+            backgroundColor: 'var(--theme-accent)',
             color: 'white',
             border: 'none',
             borderRadius: '6px',

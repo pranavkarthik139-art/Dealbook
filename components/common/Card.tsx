@@ -11,11 +11,11 @@ export function Card({ children, className = '', onClick, style = {} }: CardProp
   return (
     <div
       style={{
-        backgroundColor: 'var(--paper)',
-        border: '1px solid var(--line)',
+        backgroundColor: 'var(--theme-main-bg)',
+        border: '1px solid var(--theme-border)',
         borderRadius: 'var(--radius-md)',
-        boxShadow: 'var(--shadow-sm)',
-        padding: 'var(--space-6)',
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.08)',
+        padding: '24px',
         cursor: onClick ? 'pointer' : 'default',
         transition: 'all var(--transition-base)',
         ...style
@@ -24,12 +24,12 @@ export function Card({ children, className = '', onClick, style = {} }: CardProp
       onClick={onClick}
       onMouseEnter={(e) => {
         if (onClick) {
-          (e.currentTarget as HTMLElement).style.boxShadow = 'var(--shadow-md)';
+          (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
         }
       }}
       onMouseLeave={(e) => {
         if (onClick) {
-          (e.currentTarget as HTMLElement).style.boxShadow = 'var(--shadow-sm)';
+          (e.currentTarget as HTMLElement).style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.08)';
         }
       }}
     >

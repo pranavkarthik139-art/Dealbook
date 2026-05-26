@@ -1,8 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { THEMES, type ThemeName } from '@/lib/themes';
-import { useTheme, useSetTheme } from '@/lib/ThemeContext';
 
 export function ThemeSelector() {
   const currentTheme = useTheme();
@@ -142,7 +140,7 @@ export function ThemeSelector() {
                       flex: 1,
                       height: '24px',
                       borderRadius: '4px',
-                      backgroundColor: theme.sidebarColor,
+                      backgroundColor: theme.sidebarBg,
                       border: '1px solid rgba(0, 0, 0, 0.1)',
                       title: 'Sidebar'
                     }}
@@ -152,9 +150,9 @@ export function ThemeSelector() {
                       flex: 1,
                       height: '24px',
                       borderRadius: '4px',
-                      backgroundColor: theme.mainColor,
+                      backgroundColor: theme.accentColor,
                       border: '1px solid rgba(0, 0, 0, 0.1)',
-                      title: 'Main content'
+                      title: 'Accent'
                     }}
                   />
                 </div>

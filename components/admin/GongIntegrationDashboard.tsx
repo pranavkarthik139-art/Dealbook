@@ -63,7 +63,7 @@ export function GongIntegrationDashboard() {
   if (loading) {
     return (
       <Card>
-        <div style={{ padding: 'var(--space-6)', textAlign: 'center', color: 'var(--ink-lighter)' }}>
+        <div style={{ padding: '24px', textAlign: 'center', color: 'var(--theme-text-tertiary)' }}>
           Loading Gong integration status...
         </div>
       </Card>
@@ -71,7 +71,7 @@ export function GongIntegrationDashboard() {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-6)' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {/* Header */}
       <div>
         <h2
@@ -79,13 +79,13 @@ export function GongIntegrationDashboard() {
             fontSize: '20px',
             fontWeight: 700,
             fontFamily: '"Playfair Display", serif',
-            margin: '0 0 var(--space-2) 0',
-            color: 'var(--ink)',
+            margin: '0 0 8px 0',
+            color: 'var(--theme-text-primary)',
           }}
         >
           🎤 Gong Integration Dashboard
         </h2>
-        <p style={{ margin: '0', color: 'var(--ink-lighter)', fontSize: '13px' }}>
+        <p style={{ margin: '0', color: 'var(--theme-text-tertiary)', fontSize: '13px' }}>
           Monitor API usage, sync history, and cost optimization
         </p>
       </div>
@@ -97,51 +97,51 @@ export function GongIntegrationDashboard() {
       )}
 
       {/* Key Metrics */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 'var(--space-4)' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
         <Card>
-          <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--ink-lighter)', marginBottom: 'var(--space-2)' }}>
+          <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--theme-text-tertiary)', marginBottom: '8px' }}>
             TOTAL CALLS SYNCED
           </div>
-          <div style={{ fontSize: '28px', fontWeight: 700, color: 'var(--ink)' }}>
+          <div style={{ fontSize: '28px', fontWeight: 700, color: 'var(--theme-text-primary)' }}>
             {data?.totalCallsSynced || 0}
           </div>
-          <div style={{ fontSize: '11px', color: 'var(--ink-lighter)', marginTop: 'var(--space-2)' }}>
+          <div style={{ fontSize: '11px', color: 'var(--theme-text-tertiary)', marginTop: '8px' }}>
             across all time
           </div>
         </Card>
 
         <Card>
-          <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--ink-lighter)', marginBottom: 'var(--space-2)' }}>
+          <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--theme-text-tertiary)', marginBottom: '8px' }}>
             AVG API CALLS/SYNC
           </div>
           <div style={{ fontSize: '28px', fontWeight: 700, color: '#0047FF' }}>
             {data?.metrics?.averageApiCallsPerSync || '0'}
           </div>
-          <div style={{ fontSize: '11px', color: 'var(--ink-lighter)', marginTop: 'var(--space-2)' }}>
+          <div style={{ fontSize: '11px', color: 'var(--theme-text-tertiary)', marginTop: '8px' }}>
             (cached & batched)
           </div>
         </Card>
 
         <Card>
-          <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--ink-lighter)', marginBottom: 'var(--space-2)' }}>
+          <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--theme-text-tertiary)', marginBottom: '8px' }}>
             EST. MONTHLY COST
           </div>
           <div style={{ fontSize: '24px', fontWeight: 700, color: '#10B981' }}>
             {data?.metrics?.estimatedMonthlyCost || '$0.00'}
           </div>
-          <div style={{ fontSize: '11px', color: 'var(--ink-lighter)', marginTop: 'var(--space-2)' }}>
+          <div style={{ fontSize: '11px', color: 'var(--theme-text-tertiary)', marginTop: '8px' }}>
             (if pay-per-call)
           </div>
         </Card>
 
         <Card>
-          <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--ink-lighter)', marginBottom: 'var(--space-2)' }}>
+          <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--theme-text-tertiary)', marginBottom: '8px' }}>
             LAST SYNC
           </div>
-          <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink)' }}>
+          <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--theme-text-primary)' }}>
             {data?.lastSync ? new Date(data.lastSync).toLocaleString() : 'Never'}
           </div>
-          <div style={{ fontSize: '11px', color: 'var(--ink-lighter)', marginTop: 'var(--space-2)' }}>
+          <div style={{ fontSize: '11px', color: 'var(--theme-text-tertiary)', marginTop: '8px' }}>
             📅 Auto syncs daily
           </div>
         </Card>
@@ -149,28 +149,28 @@ export function GongIntegrationDashboard() {
 
       {/* Cost Optimization Info */}
       <Card>
-        <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink)', marginBottom: 'var(--space-3)' }}>
+        <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--theme-text-primary)', marginBottom: '12px' }}>
           ⚡ Cost Optimization Active
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 'var(--space-4)' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
           <div>
-            <div style={{ fontSize: '11px', color: 'var(--ink-lighter)', marginBottom: '4px' }}>✅ Incremental Sync</div>
-            <div style={{ fontSize: '12px', fontWeight: 500, color: 'var(--ink)' }}>Only new/updated calls</div>
+            <div style={{ fontSize: '11px', color: 'var(--theme-text-tertiary)', marginBottom: '4px' }}>✅ Incremental Sync</div>
+            <div style={{ fontSize: '12px', fontWeight: 500, color: 'var(--theme-text-primary)' }}>Only new/updated calls</div>
           </div>
           <div>
-            <div style={{ fontSize: '11px', color: 'var(--ink-lighter)', marginBottom: '4px' }}>✅ 24h Cache Layer</div>
-            <div style={{ fontSize: '12px', fontWeight: 500, color: 'var(--ink)' }}>90% fewer API calls</div>
+            <div style={{ fontSize: '11px', color: 'var(--theme-text-tertiary)', marginBottom: '4px' }}>✅ 24h Cache Layer</div>
+            <div style={{ fontSize: '12px', fontWeight: 500, color: 'var(--theme-text-primary)' }}>90% fewer API calls</div>
           </div>
           <div>
-            <div style={{ fontSize: '11px', color: 'var(--ink-lighter)', marginBottom: '4px' }}>✅ Batch Operations</div>
-            <div style={{ fontSize: '12px', fontWeight: 500, color: 'var(--ink)' }}>100 calls in 1 request</div>
+            <div style={{ fontSize: '11px', color: 'var(--theme-text-tertiary)', marginBottom: '4px' }}>✅ Batch Operations</div>
+            <div style={{ fontSize: '12px', fontWeight: 500, color: 'var(--theme-text-primary)' }}>100 calls in 1 request</div>
           </div>
         </div>
       </Card>
 
       {/* Recent Syncs */}
       <Card>
-        <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--ink)', marginBottom: 'var(--space-4)' }}>
+        <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--theme-text-primary)', marginBottom: '16px' }}>
           📊 Recent Sync History (Last 7 Days)
         </div>
 
@@ -184,19 +184,19 @@ export function GongIntegrationDashboard() {
           >
             <thead>
               <tr style={{ borderBottom: '1px solid rgba(0, 0, 0, 0.08)' }}>
-                <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600, color: 'var(--ink-lighter)' }}>
+                <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600, color: 'var(--theme-text-tertiary)' }}>
                   Date
                 </th>
-                <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600, color: 'var(--ink-lighter)' }}>
+                <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600, color: 'var(--theme-text-tertiary)' }}>
                   Fetched
                 </th>
-                <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600, color: 'var(--ink-lighter)' }}>
+                <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600, color: 'var(--theme-text-tertiary)' }}>
                   Matched
                 </th>
-                <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600, color: 'var(--ink-lighter)' }}>
+                <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600, color: 'var(--theme-text-tertiary)' }}>
                   API Calls
                 </th>
-                <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600, color: 'var(--ink-lighter)' }}>
+                <th style={{ padding: '8px', textAlign: 'left', fontWeight: 600, color: 'var(--theme-text-tertiary)' }}>
                   Status
                 </th>
               </tr>
@@ -205,11 +205,11 @@ export function GongIntegrationDashboard() {
               {data?.recentSyncs && data.recentSyncs.length > 0 ? (
                 data.recentSyncs.map((sync: SyncRecord, idx: number) => (
                   <tr key={idx} style={{ borderBottom: '1px solid rgba(0, 0, 0, 0.04)' }}>
-                    <td style={{ padding: '8px', color: 'var(--ink)' }}>
+                    <td style={{ padding: '8px', color: 'var(--theme-text-primary)' }}>
                       {new Date(sync.date).toLocaleDateString()} {new Date(sync.date).toLocaleTimeString()}
                     </td>
-                    <td style={{ padding: '8px', color: 'var(--ink)' }}>{sync.callsFetched}</td>
-                    <td style={{ padding: '8px', color: 'var(--ink)', fontWeight: 600 }}>{sync.callsMatched}</td>
+                    <td style={{ padding: '8px', color: 'var(--theme-text-primary)' }}>{sync.callsFetched}</td>
+                    <td style={{ padding: '8px', color: 'var(--theme-text-primary)', fontWeight: 600 }}>{sync.callsMatched}</td>
                     <td style={{ padding: '8px', color: '#0047FF', fontWeight: 600 }}>{sync.apiCallsUsed}</td>
                     <td style={{ padding: '8px' }}>
                       <span
@@ -230,7 +230,7 @@ export function GongIntegrationDashboard() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={5} style={{ padding: '16px', textAlign: 'center', color: 'var(--ink-lighter)' }}>
+                  <td colSpan={5} style={{ padding: '16px', textAlign: 'center', color: 'var(--theme-text-tertiary)' }}>
                     No sync history yet
                   </td>
                 </tr>
@@ -246,7 +246,7 @@ export function GongIntegrationDashboard() {
           onClick={triggerSync}
           style={{
             width: '100%',
-            padding: 'var(--space-3)',
+            padding: '12px',
             backgroundColor: '#0047FF',
             color: '#FFFFFF',
             border: 'none',
@@ -265,17 +265,17 @@ export function GongIntegrationDashboard() {
         >
           🔄 Trigger Sync Now
         </button>
-        <div style={{ fontSize: '11px', color: 'var(--ink-lighter)', marginTop: 'var(--space-3)', textAlign: 'center' }}>
+        <div style={{ fontSize: '11px', color: 'var(--theme-text-tertiary)', marginTop: '12px', textAlign: 'center' }}>
           Normally syncs daily at 3 AM. Click to sync manually.
         </div>
       </Card>
 
       {/* Info Box */}
       <Card style={{ backgroundColor: '#F0F4FF', borderColor: '#0047FF' }}>
-        <div style={{ fontSize: '11px', fontWeight: 600, color: '#0047FF', marginBottom: 'var(--space-2)' }}>
+        <div style={{ fontSize: '11px', fontWeight: 600, color: '#0047FF', marginBottom: '8px' }}>
           💡 How It Works
         </div>
-        <ul style={{ fontSize: '12px', color: 'var(--ink)', margin: '0', paddingLeft: '20px', lineHeight: 1.6 }}>
+        <ul style={{ fontSize: '12px', color: 'var(--theme-text-primary)', margin: '0', paddingLeft: '20px', lineHeight: 1.6 }}>
           <li>Only fetches calls updated since last sync (not all calls)</li>
           <li>Caches results for 24 hours to avoid redundant API calls</li>
           <li>Batches multiple calls into single API requests</li>

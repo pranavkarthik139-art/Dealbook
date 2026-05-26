@@ -83,8 +83,8 @@ export function GongInsightsDashboard({ deals }: GongInsightsDashboardProps) {
 
   return (
     <div style={{
-      marginBottom: 'var(--space-8)',
-      padding: 'var(--space-6)',
+      marginBottom: '32px',
+      padding: '24px',
       backgroundColor: '#fff8f0',
       borderRadius: 'var(--radius-lg)',
       border: '1px solid #fde0cc',
@@ -93,8 +93,8 @@ export function GongInsightsDashboard({ deals }: GongInsightsDashboardProps) {
         fontSize: 'var(--text-xl)',
         fontFamily: '"Playfair Display", serif',
         fontWeight: 700,
-        color: 'var(--ink)',
-        margin: '0 0 var(--space-6) 0',
+        color: 'var(--theme-text-primary)',
+        margin: '0 0 24px 0',
       }}>
         🎯 Gong Insights Pending Review ({pendingInsights.length})
       </h2>
@@ -102,7 +102,7 @@ export function GongInsightsDashboard({ deals }: GongInsightsDashboardProps) {
       <div style={{
         display: 'flex',
         flexDirection: 'column',
-        gap: 'var(--space-4)',
+        gap: '16px',
       }}>
         {pendingInsights.map(insight => (
           <GongInsightCard

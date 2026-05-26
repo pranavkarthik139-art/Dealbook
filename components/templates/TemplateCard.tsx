@@ -31,8 +31,8 @@ export function TemplateCard({
   return (
     <div
       style={{
-        backgroundColor: 'var(--paper)',
-        border: '1px solid var(--line)',
+        backgroundColor: 'var(--theme-main-bg)',
+        border: '1px solid var(--theme-border)',
         borderRadius: '12px',
         padding: '20px',
         boxShadow: 'var(--shadow)',
@@ -40,7 +40,7 @@ export function TemplateCard({
         cursor: 'pointer',
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.boxShadow = 'var(--shadow-lg)';
+        e.currentTarget.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.15)';
         e.currentTarget.style.transform = 'translateY(-4px)';
       }}
       onMouseLeave={(e) => {
@@ -51,14 +51,14 @@ export function TemplateCard({
       {/* Header */}
       <div style={{ marginBottom: '16px' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '8px' }}>
-          <h3 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--ink)', margin: 0 }}>
+          <h3 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--theme-text-primary)', margin: 0 }}>
             {name}
           </h3>
           <span
             style={{
               display: 'inline-block',
               padding: '4px 8px',
-              backgroundColor: 'var(--cobalt)',
+              backgroundColor: 'var(--theme-accent)',
               color: 'white',
               borderRadius: '4px',
               fontSize: '11px',
@@ -69,7 +69,7 @@ export function TemplateCard({
             {dealType}
           </span>
         </div>
-        <p style={{ fontSize: '12px', color: 'var(--ink-lighter)', margin: 0 }}>
+        <p style={{ fontSize: '12px', color: 'var(--theme-text-tertiary)', margin: 0 }}>
           Used {usage} time{usage !== 1 ? 's' : ''}
         </p>
       </div>
@@ -78,20 +78,20 @@ export function TemplateCard({
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '16px' }}>
         {expectedDuration && (
           <div>
-            <p style={{ fontSize: '11px', color: 'var(--ink-lighter)', margin: '0 0 4px 0' }}>
+            <p style={{ fontSize: '11px', color: 'var(--theme-text-tertiary)', margin: '0 0 4px 0' }}>
               Duration
             </p>
-            <p style={{ fontSize: '14px', fontWeight: 600, color: 'var(--ink)', margin: 0 }}>
+            <p style={{ fontSize: '14px', fontWeight: 600, color: 'var(--theme-text-primary)', margin: 0 }}>
               {expectedDuration}d
             </p>
           </div>
         )}
         {estimatedValue && (
           <div>
-            <p style={{ fontSize: '11px', color: 'var(--ink-lighter)', margin: '0 0 4px 0' }}>
+            <p style={{ fontSize: '11px', color: 'var(--theme-text-tertiary)', margin: '0 0 4px 0' }}>
               Est. Value
             </p>
-            <p style={{ fontSize: '14px', fontWeight: 600, color: 'var(--cobalt)', margin: 0 }}>
+            <p style={{ fontSize: '14px', fontWeight: 600, color: 'var(--theme-accent)', margin: 0 }}>
               {formatValue(Number(estimatedValue))}
             </p>
           </div>
@@ -105,7 +105,7 @@ export function TemplateCard({
           style={{
             flex: 1,
             padding: '8px 12px',
-            backgroundColor: 'var(--cobalt)',
+            backgroundColor: 'var(--theme-accent)',
             color: 'white',
             border: 'none',
             borderRadius: '6px',
@@ -124,9 +124,9 @@ export function TemplateCard({
           style={{
             flex: 1,
             padding: '8px 12px',
-            backgroundColor: 'var(--paper-alt)',
-            color: 'var(--ink)',
-            border: '1px solid var(--line)',
+            backgroundColor: 'var(--theme-card-bg)',
+            color: 'var(--theme-text-primary)',
+            border: '1px solid var(--theme-border)',
             borderRadius: '6px',
             fontSize: '12px',
             fontWeight: 600,
@@ -134,10 +134,10 @@ export function TemplateCard({
             transition: 'all 150ms ease',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = 'var(--line)';
+            e.currentTarget.style.backgroundColor = 'var(--theme-border)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'var(--paper-alt)';
+            e.currentTarget.style.backgroundColor = 'var(--theme-card-bg)';
           }}
         >
           Edit

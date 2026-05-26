@@ -121,9 +121,9 @@ export function BatchEmailModal({
     >
       <div
         style={{
-          backgroundColor: 'var(--paper)',
+          backgroundColor: 'var(--theme-main-bg)',
           borderRadius: '10px',
-          boxShadow: 'var(--shadow-lg)',
+          boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)',
           width: '100%',
           maxWidth: '700px',
           padding: '36px',
@@ -135,7 +135,7 @@ export function BatchEmailModal({
           style={{
             fontSize: '22px',
             fontWeight: 700,
-            color: 'var(--ink)',
+            color: 'var(--theme-text-primary)',
             fontFamily: '"Playfair Display", serif',
             margin: '0 0 8px 0',
           }}
@@ -145,7 +145,7 @@ export function BatchEmailModal({
         <p
           style={{
             fontSize: '13px',
-            color: 'var(--ink-light)',
+            color: 'var(--theme-text-secondary)',
             margin: '0 0 24px 0',
           }}
         >
@@ -192,10 +192,10 @@ export function BatchEmailModal({
           <div
             style={{
               padding: '12px 14px',
-              backgroundColor: 'var(--line)',
+              backgroundColor: 'var(--theme-border)',
               borderRadius: '7px',
               fontSize: '13px',
-              color: 'var(--ink)',
+              color: 'var(--theme-text-primary)',
             }}
           >
             <strong>Deals included:</strong> {deals.map(d => d.name).join(', ')}
@@ -208,7 +208,7 @@ export function BatchEmailModal({
                 display: 'block',
                 fontSize: '13px',
                 fontWeight: 600,
-                color: 'var(--ink)',
+                color: 'var(--theme-text-primary)',
                 marginBottom: '10px',
               }}
             >
@@ -225,13 +225,13 @@ export function BatchEmailModal({
                     borderRadius: '7px',
                     border:
                       templateMode === template
-                        ? '2px solid var(--cobalt)'
-                        : '1px solid var(--line)',
+                        ? '2px solid var(--theme-accent)'
+                        : '1px solid var(--theme-border)',
                     backgroundColor:
                       templateMode === template
                         ? 'rgba(0, 71, 255, 0.05)'
-                        : 'var(--paper)',
-                    color: 'var(--ink)',
+                        : 'var(--theme-main-bg)',
+                    color: 'var(--theme-text-primary)',
                     fontSize: '12px',
                     cursor: 'pointer',
                     fontWeight: 500,
@@ -240,13 +240,13 @@ export function BatchEmailModal({
                   onMouseEnter={e => {
                     if (templateMode !== template) {
                       (e.currentTarget as HTMLButtonElement).style.borderColor =
-                        'var(--cobalt)';
+                        'var(--theme-accent)';
                     }
                   }}
                   onMouseLeave={e => {
                     if (templateMode !== template) {
                       (e.currentTarget as HTMLButtonElement).style.borderColor =
-                        'var(--line)';
+                        'var(--theme-border)';
                     }
                   }}
                 >
@@ -261,13 +261,13 @@ export function BatchEmailModal({
                   borderRadius: '7px',
                   border:
                     templateMode === 'custom'
-                      ? '2px solid var(--cobalt)'
-                      : '1px solid var(--line)',
+                      ? '2px solid var(--theme-accent)'
+                      : '1px solid var(--theme-border)',
                   backgroundColor:
                     templateMode === 'custom'
                       ? 'rgba(0, 71, 255, 0.05)'
-                      : 'var(--paper)',
-                  color: 'var(--ink)',
+                      : 'var(--theme-main-bg)',
+                  color: 'var(--theme-text-primary)',
                   fontSize: '12px',
                   cursor: 'pointer',
                   fontWeight: 500,
@@ -276,13 +276,13 @@ export function BatchEmailModal({
                 onMouseEnter={e => {
                   if (templateMode !== 'custom') {
                     (e.currentTarget as HTMLButtonElement).style.borderColor =
-                      'var(--cobalt)';
+                      'var(--theme-accent)';
                   }
                 }}
                 onMouseLeave={e => {
                   if (templateMode !== 'custom') {
                     (e.currentTarget as HTMLButtonElement).style.borderColor =
-                      'var(--line)';
+                      'var(--theme-border)';
                   }
                 }}
               >
@@ -298,7 +298,7 @@ export function BatchEmailModal({
                 display: 'block',
                 fontSize: '13px',
                 fontWeight: 600,
-                color: 'var(--ink)',
+                color: 'var(--theme-text-primary)',
                 marginBottom: '8px',
               }}
             >
@@ -314,19 +314,19 @@ export function BatchEmailModal({
                 width: '100%',
                 padding: '11px 14px',
                 borderRadius: '7px',
-                border: '1px solid var(--line)',
-                color: 'var(--ink)',
+                border: '1px solid var(--theme-border)',
+                color: 'var(--theme-text-primary)',
                 fontSize: '14px',
                 outline: 'none',
                 boxSizing: 'border-box',
-                backgroundColor: 'var(--paper)',
+                backgroundColor: 'var(--theme-main-bg)',
                 transition: 'border-color 150ms ease',
               }}
               onFocus={e => {
-                e.currentTarget.style.borderColor = 'var(--cobalt)';
+                e.currentTarget.style.borderColor = 'var(--theme-accent)';
               }}
               onBlur={e => {
-                e.currentTarget.style.borderColor = 'var(--line)';
+                e.currentTarget.style.borderColor = 'var(--theme-border)';
               }}
             />
           </div>
@@ -338,7 +338,7 @@ export function BatchEmailModal({
                 display: 'block',
                 fontSize: '13px',
                 fontWeight: 600,
-                color: 'var(--ink)',
+                color: 'var(--theme-text-primary)',
                 marginBottom: '8px',
               }}
             >
@@ -354,27 +354,27 @@ export function BatchEmailModal({
                 width: '100%',
                 padding: '11px 14px',
                 borderRadius: '7px',
-                border: '1px solid var(--line)',
-                color: 'var(--ink)',
+                border: '1px solid var(--theme-border)',
+                color: 'var(--theme-text-primary)',
                 fontSize: '14px',
                 outline: 'none',
                 boxSizing: 'border-box',
-                backgroundColor: 'var(--paper)',
+                backgroundColor: 'var(--theme-main-bg)',
                 fontFamily: 'inherit',
                 transition: 'border-color 150ms ease',
                 resize: 'vertical',
               }}
               onFocus={e => {
-                e.currentTarget.style.borderColor = 'var(--cobalt)';
+                e.currentTarget.style.borderColor = 'var(--theme-accent)';
               }}
               onBlur={e => {
-                e.currentTarget.style.borderColor = 'var(--line)';
+                e.currentTarget.style.borderColor = 'var(--theme-border)';
               }}
             />
             <p
               style={{
                 fontSize: '12px',
-                color: 'var(--ink-light)',
+                color: 'var(--theme-text-secondary)',
                 marginTop: '6px',
               }}
             >
@@ -387,15 +387,15 @@ export function BatchEmailModal({
             <div
               style={{
                 padding: '14px',
-                backgroundColor: 'var(--line)',
+                backgroundColor: 'var(--theme-border)',
                 borderRadius: '7px',
-                borderLeft: '4px solid var(--cobalt)',
+                borderLeft: '4px solid var(--theme-accent)',
               }}
             >
               <p
                 style={{
                   fontSize: '11px',
-                  color: 'var(--ink-light)',
+                  color: 'var(--theme-text-secondary)',
                   marginBottom: '8px',
                   fontWeight: 600,
                   textTransform: 'uppercase',
@@ -407,7 +407,7 @@ export function BatchEmailModal({
                 style={{
                   fontSize: '13px',
                   fontWeight: 600,
-                  color: 'var(--ink)',
+                  color: 'var(--theme-text-primary)',
                   marginBottom: '8px',
                 }}
               >
@@ -416,7 +416,7 @@ export function BatchEmailModal({
               <p
                 style={{
                   fontSize: '12px',
-                  color: 'var(--ink)',
+                  color: 'var(--theme-text-primary)',
                   whiteSpace: 'pre-wrap',
                   lineHeight: '1.5',
                 }}
@@ -443,11 +443,11 @@ export function BatchEmailModal({
                 flex: 1,
                 padding: '11px 16px',
                 borderRadius: '7px',
-                border: '1px solid var(--line)',
-                color: 'var(--ink)',
+                border: '1px solid var(--theme-border)',
+                color: 'var(--theme-text-primary)',
                 fontWeight: 600,
                 fontSize: '13px',
-                backgroundColor: 'var(--paper)',
+                backgroundColor: 'var(--theme-main-bg)',
                 cursor: loading ? 'not-allowed' : 'pointer',
                 opacity: loading ? 0.5 : 1,
                 transition: 'all 150ms ease',
@@ -455,13 +455,13 @@ export function BatchEmailModal({
               onMouseEnter={e => {
                 if (!loading) {
                   (e.currentTarget as HTMLButtonElement).style.backgroundColor =
-                    'var(--line-light)';
+                    'var(--theme-border)';
                 }
               }}
               onMouseLeave={e => {
                 if (!loading) {
                   (e.currentTarget as HTMLButtonElement).style.backgroundColor =
-                    'var(--paper)';
+                    'var(--theme-main-bg)';
                 }
               }}
             >
@@ -475,7 +475,7 @@ export function BatchEmailModal({
                 padding: '11px 16px',
                 borderRadius: '7px',
                 border: 'none',
-                backgroundColor: 'var(--cobalt)',
+                backgroundColor: 'var(--theme-accent)',
                 color: 'white',
                 fontWeight: 600,
                 fontSize: '13px',
@@ -494,7 +494,7 @@ export function BatchEmailModal({
                   formData.body
                 ) {
                   (e.currentTarget as HTMLButtonElement).style.backgroundColor =
-                    'var(--cobalt-hover)';
+                    'var(--theme-accent-dark)';
                 }
               }}
               onMouseLeave={e => {
@@ -504,7 +504,7 @@ export function BatchEmailModal({
                   formData.body
                 ) {
                   (e.currentTarget as HTMLButtonElement).style.backgroundColor =
-                    'var(--cobalt)';
+                    'var(--theme-accent)';
                 }
               }}
             >

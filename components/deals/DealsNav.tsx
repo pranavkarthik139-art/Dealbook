@@ -19,7 +19,7 @@ export function DealsNav() {
       display: 'flex',
       gap: '0',
       marginBottom: '24px',
-      borderBottom: '1px solid var(--line)',
+      borderBottom: '1px solid var(--theme-border)',
       overflowX: 'auto',
       scrollBehavior: 'smooth'
     }}>
@@ -32,8 +32,8 @@ export function DealsNav() {
             fontSize: '13px',
             fontWeight: 600,
             textDecoration: 'none',
-            color: tab.active ? 'var(--cobalt)' : 'var(--ink-lighter)',
-            borderBottom: tab.active ? '3px solid var(--cobalt)' : 'none',
+            color: tab.active ? 'var(--theme-accent)' : 'var(--theme-text-tertiary)',
+            borderBottom: tab.active ? '3px solid var(--theme-accent)' : 'none',
             transition: 'all var(--transition-base)',
             marginBottom: '-1px',
             cursor: 'pointer',
@@ -42,13 +42,13 @@ export function DealsNav() {
           }}
           onMouseEnter={(e) => {
             if (!tab.active) {
-              e.currentTarget.style.color = 'var(--ink)';
-              e.currentTarget.style.backgroundColor = 'var(--line-light)';
+              e.currentTarget.style.color = 'var(--theme-text-primary)';
+              e.currentTarget.style.backgroundColor = 'var(--theme-border)';
             }
           }}
           onMouseLeave={(e) => {
             if (!tab.active) {
-              e.currentTarget.style.color = 'var(--ink-lighter)';
+              e.currentTarget.style.color = 'var(--theme-text-tertiary)';
               e.currentTarget.style.backgroundColor = 'transparent';
             }
           }}

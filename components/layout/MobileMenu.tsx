@@ -27,18 +27,18 @@ export function MobileMenu() {
         onClick={() => setIsOpen(!isOpen)}
         className="fixed top-4 left-4 z-50 lg:hidden"
         style={{
-          backgroundColor: 'var(--paper)',
-          border: '1px solid var(--line)',
+          backgroundColor: 'var(--theme-main-bg)',
+          border: '1px solid var(--theme-border)',
           borderRadius: '7px',
           padding: '8px 12px',
           cursor: 'pointer',
           transition: 'all 150ms ease'
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.backgroundColor = 'var(--paper-alt)';
+          e.currentTarget.style.backgroundColor = 'var(--theme-card-bg)';
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.backgroundColor = 'var(--paper)';
+          e.currentTarget.style.backgroundColor = 'var(--theme-main-bg)';
         }}
       >
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -61,21 +61,21 @@ export function MobileMenu() {
           <div
             className="fixed top-0 left-0 h-screen w-64 z-40 lg:hidden overflow-y-auto"
             style={{
-              backgroundColor: 'var(--paper)',
-              boxShadow: 'var(--shadow-lg)',
+              backgroundColor: 'var(--theme-main-bg)',
+              boxShadow: '0 10px 25px rgba(0, 0, 0, 0.15)',
               animation: 'slideInLeft 300ms ease'
             }}
           >
             {/* Header */}
             <div style={{
               padding: '32px 24px',
-              borderBottom: '1px solid var(--line)'
+              borderBottom: '1px solid var(--theme-border)'
             }}>
               <h1 style={{
                 fontSize: '32px',
                 fontWeight: 700,
                 fontFamily: '"Playfair Display", serif',
-                color: 'var(--ink)',
+                color: 'var(--theme-text-primary)',
                 margin: 0,
                 letterSpacing: '-0.8px',
                 lineHeight: 1.1
@@ -101,14 +101,14 @@ export function MobileMenu() {
                       fontWeight: 500,
                       textDecoration: 'none',
                       transition: 'all 150ms ease',
-                      backgroundColor: isActive(item.href) ? 'var(--paper-alt)' : 'transparent',
-                      color: 'var(--ink)',
+                      backgroundColor: isActive(item.href) ? 'var(--theme-card-bg)' : 'transparent',
+                      color: 'var(--theme-text-primary)',
                       opacity: isActive(item.href) ? 1 : 0.85,
                       cursor: 'pointer'
                     }}
                     onMouseEnter={(e) => {
                       if (!isActive(item.href)) {
-                        e.currentTarget.style.backgroundColor = 'var(--paper-alt)';
+                        e.currentTarget.style.backgroundColor = 'var(--theme-card-bg)';
                         e.currentTarget.style.opacity = '1';
                       }
                     }}

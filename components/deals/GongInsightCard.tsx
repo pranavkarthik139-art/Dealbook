@@ -25,10 +25,10 @@ export function GongInsightCard({
 
   const riskColor =
     insight.riskLevel === 'high'
-      ? 'var(--error)'
+      ? 'var(--theme-error)'
       : insight.riskLevel === 'medium'
-      ? 'var(--warning)'
-      : 'var(--success)';
+      ? 'var(--theme-warning)'
+      : 'var(--theme-success)';
 
   const riskEmoji =
     insight.riskLevel === 'high'
@@ -52,22 +52,22 @@ export function GongInsightCard({
   return (
     <div style={{
       borderTop: `3px solid ${riskColor}`,
-      paddingTop: 'var(--space-5)',
+      paddingTop: '20px',
       marginBottom: 0,
     }}>
       {/* Header */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
-        gap: 'var(--space-2)',
-        marginBottom: 'var(--space-4)',
+        gap: '8px',
+        marginBottom: '16px',
       }}>
         <span style={{ fontSize: '20px' }}>📞</span>
         <h3 style={{
           margin: 0,
           fontSize: 'var(--text-base)',
           fontWeight: 600,
-          color: 'var(--ink)',
+          color: 'var(--theme-text-primary)',
         }}>
           Gong Call Insight
         </h3>
@@ -85,11 +85,11 @@ export function GongInsightCard({
       </div>
 
       {/* Call Brief */}
-      <div style={{ marginBottom: 'var(--space-4)' }}>
+      <div style={{ marginBottom: '16px' }}>
         <p style={{
           margin: 0,
           fontSize: 'var(--text-sm)',
-          color: 'var(--ink)',
+          color: 'var(--theme-text-primary)',
           lineHeight: 1.6,
         }}>
           {insight.callBrief}
@@ -98,10 +98,10 @@ export function GongInsightCard({
 
       {/* Risk Description */}
       {insight.riskDescription && (
-        <div style={{ marginBottom: 'var(--space-4)' }}>
+        <div style={{ marginBottom: '16px' }}>
           <p style={{
             margin: 0,
-            padding: 'var(--space-3)',
+            padding: '12px',
             backgroundColor: riskColor + '10',
             borderLeft: `3px solid ${riskColor}`,
             borderRadius: '4px',
@@ -115,12 +115,12 @@ export function GongInsightCard({
       )}
 
       {/* Next Steps */}
-      <div style={{ marginBottom: 'var(--space-5)' }}>
+      <div style={{ marginBottom: '20px' }}>
         <p style={{
-          margin: '0 0 var(--space-2) 0',
+          margin: '0 0 8px 0',
           fontSize: 'var(--text-xs)',
           fontWeight: 700,
-          color: 'var(--ink-lighter)',
+          color: 'var(--theme-text-tertiary)',
           textTransform: 'uppercase',
           letterSpacing: '0.5px',
         }}>
@@ -129,7 +129,7 @@ export function GongInsightCard({
         <p style={{
           margin: 0,
           fontSize: 'var(--text-sm)',
-          color: 'var(--ink)',
+          color: 'var(--theme-text-primary)',
           whiteSpace: 'pre-wrap',
           lineHeight: 1.6,
         }}>
@@ -143,8 +143,8 @@ export function GongInsightCard({
         disabled={syncing}
         style={{
           width: '100%',
-          padding: 'var(--space-3) var(--space-4)',
-          backgroundColor: 'var(--success)',
+          padding: '12px 16px',
+          backgroundColor: 'var(--theme-success)',
           color: 'white',
           border: 'none',
           borderRadius: 'var(--radius-md)',

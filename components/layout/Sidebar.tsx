@@ -240,6 +240,40 @@ export function Sidebar() {
             Automations
           </Link>
 
+          {/* Link Hub */}
+          <Link
+            href="/links"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              padding: '10px 12px',
+              borderRadius: '6px',
+              fontSize: '13px',
+              fontWeight: 500,
+              textDecoration: 'none',
+              transition: 'all 150ms ease',
+              backgroundColor: isActive('/links') ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
+              color: textColor,
+              opacity: isActive('/links') ? 1 : 0.85,
+              cursor: 'pointer'
+            }}
+            onMouseEnter={(e) => {
+              if (!isActive('/links')) {
+                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.12)';
+                e.currentTarget.style.opacity = '1';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (!isActive('/links')) {
+                e.currentTarget.style.backgroundColor = 'transparent';
+                e.currentTarget.style.opacity = '0.85';
+              }
+            }}
+          >
+            <span style={{ marginRight: '10px', fontSize: '16px' }}>📎</span>
+            Link Hub
+          </Link>
+
           {/* Settings */}
           <Link
             href="/settings"

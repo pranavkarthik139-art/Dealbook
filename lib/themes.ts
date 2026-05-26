@@ -32,29 +32,29 @@ export const THEMES: Record<ThemeName, ThemeConfig> = {
   cobalt: {
     name: 'cobalt',
     label: 'Cobalt',
-    sidebarColor: '#FFFFFF',    // White sidebar with cobalt accents
-    mainColor: '#F9F9F7',       // Paper background
+    sidebarColor: '#4F46E5',    // Rich cobalt sidebar
+    mainColor: '#F0F4FF',       // Light cobalt-tinted background
     accentColor: '#6366F1',     // Cobalt accent
-    textColor: '#0F172A',       // Ink text
-    description: 'Modern cobalt accent with neutral sidebar',
+    textColor: '#0F172A',       // Dark text
+    description: 'Modern cobalt theme with complementary sidebar and main area',
   },
   emerald: {
     name: 'emerald',
     label: 'Emerald',
-    sidebarColor: '#FFFFFF',    // White sidebar
-    mainColor: '#F9F9F7',       // Paper background
+    sidebarColor: '#047857',    // Rich emerald sidebar
+    mainColor: '#F0FDF4',       // Light emerald-tinted background
     accentColor: '#10B981',     // Emerald accent
-    textColor: '#0F172A',       // Ink text
-    description: 'Emerald accent with neutral sidebar',
+    textColor: '#0F172A',       // Dark text
+    description: 'Fresh emerald theme with complementary green sidebar',
   },
   slate: {
     name: 'slate',
     label: 'Slate',
-    sidebarColor: '#FFFFFF',    // White sidebar
-    mainColor: '#F9F9F7',       // Paper background
+    sidebarColor: '#475569',    // Deep slate sidebar
+    mainColor: '#F8FAFC',       // Light slate-tinted background
     accentColor: '#64748B',     // Slate accent
-    textColor: '#0F172A',       // Ink text
-    description: 'Slate accent with neutral sidebar',
+    textColor: '#0F172A',       // Dark text
+    description: 'Professional slate theme with complementary sidebar',
   },
 };
 

@@ -38,15 +38,15 @@ export function AutomationCard({
   return (
     <div
       style={{
-        backgroundColor: 'var(--paper)',
-        border: `2px solid ${enabled ? 'var(--green-light)' : 'var(--line)'}`,
+        backgroundColor: 'var(--theme-main-bg)',
+        border: `2px solid ${enabled ? 'var(--green-light)' : 'var(--theme-border)'}`,
         borderRadius: '12px',
         padding: '20px',
         boxShadow: 'var(--shadow)',
         transition: 'all 200ms ease',
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.boxShadow = 'var(--shadow-lg)';
+        e.currentTarget.style.boxShadow = '0 10px 25px rgba(0, 0, 0, 0.15)';
         e.currentTarget.style.transform = 'translateY(-2px)';
       }}
       onMouseLeave={(e) => {
@@ -57,10 +57,10 @@ export function AutomationCard({
       {/* Header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
         <div>
-          <h3 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--ink)', margin: 0, marginBottom: '4px' }}>
+          <h3 style={{ fontSize: '16px', fontWeight: 600, color: 'var(--theme-text-primary)', margin: 0, marginBottom: '4px' }}>
             {name}
           </h3>
-          <p style={{ fontSize: '12px', color: 'var(--ink-lighter)', margin: 0 }}>
+          <p style={{ fontSize: '12px', color: 'var(--theme-text-tertiary)', margin: 0 }}>
             {enabled ? '🟢 Active' : '⚫ Inactive'}
           </p>
         </div>
@@ -80,12 +80,12 @@ export function AutomationCard({
       </div>
 
       {/* Flow */}
-      <div style={{ marginBottom: '16px', padding: '12px', backgroundColor: 'var(--paper-alt)', borderRadius: '8px' }}>
+      <div style={{ marginBottom: '16px', padding: '12px', backgroundColor: 'var(--theme-card-bg)', borderRadius: '8px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-          <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--cobalt)', textTransform: 'uppercase' }}>
+          <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--theme-accent)', textTransform: 'uppercase' }}>
             When
           </span>
-          <span style={{ fontSize: '13px', color: 'var(--ink)' }}>
+          <span style={{ fontSize: '13px', color: 'var(--theme-text-primary)' }}>
             {triggerDesc}
           </span>
         </div>
@@ -93,7 +93,7 @@ export function AutomationCard({
           <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--green)', textTransform: 'uppercase' }}>
             Then
           </span>
-          <span style={{ fontSize: '13px', color: 'var(--ink)' }}>
+          <span style={{ fontSize: '13px', color: 'var(--theme-text-primary)' }}>
             {actionDesc}
           </span>
         </div>
@@ -106,9 +106,9 @@ export function AutomationCard({
           style={{
             flex: 1,
             padding: '8px 12px',
-            backgroundColor: 'var(--paper-alt)',
-            color: 'var(--ink)',
-            border: '1px solid var(--line)',
+            backgroundColor: 'var(--theme-card-bg)',
+            color: 'var(--theme-text-primary)',
+            border: '1px solid var(--theme-border)',
             borderRadius: '6px',
             fontSize: '12px',
             fontWeight: 600,
@@ -116,10 +116,10 @@ export function AutomationCard({
             transition: 'all 150ms ease',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = 'var(--line)';
+            e.currentTarget.style.backgroundColor = 'var(--theme-border)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'var(--paper-alt)';
+            e.currentTarget.style.backgroundColor = 'var(--theme-card-bg)';
           }}
         >
           History
@@ -129,9 +129,9 @@ export function AutomationCard({
           style={{
             flex: 1,
             padding: '8px 12px',
-            backgroundColor: 'var(--paper-alt)',
-            color: 'var(--ink)',
-            border: '1px solid var(--line)',
+            backgroundColor: 'var(--theme-card-bg)',
+            color: 'var(--theme-text-primary)',
+            border: '1px solid var(--theme-border)',
             borderRadius: '6px',
             fontSize: '12px',
             fontWeight: 600,
@@ -139,10 +139,10 @@ export function AutomationCard({
             transition: 'all 150ms ease',
           }}
           onMouseEnter={(e) => {
-            e.currentTarget.style.backgroundColor = 'var(--line)';
+            e.currentTarget.style.backgroundColor = 'var(--theme-border)';
           }}
           onMouseLeave={(e) => {
-            e.currentTarget.style.backgroundColor = 'var(--paper-alt)';
+            e.currentTarget.style.backgroundColor = 'var(--theme-card-bg)';
           }}
         >
           Edit
