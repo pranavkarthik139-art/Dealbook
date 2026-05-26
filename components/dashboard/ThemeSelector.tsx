@@ -2,18 +2,25 @@
 
 import React, { useState } from 'react';
 
+const THEMES = {
+  paper: { name: 'paper', label: 'Paper', description: 'Light & clean', sidebarBg: '#F9F9F7', accentColor: '#0047FF' },
+  cobalt: { name: 'cobalt', label: 'Cobalt', description: 'Bold blue', sidebarBg: '#0047FF', accentColor: '#0047FF' },
+  emerald: { name: 'emerald', label: 'Emerald', description: 'Green accent', sidebarBg: '#F9F9F7', accentColor: '#10B981' },
+};
+
 export function ThemeSelector() {
-  const currentTheme = useTheme();
-  const setTheme = useSetTheme();
+  const [currentTheme, setCurrentTheme] = useState('paper');
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleThemeChange = (theme: ThemeName) => {
-    setTheme(theme);
+  const handleThemeChange = (theme: string) => {
+    setCurrentTheme(theme);
     setIsOpen(false);
+    // Store in localStorage
+    localStorage.setItem('dealbook-theme', theme);
   };
 
   const themeList = Object.values(THEMES);
-  const activeTheme = THEMES[currentTheme];
+  const activeTheme = THEMES[currentTheme as keyof typeof THEMES] || THEMES.paper;
 
   return (
     <div style={{ position: 'relative' }}>
