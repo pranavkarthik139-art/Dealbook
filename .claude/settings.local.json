@@ -255,7 +255,8 @@
       "Bash(grep -E \"\\\\.\\(tsx?|jsx?\\)$\")",
       "Bash(cd /c/Users/prana/OneDrive/Desktop/Hashwork && grep -r \"var\\(--paper\\\\|var\\(--ink\\\\|var\\(--cobalt\\\\|var\\(--error\\\\|var\\(--line\\\\|var\\(--shadow-\" components/ --include=\"*.tsx\" | head -20)",
       "Bash(curl -s http://localhost:3001)",
-      "mcp__49cce02b-615b-403a-9394-4afd007eafbd__create_file"
+      "mcp__49cce02b-615b-403a-9394-4afd007eafbd__create_file",
+      "Bash(grep -E \"\\\\.\\(ts|js\\)$\")"
     ]
   }
 }
