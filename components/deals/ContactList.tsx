@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { useTheme } from '@/lib/ThemeContext';
+import { getTheme } from '@/lib/themes';
 import { LogEngagementModal } from './LogEngagementModal';
 
 interface Contact {
@@ -11,6 +13,7 @@ interface Contact {
   role?: string;
   linkedinUrl?: string;
   lastContactedAt?: string;
+  notes?: string;
 }
 
 interface ContactListProps {
@@ -106,6 +109,13 @@ export function ContactList({
                       <p className="text-xs text-ink-lighter mt-1">
                         Last contacted: {new Date(contact.lastContactedAt).toLocaleDateString()}
                       </p>
+                    )}
+                    {contact.notes && (
+                      <div className="mt-3 pt-3 border-t border-line text-xs text-ink-lighter space-y-1">
+                        {contact.notes.split('\n').map((line, idx) => (
+                          <p key={idx}>{line}</p>
+                        ))}
+                      </div>
                     )}
                   </div>
                   <div className="flex gap-2 ml-4">

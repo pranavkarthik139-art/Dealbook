@@ -26,7 +26,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     const contacts = await prisma.contact.findMany({
       where: {
-        userId: USER_ID,
+        userId: user.id,
         dealId,
       },
       orderBy: { createdAt: 'desc' },

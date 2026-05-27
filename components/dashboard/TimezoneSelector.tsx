@@ -102,72 +102,72 @@ export function TimezoneSelector() {
 
   return (
     <div style={{ position: 'relative' }}>
-      {/* Minimal Time Display - Blends with background */}
+      {/* Large Time Display - Prominent Clock */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '10px',
-          padding: '8px 12px',
+          gap: '14px',
+          padding: '12px 14px',
           backgroundColor: 'transparent',
-          border: 'none',
-          borderRadius: '6px',
+          border: '1px solid transparent',
+          borderRadius: '8px',
           cursor: 'pointer',
-          transition: 'background-color 150ms ease',
+          transition: 'all 150ms ease',
           fontFamily: '"Courier Prime", "SF Mono", monospace',
-          fontSize: '13px',
-          fontWeight: '500',
-          color: 'var(--theme-text-secondary)',
-          minWidth: 'auto'
+          minWidth: 'auto',
+          hover: { borderColor: 'var(--theme-border)' }
         }}
         onMouseEnter={(e) => {
           e.currentTarget.style.backgroundColor = 'var(--theme-hover-bg)';
+          e.currentTarget.style.borderColor = 'var(--theme-border)';
         }}
         onMouseLeave={(e) => {
           e.currentTarget.style.backgroundColor = 'transparent';
+          e.currentTarget.style.borderColor = 'transparent';
         }}
         title="Click to configure timezones"
       >
+        {/* Large Clock Icon */}
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{
+          color: 'var(--theme-text-primary)',
+          flexShrink: 0,
+          opacity: 0.85
+        }}>
+          <circle cx="12" cy="12" r="10" />
+          <polyline points="12 6 12 12 16 14" />
+        </svg>
+
         {/* Time Display - Primary & Secondary Timezones */}
         {times.length > 0 && (
-          <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', gap: '2px' }}>
-            {/* Primary Timezone - Larger */}
+          <div style={{ textAlign: 'left', display: 'flex', flexDirection: 'column', gap: '3px' }}>
+            {/* Primary Timezone - Large & Bold */}
             <div style={{
-              fontSize: '14px',
-              fontWeight: '600',
-              letterSpacing: '0.3px',
+              fontSize: '18px',
+              fontWeight: '700',
+              letterSpacing: '0.2px',
               color: 'var(--theme-text-primary)',
               fontFamily: '"Courier Prime", "SF Mono", monospace',
-              lineHeight: '1.1'
+              lineHeight: '1.2'
             }}>
               {times[0].time}
             </div>
-            {/* Secondary Timezone - Smaller */}
+            {/* Secondary Timezone - Clear & Visible */}
             {times.length > 1 && (
               <div style={{
-                fontSize: '11px',
-                fontWeight: '400',
-                color: 'var(--theme-text-tertiary)',
+                fontSize: '14px',
+                fontWeight: '500',
+                color: 'var(--theme-text-secondary)',
                 fontFamily: '"Courier Prime", "SF Mono", monospace',
-                lineHeight: '1',
-                opacity: 0.8
+                lineHeight: '1.1',
+                opacity: 0.9
               }}>
                 {times[1].time}
               </div>
             )}
           </div>
         )}
-
-        {/* Small clock icon */}
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{
-          color: 'var(--theme-text-tertiary)',
-          flexShrink: 0,
-          opacity: 0.6
-        }}>
-          <circle cx="12" cy="12" r="10" />
-          <polyline points="12 6 12 12 16 14" />
-        </svg>
       </button>
 
       {/* Dropdown Menu */}
