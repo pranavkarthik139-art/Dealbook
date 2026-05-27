@@ -27,28 +27,27 @@ export function LayoutWrapper({ children }: { children: React.ReactNode }) {
       {/* Apply current theme to document */}
       <ThemeApplier />
 
+      {/* Sidebar - hidden on mobile, fixed positioning */}
+      <div className="hidden lg:block" style={{ position: 'fixed', left: 0, top: 0, height: '100vh', zIndex: 1000 }}>
+        <Sidebar key={theme} />
+      </div>
+
+      {/* Mobile Menu - only visible on mobile */}
+      <div className="lg:hidden">
+        <MobileMenu />
+      </div>
+
       <div style={{
-        display: 'flex',
         minHeight: '100vh',
         backgroundColor: themeConfig.mainColor,
-        transition: 'background-color 300ms ease'
-      }}>
-        {/* Sidebar - hidden on mobile */}
-        <div className="hidden lg:block" style={{ flexShrink: 0 }}>
-          <Sidebar key={theme} />
-        </div>
-
-        {/* Mobile Menu - only visible on mobile */}
-        <div className="lg:hidden">
-          <MobileMenu />
-        </div>
-
+        transition: 'background-color 300ms ease',
+        marginLeft: '280px'  // Account for fixed sidebar width
+      }} className="hidden lg:block">
       {/* Main area with topbar + content */}
       <div style={{
-        flex: 1,
         display: 'flex',
         flexDirection: 'column',
-        minWidth: 0  // Prevent flex overflow issues
+        minHeight: '100vh'
       }}>
         <Topbar />
         <CommandBar />

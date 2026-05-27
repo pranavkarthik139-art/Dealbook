@@ -52,13 +52,15 @@ export function Sidebar() {
   return (
     <aside style={{
       width: '280px',
+      height: '100vh',
       backgroundColor: themeConfig.sidebarColor,
       borderRight: `1px solid ${borderColor}`,
       display: 'flex',
       flexDirection: 'column',
       flexShrink: 0,
       boxShadow: '0 2px 8px rgba(0, 0, 0, 0.12)',
-      transition: 'background-color 300ms ease'
+      transition: 'background-color 300ms ease',
+      overflowY: 'auto'
     }}>
       {/* Brand */}
       <div style={{
