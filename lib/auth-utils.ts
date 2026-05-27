@@ -4,70 +4,25 @@ import { prisma } from '@/lib/db';
 
 /**
  * Get current user from session
- * Extracts user from NextAuth session, falling back to demo user for development
+ * Returns the authenticated user or null
  */
 export async function getCurrentUser() {
-  const session = await getServerSession(authOptions);
-
-  if (!session?.user?.email) {
-    console.warn('[Auth] No session found - using demo user');
-    // Fallback: return demo user (ID 1)
-    return {
-      id: 1,
-      email: 'demo@dealbook.com',
-      name: 'Demo User',
-      image: null,
-      emailVerified: null,
-      role: 'admin',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-  }
-
   try {
-    // Fetch user from database by email (source of truth for user data and role)
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.email) {
+      return null;
+    }
+
+    // Fetch user from database by email
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
     });
 
-    if (!user) {
-      console.warn(`[Auth] User ${session.user.email} not found in database - creating with default role`);
-      // Auto-create user if they have a valid session
-      const newUser = await prisma.user.create({
-        data: {
-          email: session.user.email,
-          name: session.user.name || session.user.email.split('@')[0],
-          image: session.user.image || null,
-          role: 'sales_engineer',
-        },
-      });
-      return newUser;
-    }
-
-    // Ensure user has a role set (should be set by signIn callback)
-    if (!user.role) {
-      console.warn(`[Auth] User ${user.email} has no role set - assigning sales_engineer`);
-      const updated = await prisma.user.update({
-        where: { id: user.id },
-        data: { role: 'sales_engineer' },
-      });
-      return updated;
-    }
-
     return user;
   } catch (error) {
-    console.error('[Auth] Error fetching user from database:', error);
-    // Fallback on error
-    return {
-      id: 1,
-      email: 'demo@dealbook.com',
-      name: 'Demo User',
-      image: null,
-      emailVerified: null,
-      role: 'admin',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+    console.error('[Auth] Error in getCurrentUser:', error);
+    return null;
   }
 }
 
