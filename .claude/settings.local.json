@@ -260,7 +260,32 @@
       "Bash(xargs -I {} sh -c 'echo \"=== {} ===\" && head -5 {}')",
       "Bash(curl -s http://localhost:3000/settings)",
       "Bash(cloc --by-file-by-lang --quiet .)",
-      "Bash(curl -s https://dealbook.vercel.app/api/seed)"
+      "Bash(curl -s https://dealbook.vercel.app/api/seed)",
+      "Bash(curl -X POST https://dealbook.vercel.app/api/seed -H \"Content-Type: application/json\")",
+      "mcp__bf5722c8-7476-4eb7-863b-9f030a8e720a__list_deployments",
+      "mcp__bf5722c8-7476-4eb7-863b-9f030a8e720a__list_teams",
+      "mcp__bf5722c8-7476-4eb7-863b-9f030a8e720a__list_projects",
+      "Bash(curl -s -w \"\\\\nStatus: %{http_code}\\\\n\" https://dealbook.vercel.app/)",
+      "Bash(timeout 30 curl -X POST https://dealbook.vercel.app/api/seed -H \"Content-Type: application/json\" -s)",
+      "Bash(curl -s https://dealbook.vercel.app/deals -w \"\\\\nStatus: %{http_code}\\\\n\" -L -H \"User-Agent: curl\")",
+      "mcp__mcp-registry__list_connectors",
+      "mcp__mcp-registry__search_mcp_registry",
+      "mcp__98aa697c-5b51-466b-b6d8-e6e98b6a2421__execute_sql",
+      "mcp__98aa697c-5b51-466b-b6d8-e6e98b6a2421__list_tables",
+      "mcp__bf5722c8-7476-4eb7-863b-9f030a8e720a__get_access_to_vercel_url",
+      "WebFetch(domain:dealbook.vercel.app)",
+      "mcp__bf5722c8-7476-4eb7-863b-9f030a8e720a__get_runtime_logs",
+      "Bash(cd \"C:\\\\\\\\Users\\\\\\\\prana\\\\\\\\OneDrive\\\\\\\\Desktop\\\\\\\\Hashwork\")",
+      "mcp__bf5722c8-7476-4eb7-863b-9f030a8e720a__get_deployment",
+      "mcp__bf5722c8-7476-4eb7-863b-9f030a8e720a__get_deployment_build_logs",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\prana\\\\OneDrive\\\\Desktop\\\\Hashwork\" -Directory)",
+      "Bash(Select-Object Name)",
+      "Bash(grep -r \"from.*components\" /c/Users/prana/OneDrive/Desktop/Hashwork/app --include=\"*.tsx\" --include=\"*.ts\" | cut -d: -f2 | sort -u > /tmp/imported_components.txt && wc -l /tmp/imported_components.txt)",
+      "Bash(grep -r \"^[[:space:]]*//.*{$\\\\|^[[:space:]]*\\\\/\\\\*\" /c/Users/prana/OneDrive/Desktop/Hashwork/components --include=\"*.tsx\" --include=\"*.ts\" -A 2)",
+      "Bash(chmod +x /tmp/check_imports.sh)",
+      "Bash(bash /tmp/check_imports.sh)",
+      "Bash(chmod +x /tmp/check_api_usage.sh)",
+      "Bash(bash /tmp/check_api_usage.sh)"
     ]
   }
 }

@@ -9,6 +9,9 @@ import { TodoList } from '@/components/dashboard/TodoList';
 import { ActivityFeed } from '@/components/dashboard/ActivityFeed';
 import { CriticalDeals } from '@/components/dashboard/CriticalDeals';
 import { KeyInsights } from '@/components/dashboard/KeyInsights';
+import { StageAnalytics } from '@/components/dashboard/StageAnalytics';
+import { EmailSyncButton } from '@/components/dashboard/EmailSyncButton';
+import { CalendarSyncButton } from '@/components/dashboard/CalendarSyncButton';
 import BrainBreakContainer from '@/components/BrainBreak/BrainBreakContainer';
 import { getTheme } from '@/lib/themes';
 import { useTheme } from '@/lib/ThemeContext';
@@ -66,6 +69,9 @@ export default function DashboardPage() {
 
             {/* Key Insights */}
             <KeyInsights />
+
+            {/* Stage Analytics */}
+            <StageAnalytics />
           </div>
 
           {/* RIGHT COLUMN */}
@@ -75,6 +81,27 @@ export default function DashboardPage() {
 
             {/* Activity Feed */}
             <ActivityFeed />
+
+            {/* Sync Panel */}
+            <div style={{
+              padding: 'var(--space-6)',
+              backgroundColor: 'var(--paper)',
+              border: '1px solid var(--line)',
+              borderRadius: 'var(--radius-lg)',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 'var(--space-6)'
+            }}>
+              <h3 style={{
+                fontSize: 'var(--text-sm)',
+                fontWeight: 700,
+                color: 'var(--ink)',
+                margin: 0,
+                marginBottom: 'var(--space-2)'
+              }}>Sync Data</h3>
+              <EmailSyncButton />
+              <CalendarSyncButton />
+            </div>
 
             {/* Brain Break Game */}
             <button

@@ -16,6 +16,7 @@ import { CallLogModal } from './CallLogModal';
 import { PulseAlert } from './PulseAlert';
 import { EmailThread } from './EmailThread';
 import { DealDetailHeader } from './DealDetailHeader';
+import { TechStackOverview } from './TechStackOverview';
 import { DealDetailSkeleton } from '@/components/common/SkeletonLoader';
 import { calculateDealPulse, type PulseSignal } from '@/lib/dealPulse';
 import type { CompanyData, ContactData } from '@/lib/apollo';
@@ -584,6 +585,12 @@ export function DealDetailView({ dealId }: { dealId: number }) {
             onEnrich={() => enrichCompany()}
           />
         </div>
+
+        {/* Divider */}
+        <div className="border-b border-line mt-8 mb-8" />
+
+        {/* Tech Stack Overview */}
+        <TechStackOverview dealId={dealId} />
 
         {/* Divider */}
         <div className="border-b border-line mt-8 mb-8" />
