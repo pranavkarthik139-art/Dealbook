@@ -20,19 +20,55 @@ export async function GET(
     const parsedId = parseInt(id);
     console.log('[API] Fetching deal with ID:', parsedId, 'Type:', typeof parsedId);
 
-    console.log('[API] Attempting to fetch deal with relations...');
+    console.log('[API] Attempting to fetch deal...');
     let deal;
     try {
+      // First, try to fetch just the deal without relations
       deal = await prisma.deal.findUnique({
         where: { id: parsedId },
-        include: {
-          calendarEvents: { orderBy: { startTime: 'asc' } },
-          todos: { orderBy: { createdAt: 'desc' } },
-          activityLogs: { orderBy: { createdAt: 'desc' }, take: 20 },
-          contacts: true,
-        },
       });
-      console.log('[API] Deal query succeeded, deal:', deal ? `Found (ID: ${deal.id}, Owner: ${deal.userId})` : 'Not found');
+      console.log('[API] Basic deal query succeeded');
+
+      if (!deal) {
+        console.log('[API] Deal not found');
+      } else {
+        // Now try to fetch relations one by one
+        console.log('[API] Fetching relations...');
+
+        const calendarEvents = await prisma.calendarEvent.findMany({
+          where: { dealId: parsedId },
+          orderBy: { startTime: 'asc' },
+        });
+        console.log('[API] Calendar events fetched:', calendarEvents.length);
+
+        const todos = await prisma.todo.findMany({
+          where: { dealId: parsedId },
+          orderBy: { createdAt: 'desc' },
+        });
+        console.log('[API] Todos fetched:', todos.length);
+
+        const activityLogs = await prisma.activityLog.findMany({
+          where: { dealId: parsedId },
+          orderBy: { createdAt: 'desc' },
+          take: 20,
+        });
+        console.log('[API] Activity logs fetched:', activityLogs.length);
+
+        const contacts = await prisma.contact.findMany({
+          where: { dealId: parsedId },
+        });
+        console.log('[API] Contacts fetched:', contacts.length);
+
+        // Combine them into the deal object
+        deal = {
+          ...deal,
+          calendarEvents,
+          todos,
+          activityLogs,
+          contacts,
+        };
+        console.log('[API] Deal fully loaded with relations');
+      }
     } catch (queryError) {
       console.error('[API] Deal query error:', queryError);
       throw queryError;
@@ -87,10 +123,17 @@ export async function GET(
     return NextResponse.json(dealWithMetadata, { status: 200 });
   } catch (error) {
     const errorMsg = error instanceof Error ? error.message : String(error);
+    const errorStack = error instanceof Error ? error.stack : '';
     console.error('[API] Error fetching deal:', errorMsg);
+    console.error('[API] Error stack:', errorStack);
     console.error('[API] Full error:', error);
+
     return NextResponse.json(
-      { error: 'Failed to fetch deal', details: errorMsg },
+      {
+        error: 'Failed to fetch deal',
+        details: errorMsg,
+        type: error instanceof Error ? error.constructor.name : typeof error
+      },
       { status: 500 }
     );
   }
