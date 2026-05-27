@@ -339,7 +339,7 @@ export async function POST() {
 }
 
 /**
- * GET - Check if test data exists
+ * GET - Check if test data exists, or create it if it doesn't
  */
 export async function GET() {
   try {
@@ -356,15 +356,114 @@ export async function GET() {
       where: { userId: user.id },
     });
 
+    // If no deals exist, automatically create them
+    if (dealCount === 0) {
+      console.log(`[Seed] No deals found for user ${user.email}, creating sample data...`);
+
+      // Delete existing data to avoid conflicts
+      await prisma.contact.deleteMany({ where: { userId: user.id } });
+      await prisma.activityLog.deleteMany({ where: { userId: user.id } });
+      await prisma.deal.deleteMany({ where: { userId: user.id } });
+
+      // Create deals with enrichment metadata
+      const deals = await Promise.all(
+        REAL_DEALS.map((dealData) =>
+          prisma.deal.create({
+            data: {
+              userId: user.id,
+              name: dealData.name,
+              email: dealData.contacts[0]?.email || 'contact@example.com',
+              amount: dealData.amount,
+              status: dealData.status,
+              stage: dealData.stage,
+              probability: dealData.probability,
+              leadSource: dealData.leadSource,
+              expectedCloseDate: new Date(
+                Date.now() + dealData.daysToClose * 24 * 60 * 60 * 1000
+              ),
+            },
+          })
+        )
+      );
+
+      // Create contacts with enrichment data
+      for (let i = 0; i < deals.length; i++) {
+        const deal = deals[i];
+        const dealData = REAL_DEALS[i];
+
+        for (const contact of dealData.contacts) {
+          await prisma.contact.create({
+            data: {
+              userId: user.id,
+              dealId: deal.id,
+              name: contact.name,
+              email: contact.email,
+              title: contact.title,
+              role: contact.role,
+              company: dealData.company.name,
+              notes: `Apollo Enrichment:\n📊 Company Size: ${dealData.company.employees}\n💰 Funding: ${dealData.company.funding}\n🏢 Headquarters: ${dealData.company.headquarters}\n🌐 Website: ${dealData.company.website}`,
+            },
+          });
+        }
+
+        // Create activity logs
+        const activities = [
+          {
+            action: 'deal_created',
+            description: `Deal "${dealData.name}" created from ${dealData.leadSource} lead`,
+            daysAgo: Math.floor(Math.random() * 30) + 5,
+          },
+          {
+            action: 'email_received',
+            description: `Email from ${dealData.contacts[0]?.name}: "Interested in discussing implementation timeline"`,
+            daysAgo: Math.floor(Math.random() * 20) + 2,
+          },
+          {
+            action: 'call_logged',
+            description: `Discovery call with ${dealData.contacts[0]?.name} - High interest in features`,
+            daysAgo: Math.floor(Math.random() * 15),
+          },
+        ];
+
+        for (const activity of activities) {
+          await prisma.activityLog.create({
+            data: {
+              userId: user.id,
+              dealId: deal.id,
+              action: activity.action,
+              description: activity.description,
+              metadata: {
+                company: dealData.company.name,
+                industry: dealData.company.industry,
+                employees: dealData.company.employees,
+                funding: dealData.company.funding,
+              },
+            },
+          });
+        }
+      }
+
+      return NextResponse.json({
+        success: true,
+        message: 'Sample data created successfully',
+        hasTestData: true,
+        dealsCreated: deals.length,
+        dealCount: deals.length,
+        email: user.email,
+        userId: user.id,
+      });
+    }
+
     return NextResponse.json({
-      hasTestData: dealCount > 0,
+      hasTestData: true,
       dealCount,
       email: user.email,
       userId: user.id,
     });
   } catch (error) {
+    console.error('[Seed] Error:', error);
     return NextResponse.json(
-      { error: 'Failed to check test data' },
+      { error: 'Failed to check/create test data' },
       { status: 500 }
     );
   }

@@ -122,25 +122,30 @@ export function UserProfile() {
         >
           <p
             style={{
-              fontSize: '13px',
-              fontWeight: 600,
+              fontSize: '14px',
+              fontWeight: 700,
               color: '#FFFFFF',
-              margin: '0 0 2px 0',
+              margin: '0 0 3px 0',
               whiteSpace: 'nowrap',
               overflow: 'hidden',
-              textOverflow: 'ellipsis'
+              textOverflow: 'ellipsis',
+              fontFamily: 'DM Sans, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+              letterSpacing: '0.3px'
             }}
           >
             {userName}
           </p>
           <p
             style={{
-              fontSize: '11px',
-              color: 'rgba(255, 255, 255, 0.75)',
+              fontSize: '12px',
+              fontWeight: 500,
+              color: '#FFFFFF',
               margin: 0,
               whiteSpace: 'nowrap',
               overflow: 'hidden',
-              textOverflow: 'ellipsis'
+              textOverflow: 'ellipsis',
+              fontFamily: 'DM Sans, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+              opacity: 0.9
             }}
           >
             {userRole}
