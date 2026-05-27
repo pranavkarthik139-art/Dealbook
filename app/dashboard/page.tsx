@@ -4,7 +4,6 @@ import { useSession } from 'next-auth/react';
 import { Header } from '@/components/dashboard/Header';
 import { TodaysFocus } from '@/components/dashboard/TodaysFocus';
 import { DealsSnapshot } from '@/components/dashboard/DealsSnapshot';
-import { StageAnalytics } from '@/components/dashboard/StageAnalytics';
 import { TodoList } from '@/components/dashboard/TodoList';
 import { ActivityFeed } from '@/components/dashboard/ActivityFeed';
 import { CriticalDeals } from '@/components/dashboard/CriticalDeals';
@@ -58,9 +57,6 @@ export default function DashboardPage() {
 
             {/* Pipeline Summary */}
             <DealsSnapshot />
-
-            {/* Stage Analytics - Pipeline Breakdown */}
-            <StageAnalytics />
 
             {/* Critical Deals */}
             <CriticalDeals />
