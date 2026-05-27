@@ -6,7 +6,6 @@ import { Header } from '@/components/dashboard/Header';
 import { TodaysFocus } from '@/components/dashboard/TodaysFocus';
 import { DealsSnapshot } from '@/components/dashboard/DealsSnapshot';
 import { TodoList } from '@/components/dashboard/TodoList';
-import { ActivityFeed } from '@/components/dashboard/ActivityFeed';
 import { CriticalDeals } from '@/components/dashboard/CriticalDeals';
 import { KeyInsights } from '@/components/dashboard/KeyInsights';
 import { StageAnalytics } from '@/components/dashboard/StageAnalytics';
@@ -78,9 +77,6 @@ export default function DashboardPage() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-8)' }}>
             {/* To-Do List */}
             <TodoList />
-
-            {/* Activity Feed */}
-            <ActivityFeed />
 
             {/* Sync Panel */}
             <div style={{
