@@ -259,7 +259,8 @@
       "Bash(grep -E \"\\\\.\\(ts|js\\)$\")",
       "Bash(xargs -I {} sh -c 'echo \"=== {} ===\" && head -5 {}')",
       "Bash(curl -s http://localhost:3000/settings)",
-      "Bash(cloc --by-file-by-lang --quiet .)"
+      "Bash(cloc --by-file-by-lang --quiet .)",
+      "Bash(curl -s https://dealbook.vercel.app/api/seed)"
     ]
   }
 }
