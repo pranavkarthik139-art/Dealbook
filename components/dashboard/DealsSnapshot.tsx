@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Card } from '@/components/common/Card';
 import { Spinner } from '@/components/common/Spinner';
 import { Badge } from '@/components/common/Badge';
@@ -14,6 +15,7 @@ interface DealSummary {
 }
 
 export function DealsSnapshot() {
+  const router = useRouter();
   const [summary, setSummary] = useState<DealSummary | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -35,6 +37,14 @@ export function DealsSnapshot() {
     fetchSummary();
   }, []);
 
+  const handleCardClick = (status?: string) => {
+    if (status) {
+      router.push(`/deals?status=${status}`);
+    } else {
+      router.push('/deals');
+    }
+  };
+
   if (loading) {
     return <div className="h-32 flex items-center justify-center"><Spinner /></div>;
   }
@@ -44,10 +54,10 @@ export function DealsSnapshot() {
   }
 
   const statCards = [
-    { label: 'Total Deals', value: summary.total, variant: 'default' as const },
-    { label: 'Active', value: summary.active, variant: 'active' as const },
-    { label: 'Closed', value: summary.closed, variant: 'closed' as const },
-    { label: 'On Hold', value: summary.onHold, variant: 'on-hold' as const },
+    { label: 'Total Deals', value: summary.total, variant: 'default' as const, status: undefined },
+    { label: 'Active', value: summary.active, variant: 'active' as const, status: 'active' },
+    { label: 'Closed', value: summary.closed, variant: 'closed' as const, status: 'closed' },
+    { label: 'On Hold', value: summary.onHold, variant: 'on-hold' as const, status: 'on_hold' },
   ];
 
   return (
@@ -68,6 +78,7 @@ export function DealsSnapshot() {
         {statCards.map((stat) => (
           <div
             key={stat.label}
+            onClick={() => handleCardClick(stat.status)}
             style={{
               backgroundColor: 'var(--paper)',
               border: '1px solid var(--line)',
