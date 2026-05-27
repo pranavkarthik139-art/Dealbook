@@ -16,7 +16,6 @@ import { CallLogModal } from './CallLogModal';
 import { PulseAlert } from './PulseAlert';
 import { EmailThread } from './EmailThread';
 import { DealDetailHeader } from './DealDetailHeader';
-import { TechStackOverview } from './TechStackOverview';
 import { DealDetailSkeleton } from '@/components/common/SkeletonLoader';
 import { calculateDealPulse, type PulseSignal } from '@/lib/dealPulse';
 import type { CompanyData, ContactData } from '@/lib/apollo';
@@ -144,7 +143,6 @@ export function DealDetailView({ dealId }: { dealId: number }) {
   const [showCallLogModal, setShowCallLogModal] = useState(false);
   const [syncingGong, setSyncingGong] = useState(false);
   const [pulse, setPulse] = useState<PulseSignal | null>(null);
-  const [fetchError, setFetchError] = useState<string>('');
 
   const fetchDealContacts = async () => {
     try {
@@ -384,14 +382,10 @@ export function DealDetailView({ dealId }: { dealId: number }) {
   useEffect(() => {
     const fetchDeal = async () => {
       try {
-        console.log(`[DealDetail] Fetching deal ${dealId}`);
         const response = await fetch(`/api/deals/${dealId}`);
-
         if (response.ok) {
           const data = await response.json();
-          console.log(`[DealDetail] Deal loaded successfully:`, data);
           setDeal(data);
-          setFetchError('');
           setFormData({
             name: data.name,
             amount: data.amount || '',
@@ -411,16 +405,9 @@ export function DealDetailView({ dealId }: { dealId: number }) {
 
           // Fetch calls for this deal
           await fetchCalls();
-        } else {
-          const errorData = await response.json().catch(() => ({}));
-          const errorMsg = errorData.error || response.statusText || 'Unknown error';
-          console.error(`[DealDetail] API Error ${response.status}:`, errorMsg);
-          setFetchError(`Error loading deal (${response.status}): ${errorMsg}`);
         }
       } catch (error) {
-        const msg = error instanceof Error ? error.message : String(error);
-        console.error('[DealDetail] Fetch error:', msg);
-        setFetchError(`Failed to load deal: ${msg}`);
+        console.error('Error fetching deal:', error);
       } finally {
         setLoading(false);
       }
@@ -468,14 +455,7 @@ export function DealDetailView({ dealId }: { dealId: number }) {
       <div className="flex flex-col items-center justify-center h-96 text-center">
         <div className="text-6xl mb-4">📭</div>
         <h2 className="text-2xl font-bold text-ink mb-2">Deal Not Found</h2>
-        <p className="text-ink-lighter mb-2">
-          {fetchError || 'This deal no longer exists or you don\'t have access to it.'}
-        </p>
-        {fetchError && (
-          <p className="text-xs text-red-500 mb-6 font-mono bg-red-50 px-4 py-2 rounded">
-            {fetchError}
-          </p>
-        )}
+        <p className="text-ink-lighter mb-6">This deal no longer exists or you don't have access to it.</p>
         <a
           href="/deals"
           className="px-4 py-2 rounded-lg bg-cobalt text-white text-sm hover:opacity-90 transition-opacity"
@@ -604,12 +584,6 @@ export function DealDetailView({ dealId }: { dealId: number }) {
             onEnrich={() => enrichCompany()}
           />
         </div>
-
-        {/* Divider */}
-        <div className="border-b border-line mt-8 mb-8" />
-
-        {/* Tech Stack Overview */}
-        <TechStackOverview dealId={dealId} />
 
         {/* Divider */}
         <div className="border-b border-line mt-8 mb-8" />
