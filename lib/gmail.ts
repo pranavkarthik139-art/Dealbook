@@ -50,11 +50,12 @@ export async function fetchGmailEmails(
 
     console.log('📧 Fetching emails from Gmail...');
 
+    // Fetch recent emails (unread or from last 7 days)
     const response = await gmailWithAuth.users.messages.list({
       userId: 'me',
       maxResults: limit,
       pageToken,
-      q: 'is:unread',
+      q: 'after:2026-05-20', // Last 7 days approximately
     });
 
     const messages = response.data.messages || [];
