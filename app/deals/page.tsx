@@ -82,11 +82,24 @@ export default function DealsPage() {
     const fetchDeals = async () => {
       try {
         const response = await fetch('/api/deals');
+
+        if (!response.ok) {
+          console.error('Deals API error:', response.status, response.statusText);
+          const errorData = await response.json().catch(() => ({}));
+          console.error('Error details:', errorData);
+          setDeals([]);
+          setFilteredDeals([]);
+          return;
+        }
+
         const data = await response.json();
+        console.log('Deals fetched successfully:', data.deals?.length, 'deals');
         setDeals(data.deals || []);
         setFilteredDeals(data.deals || []);
       } catch (error) {
         console.error('Failed to fetch deals:', error);
+        setDeals([]);
+        setFilteredDeals([]);
       } finally {
         setLoading(false);
       }
