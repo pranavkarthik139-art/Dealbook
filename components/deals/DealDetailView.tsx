@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow, differenceInDays } from 'date-fns';
 import { getTheme } from '@/lib/themes';
 import { useTheme } from '@/lib/ThemeContext';
 import { DealHealthScore } from './DealHealthScore';
@@ -61,17 +61,8 @@ interface Deal {
   activityLogs?: Array<{ id: number; action: string; description?: string; createdAt: string }>;
 }
 
-interface GongInsight {
-  id: number;
-  callBrief: string;
-  riskLevel: 'low' | 'medium' | 'high';
-  riskDescription?: string;
-  nextSteps: string;
-}
-
-// Generate consistent mock Gong insights for any deal ID
-function generateGongInsight(dealId: number, dealName: string): GongInsight {
-  const insightVariations: Omit<GongInsight, 'id'>[] = [
+function generateGongInsight(dealId: number, dealName: string) {
+  const insightVariations = [
     {
       callBrief: `Discovery call with stakeholder team completed. Strong product-market fit signals detected. Budget approved for Q2. Wants to move to POC phase next month.`,
       riskLevel: 'low',
@@ -104,14 +95,8 @@ function generateGongInsight(dealId: number, dealName: string): GongInsight {
     },
   ];
 
-  // Use dealId to consistently pick the same variation
   const index = dealId % insightVariations.length;
-  const insight = insightVariations[index];
-
-  return {
-    id: dealId,
-    ...insight,
-  };
+  return insightVariations[index];
 }
 
 export function DealDetailView({ dealId }: { dealId: number }) {
@@ -132,7 +117,6 @@ export function DealDetailView({ dealId }: { dealId: number }) {
   const [companyData, setCompanyData] = useState<CompanyData | null>(null);
   const [contacts, setContacts] = useState<ContactData[]>([]);
   const [enriching, setEnriching] = useState(false);
-  const [enrichError, setEnrichError] = useState<string>('');
   const [dealContacts, setDealContacts] = useState<Contact[]>([]);
   const [loadingContacts, setLoadingContacts] = useState(false);
   const [showContactForm, setShowContactForm] = useState(false);
@@ -177,13 +161,9 @@ export function DealDetailView({ dealId }: { dealId: number }) {
         await fetchDealContacts();
         setShowContactForm(false);
         setEditingContact(null);
-      } else {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to save contact');
       }
     } catch (error) {
-      const msg = error instanceof Error ? error.message : 'Unknown error';
-      throw new Error(msg);
+      console.error('Error saving contact:', error);
     }
   };
 
@@ -195,13 +175,9 @@ export function DealDetailView({ dealId }: { dealId: number }) {
 
       if (response.ok) {
         await fetchDealContacts();
-      } else {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to delete contact');
       }
     } catch (error) {
-      const msg = error instanceof Error ? error.message : 'Unknown error';
-      throw new Error(msg);
+      console.error('Error deleting contact:', error);
     }
   };
 
@@ -230,35 +206,9 @@ export function DealDetailView({ dealId }: { dealId: number }) {
 
       if (response.ok) {
         await fetchCalls();
-      } else {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to log call');
       }
     } catch (error) {
-      const msg = error instanceof Error ? error.message : 'Unknown error';
-      console.error('Error logging call:', msg);
-      throw error;
-    }
-  };
-
-  const handleUpdateGongDescription = async (callId: number, description: string) => {
-    try {
-      const response = await fetch(`/api/calls/${callId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ gongDescription: description }),
-      });
-
-      if (response.ok) {
-        await fetchCalls();
-      } else {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to update Gong description');
-      }
-    } catch (error) {
-      const msg = error instanceof Error ? error.message : 'Unknown error';
-      console.error('Error updating Gong description:', msg);
-      throw error;
+      console.error('Error logging call:', error);
     }
   };
 
@@ -270,110 +220,37 @@ export function DealDetailView({ dealId }: { dealId: number }) {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        console.log('Gong sync result:', data);
         await fetchCalls();
-        // Show success message
-        if (data.syncedCount > 0) {
-          console.log(`✅ Synced ${data.syncedCount} calls from Gong`);
-        } else {
-          console.log('No new calls to sync');
-        }
-      } else {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to sync Gong calls');
       }
     } catch (error) {
-      const msg = error instanceof Error ? error.message : 'Unknown error';
-      console.error('Error syncing Gong:', msg);
+      console.error('Error syncing Gong:', error);
     } finally {
       setSyncingGong(false);
     }
-  };
-
-  const calculatePulse = () => {
-    if (!deal || deal.activityLogs === undefined) return;
-
-    // Transform activity logs for pulse calculation
-    const activityLogsForPulse = (deal.activityLogs || []).map(log => ({
-      action: log.action,
-      createdAt: new Date(log.createdAt)
-    }));
-
-    // Transform calendar events
-    const calendarEventsForPulse = (deal.calendarEvents || []).map(event => ({
-      startTime: new Date(event.startTime)
-    }));
-
-    // Transform calls
-    const callsForPulse = calls.map(call => ({
-      callDate: new Date(call.callDate)
-    }));
-
-    // Transform contacts
-    const contactsForPulse = dealContacts.map(contact => ({
-      id: contact.id,
-      lastContactedAt: contact.lastContactedAt ? new Date(contact.lastContactedAt) : undefined
-    }));
-
-    // Transform Gong data from calls
-    const gongDataForPulse = calls.map(call => ({
-      description: call.gongDescription,
-      riskLevel: call.gongRiskLevel
-    }));
-
-    // Calculate pulse
-    const calculatedPulse = calculateDealPulse(
-      activityLogsForPulse,
-      calendarEventsForPulse,
-      callsForPulse,
-      gongDataForPulse,
-      calls,
-      contactsForPulse
-    );
-
-    setPulse(calculatedPulse);
   };
 
   const enrichCompany = async (dealName?: string) => {
     if (!deal && !dealName) return;
 
     setEnriching(true);
-    setEnrichError('');
 
     try {
-      // Extract company name (before the " - " separator)
       const fullName = dealName || deal?.name;
       const companyName = fullName?.split(' - ')[0].trim() || fullName;
-      console.log('🔍 Enriching company with query:', companyName);
 
       const response = await fetch('/api/enrichment/company', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          query: companyName,
-        }),
+        body: JSON.stringify({ query: companyName }),
       });
-
-      console.log('📡 Enrichment response status:', response.status);
 
       if (response.ok) {
         const data = await response.json();
-        console.log('✅ Enrichment data:', data);
         setCompanyData(data.company);
         setContacts(data.contacts || []);
-        if (!data.company) {
-          setEnrichError('No company found. Try a different search term.');
-        }
-      } else {
-        const error = await response.text();
-        console.error('❌ Enrichment error:', error);
-        setEnrichError(`Error: ${response.status} - ${error}`);
       }
     } catch (error) {
-      const msg = error instanceof Error ? error.message : String(error);
-      console.error('❌ Error enriching company:', msg);
-      setEnrichError(`Failed to enrich: ${msg}`);
+      console.error('Error enriching company:', error);
     } finally {
       setEnriching(false);
     }
@@ -397,13 +274,8 @@ export function DealDetailView({ dealId }: { dealId: number }) {
               : '',
           });
 
-          // Auto-enrich company data
           await enrichCompany(data.name);
-
-          // Fetch deal contacts
           await fetchDealContacts();
-
-          // Fetch calls for this deal
           await fetchCalls();
         }
       } catch (error) {
@@ -415,11 +287,6 @@ export function DealDetailView({ dealId }: { dealId: number }) {
 
     fetchDeal();
   }, [dealId]);
-
-  // Calculate pulse whenever deal or calls change
-  useEffect(() => {
-    calculatePulse();
-  }, [deal, calls, dealContacts]);
 
   const handleSave = async () => {
     try {
@@ -456,323 +323,355 @@ export function DealDetailView({ dealId }: { dealId: number }) {
         <div className="text-6xl mb-4">📭</div>
         <h2 className="text-2xl font-bold text-ink mb-2">Deal Not Found</h2>
         <p className="text-ink-lighter mb-6">This deal no longer exists or you don't have access to it.</p>
-        <a
-          href="/deals"
-          className="px-4 py-2 rounded-lg bg-cobalt text-white text-sm hover:opacity-90 transition-opacity"
-        >
+        <a href="/deals" className="px-4 py-2 rounded-lg bg-cobalt text-white text-sm hover:opacity-90">
           ← Back to Deals
         </a>
       </div>
     );
   }
 
+  const daysInStage = deal.lastActivityAt ? differenceInDays(new Date(), new Date(deal.lastActivityAt)) : 0;
+  const dealAge = differenceInDays(new Date(), new Date(deal.createdAt));
+  const gongInsight = generateGongInsight(dealId, deal.name);
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      {/* Main Column */}
-      <div className="lg:col-span-2 space-y-12">
-        {/* Enhanced Deal Header */}
-        <DealDetailHeader
-          deal={deal}
-          isEditing={editing}
-          editValues={formData}
-          onEdit={() => setEditing(true)}
-          onEditChange={(field, value) => setFormData({ ...formData, [field]: value })}
-          onSave={handleSave}
-          onCancel={() => setEditing(false)}
-        />
-
-        {/* Divider */}
-        <div className="border-b border-line" />
-
-        {/* Email Display Section */}
-        <div>
-          <p className="text-xs font-medium text-ink-lighter uppercase tracking-wide mb-3">Primary Contact Email</p>
-
-          {editingEmail ? (
-            <div className="space-y-3 max-w-md">
+    <div className="space-y-8">
+      {/* Header Section */}
+      <div className="bg-white rounded-lg border border-line p-8">
+        {/* Top Row: Name, Amount, Badges, Edit Button */}
+        <div className="flex items-start justify-between mb-8">
+          <div className="flex-1">
+            {editing ? (
               <input
-                type="email"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                placeholder="name@company.com"
-                className="w-full px-0 py-2 border-b border-cobalt focus:outline-none focus:border-cobalt text-sm"
+                type="text"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                className="font-serif text-4xl font-bold text-ink w-full border-b border-cobalt focus:outline-none"
               />
-              <div className="flex gap-2">
-                <button
-                  onClick={async () => {
-                    try {
-                      const response = await fetch(`/api/deals/${dealId}`, {
-                        method: 'PATCH',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                          email: formData.email || null,
-                        }),
-                      });
-                      if (response.ok) {
-                        const updated = await response.json();
-                        setDeal(updated);
-                        setEditingEmail(false);
-                      }
-                    } catch (error) {
-                      console.error('Error updating email:', error);
-                    }
-                  }}
-                  className="px-3 py-1 text-xs rounded bg-cobalt text-white hover:opacity-90 transition-opacity"
-                >
-                  Save
-                </button>
-                <button
-                  onClick={() => {
-                    setFormData({ ...formData, email: deal?.email || '' });
-                    setEditingEmail(false);
-                  }}
-                  className="px-3 py-1 text-xs rounded border border-line text-ink hover:bg-paper-alt transition-colors"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
+            ) : (
+              <h1 className="font-serif text-4xl font-bold text-ink">{deal.name}</h1>
+            )}
+
+            {editing ? (
+              <input
+                type="number"
+                value={formData.amount}
+                onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                placeholder="Amount"
+                className="text-3xl font-bold text-cobalt mt-2 border-b border-cobalt focus:outline-none"
+              />
+            ) : (
+              <p className="text-3xl font-bold text-cobalt mt-2">
+                ${(deal.amount || 0) / 1000}k
+              </p>
+            )}
+          </div>
+
+          {!editing ? (
+            <button
+              onClick={() => setEditing(true)}
+              className="px-4 py-2 rounded-lg border border-line text-cobalt font-medium hover:bg-slate-50 transition-colors"
+            >
+              ✏️ Edit
+            </button>
           ) : (
-            <div className="flex items-center justify-between">
-              <div>
-                {deal.email ? (
-                  <a href={`mailto:${deal.email}`} className="text-base font-mono text-cobalt hover:opacity-80">
-                    {deal.email}
-                  </a>
-                ) : (
-                  <p className="text-base text-ink-lighter">No contact email set</p>
-                )}
-              </div>
+            <div className="flex gap-2">
               <button
-                onClick={() => setEditingEmail(true)}
-                className="text-xs text-cobalt hover:opacity-80 font-medium"
+                onClick={handleSave}
+                className="px-4 py-2 rounded-lg bg-cobalt text-white font-medium hover:opacity-90"
               >
-                Edit
+                Save
+              </button>
+              <button
+                onClick={() => setEditing(false)}
+                className="px-4 py-2 rounded-lg border border-line text-ink hover:bg-slate-50"
+              >
+                Cancel
               </button>
             </div>
           )}
         </div>
 
-        {/* Divider */}
-        <div className="border-b border-line mt-8 mb-8" />
-
-        {/* Gong Insight Section - Below Deal Header & Email */}
-        {!syncedGong && (
-          <div>
-            <GongInsightCard
-              insight={generateGongInsight(dealId, deal.name)}
-              dealId={dealId}
-              onSync={() => setSyncedGong(true)}
-            />
-          </div>
-        )}
-
-        {/* Divider */}
-        <div className="border-b border-line mt-8 mb-8" />
-
-        {/* Company Enrichment */}
-        <div>
-          <h2 style={{ fontSize: '12px', fontWeight: '600', color: '#999', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-            Company Details
-          </h2>
-          <CompanyEnrichment
-            dealName={deal.name}
-            companyData={companyData}
-            contacts={contacts}
-            loading={enriching}
-            error={enrichError}
-            onEnrich={() => enrichCompany()}
-          />
-        </div>
-
-        {/* Divider */}
-        <div className="border-b border-line mt-8 mb-8" />
-
-        {/* Contacts Management */}
-        <div>
-          <h2 style={{ fontSize: '12px', fontWeight: '600', color: '#999', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-            Stakeholders
-          </h2>
-          {showContactForm ? (
-            <div className="space-y-4">
-              <ContactForm
-                dealId={dealId}
-                contact={editingContact}
-                onSave={handleSaveContact}
-                onCancel={() => {
-                  setShowContactForm(false);
-                  setEditingContact(null);
-                }}
-                isLoading={loadingContacts}
-              />
-            </div>
-          ) : (
-            <ContactList
-              dealId={dealId}
-              contacts={dealContacts}
-              primaryContactEmail={deal.email || undefined}
-              onAdd={() => setShowContactForm(true)}
-              onEdit={(contact) => {
-                setEditingContact(contact);
-                setShowContactForm(true);
-              }}
-              onDelete={handleDeleteContact}
-              onEngagementLogged={() => {
-                // Refresh deal data when engagement is logged
-                fetchDealContacts();
-              }}
-              isLoading={loadingContacts}
-            />
+        {/* Badges */}
+        <div className="flex gap-2 mb-8 flex-wrap">
+          {deal.stage && (
+            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-900">
+              {deal.stage.toUpperCase()}
+            </span>
+          )}
+          {deal.status && (
+            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-900">
+              {deal.status.replace('_', ' ').toUpperCase()}
+            </span>
+          )}
+          {deal.probability && (
+            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-900">
+              {deal.probability}% Win
+            </span>
           )}
         </div>
 
-
-        {/* Timeline */}
-        <div className="space-y-4">
-          {/* Log Call Button */}
-          <div className="flex gap-3">
-            <button
-              onClick={() => setShowCallLogModal(true)}
-              className="px-4 py-2 rounded-lg bg-cobalt text-white text-sm hover:opacity-90 transition-opacity"
-            >
-              📞 Log Call
-            </button>
-            <button
-              onClick={handleSyncGong}
-              disabled={syncingGong}
-              className="px-4 py-2 rounded-lg border border-cobalt text-cobalt text-sm hover:bg-cobalt hover:bg-opacity-5 transition-colors disabled:opacity-50"
-            >
-              {syncingGong ? 'Syncing...' : 'Sync Gong'}
-            </button>
+        {/* Metrics Row */}
+        <div className="grid grid-cols-4 gap-6 p-6 bg-slate-50 rounded-lg border border-line mb-8">
+          <div>
+            <p className="text-xs font-semibold text-ink-lighter uppercase">Days in Stage</p>
+            <p className="text-2xl font-bold text-ink mt-1">{daysInStage}</p>
           </div>
-
-          {/* Call Log Modal */}
-          <CallLogModal
-            dealId={dealId}
-            isOpen={showCallLogModal}
-            onClose={() => setShowCallLogModal(false)}
-            onSubmit={handleLogCall}
-          />
-
-          {/* Timeline */}
-          <DealTimeline
-            activities={deal.activityLogs || []}
-            calls={calls}
-            onUpdateGongDescription={handleUpdateGongDescription}
-          />
+          <div>
+            <p className="text-xs font-semibold text-ink-lighter uppercase">Last Activity</p>
+            <p className="text-lg font-bold text-ink mt-1">
+              {deal.lastActivityAt ? formatDistanceToNow(new Date(deal.lastActivityAt), { addSuffix: true }) : 'None'}
+            </p>
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-ink-lighter uppercase">Deal Age</p>
+            <p className="text-2xl font-bold text-ink mt-1">{dealAge}d</p>
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-ink-lighter uppercase">Close Date</p>
+            <p className="text-lg font-bold text-ink mt-1">
+              {deal.expectedCloseDate ? new Date(deal.expectedCloseDate).toLocaleDateString() : '—'}
+            </p>
+          </div>
         </div>
 
-        {/* Email Thread Section */}
-        <div className="border-t border-line pt-12">
-          <h2 className="text-lg font-semibold text-ink mb-6">Email Interactions</h2>
-          <EmailThread dealId={deal.id} prospectEmail={deal.email || undefined} />
+        {/* Primary Contact Email */}
+        <div className="border-t border-line pt-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs font-semibold text-ink-lighter uppercase mb-2">Primary Contact Email</p>
+              {editingEmail ? (
+                <div className="space-y-3 max-w-md">
+                  <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    placeholder="name@company.com"
+                    className="w-full px-0 py-2 border-b border-cobalt focus:outline-none text-sm"
+                  />
+                  <div className="flex gap-2">
+                    <button
+                      onClick={async () => {
+                        try {
+                          const response = await fetch(`/api/deals/${dealId}`, {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ email: formData.email || null }),
+                          });
+                          if (response.ok) {
+                            const updated = await response.json();
+                            setDeal(updated);
+                            setEditingEmail(false);
+                          }
+                        } catch (error) {
+                          console.error('Error updating email:', error);
+                        }
+                      }}
+                      className="px-3 py-1 text-xs rounded bg-cobalt text-white hover:opacity-90"
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={() => setEditingEmail(false)}
+                      className="px-3 py-1 text-xs rounded border border-line text-ink hover:bg-slate-50"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-lg font-mono text-cobalt">
+                  {deal.email || 'No contact email set'}
+                </p>
+              )}
+            </div>
+            {!editingEmail && (
+              <button
+                onClick={() => setEditingEmail(true)}
+                className="text-sm text-cobalt font-medium hover:opacity-80"
+              >
+                Edit
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Right Sidebar */}
-      <div className="space-y-12">
-        {/* Intelligence Alerts */}
-        <div className="sticky top-8">
-          <div
-            className="rounded-lg border border-line p-6 space-y-6"
-            style={{
-              backgroundColor: theme === 'dark' ? '#1e293b' : '#ffffff',
-              transition: 'background-color 300ms ease'
-            }}
-          >
-            <h3
-              className="font-semibold flex items-center gap-2"
-              style={{
-                color: themeConfig.textColor,
-              }}
-            >
-              <span className="text-lg">⚡</span>
-              Intelligence Alerts
-            </h3>
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Main Content */}
+        <div className="lg:col-span-2 space-y-8">
+          {/* Gong Insight */}
+          {!syncedGong && (
+            <div className="bg-white rounded-lg border border-line p-6">
+              <div className="flex items-start gap-3 mb-4">
+                <span className="text-2xl">📞</span>
+                <div className="flex-1">
+                  <h3 className="font-semibold text-ink">Gong Call Insight</h3>
+                  <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-900 font-semibold inline-block mt-2">
+                    {gongInsight.riskLevel.toUpperCase()}
+                  </span>
+                </div>
+              </div>
+              <p className="text-sm text-ink leading-relaxed mb-4">{gongInsight.callBrief}</p>
+              <div className="bg-slate-50 p-4 rounded-lg mb-4 border-l-4 border-amber-400">
+                <p className="text-xs font-semibold text-amber-900 mb-2">Key Insight</p>
+                <p className="text-sm text-amber-900">{gongInsight.riskDescription}</p>
+              </div>
+              <div className="border-t border-line pt-4">
+                <p className="text-xs font-semibold text-ink-lighter uppercase mb-2">RECOMMENDED NEXT STEPS</p>
+                <ul className="space-y-2 text-sm text-ink">
+                  {gongInsight.nextSteps.split('\n').map((step, i) => (
+                    <li key={i} className="flex items-start gap-2">
+                      {step}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          )}
 
-            {/* Pulse Alert - Part of Intelligence Detection */}
-            {pulse && <PulseAlert pulse={pulse} />}
+          {/* Company Enrichment */}
+          {companyData && (
+            <div className="bg-white rounded-lg border border-line p-6">
+              <h3 className="text-lg font-semibold text-ink mb-4">Company Details</h3>
+              <CompanyEnrichment
+                dealName={deal.name}
+                companyData={companyData}
+                contacts={contacts}
+                loading={enriching}
+                error=""
+                onEnrich={() => enrichCompany()}
+              />
+            </div>
+          )}
 
-            {/* Other Intelligence Data */}
-            <IntelligenceAlerts dealId={deal.id} />
+          {/* Timeline */}
+          <div className="space-y-4">
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowCallLogModal(true)}
+                className="px-4 py-2 rounded-lg bg-cobalt text-white text-sm hover:opacity-90"
+              >
+                📞 Log Call
+              </button>
+              <button
+                onClick={handleSyncGong}
+                disabled={syncingGong}
+                className="px-4 py-2 rounded-lg border border-cobalt text-cobalt text-sm hover:bg-cobalt hover:bg-opacity-5 disabled:opacity-50"
+              >
+                {syncingGong ? 'Syncing...' : 'Sync Gong'}
+              </button>
+            </div>
+
+            <CallLogModal
+              dealId={dealId}
+              isOpen={showCallLogModal}
+              onClose={() => setShowCallLogModal(false)}
+              onSubmit={handleLogCall}
+            />
+
+            <DealTimeline activities={deal.activityLogs || []} calls={calls} onUpdateGongDescription={() => {}} />
           </div>
         </div>
 
-        {/* Deal Intelligence */}
-        <DealIntelligence deal={deal} health={deal.probability || 50} />
-
-        {/* Health Score */}
-        <DealHealthScore deal={deal} />
-
-        {/* To-Dos */}
-        {deal.todos && deal.todos.length > 0 && (
-          <div
-            className="rounded-lg border border-line p-6"
-            style={{
-              backgroundColor: theme === 'dark' ? '#1e293b' : '#ffffff',
-              transition: 'background-color 300ms ease'
-            }}
-          >
-            <h3 className="font-medium mb-4" style={{ color: themeConfig.textColor }}>
-              To-Dos
+        {/* Right Sidebar */}
+        <div className="space-y-6">
+          {/* Intelligence Alerts */}
+          <div className="bg-white rounded-lg border border-line p-6">
+            <h3 className="font-semibold text-ink flex items-center gap-2 mb-4">
+              <span>⚡</span> Intelligence Alerts
             </h3>
-            <div className="space-y-2">
-              {deal.todos.map((todo) => (
-                <label
-                  key={todo.id}
-                  className="flex items-center gap-3 cursor-pointer p-2 rounded"
-                  style={{
-                    backgroundColor: theme === 'dark' ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.02)',
-                  }}
-                >
-                  <input
-                    type="checkbox"
-                    checked={todo.completed}
-                    className="w-4 h-4"
-                    readOnly
-                  />
-                  <span className={`text-sm ${todo.completed ? 'line-through text-ink-lighter' : 'text-ink'}`}>
-                    {todo.content}
-                  </span>
-                </label>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Calendar Events */}
-        {deal.calendarEvents && deal.calendarEvents.length > 0 && (
-          <div
-            className="rounded-lg border border-line p-6"
-            style={{
-              backgroundColor: theme === 'dark' ? '#1e293b' : '#ffffff',
-              transition: 'background-color 300ms ease'
-            }}
-          >
-            <h3 className="font-medium mb-4" style={{ color: themeConfig.textColor }}>
-              Upcoming Calls
-            </h3>
-            <div className="space-y-3">
-              {deal.calendarEvents.map((event) => (
-                <div key={event.id} className="text-sm">
-                  <p className="font-medium text-ink">{event.title}</p>
-                  <p className="text-xs text-ink-lighter">
-                    {new Date(event.startTime).toLocaleDateString()} at{' '}
-                    {new Date(event.startTime).toLocaleTimeString([], {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
-                  </p>
-                  {event.attendees && event.attendees.length > 0 && (
-                    <p className="text-xs text-ink-lighter mt-1">
-                      {event.attendees.join(', ')}
-                    </p>
-                  )}
+            <div className="space-y-4">
+              <div className="p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
+                <p className="text-xs font-semibold text-green-900 uppercase">Customer Pulse</p>
+                <div className="flex items-center gap-3 mt-2">
+                  <span className="text-3xl">📈</span>
+                  <div>
+                    <p className="text-sm font-bold text-green-900">Flatline</p>
+                    <p className="text-xs text-green-700">65 bpm</p>
+                  </div>
                 </div>
-              ))}
+                <p className="text-xs text-green-700 mt-2">No recent activity</p>
+              </div>
+              <IntelligenceAlerts dealId={deal.id} />
             </div>
           </div>
-        )}
+
+          {/* Deal Health */}
+          <div className="bg-amber-50 rounded-lg border border-amber-200 p-6">
+            <div className="flex items-start justify-between mb-4">
+              <h3 className="font-semibold text-amber-900">Deal Health</h3>
+              <p className="text-3xl font-bold text-amber-600">45</p>
+            </div>
+            <p className="text-sm font-medium text-amber-700 mb-3">Medium Risk</p>
+            <div className="space-y-2 text-sm text-amber-700 mb-4">
+              <p className="font-semibold text-xs uppercase">Risk Factors:</p>
+              <ul className="space-y-1 text-xs">
+                <li>• No stakeholders identified</li>
+                <li>• Moderate deal health (50/100)</li>
+              </ul>
+            </div>
+            <p className="text-sm text-amber-700">
+              <span className="inline-block px-2 py-1 bg-blue-100 text-blue-900 rounded text-xs font-semibold">Neutral Momentum</span>
+            </p>
+          </div>
+
+          {/* Recommended Next Steps */}
+          <div className="bg-white rounded-lg border border-line p-6">
+            <h3 className="font-semibold text-ink mb-4">Recommended Next Steps</h3>
+            <div className="space-y-3">
+              <div className="p-3 border border-red-200 rounded-lg bg-red-50">
+                <p className="text-sm font-medium text-red-900">Add key stakeholders</p>
+                <p className="text-xs text-red-700 mt-1">No contacts on this deal yet. Add decision makers, technical buyers, and champions.</p>
+                <p className="text-xs text-red-600 mt-2 font-semibold">Add at least 3 stakeholders before advancing</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Suggested Follow-up */}
+          <div className="bg-white rounded-lg border border-line p-6 text-center">
+            <p className="text-sm text-ink">Suggested follow-up: <span className="font-semibold">in 1 day</span></p>
+          </div>
+
+          {/* To-Dos */}
+          {deal.todos && deal.todos.length > 0 && (
+            <div className="bg-white rounded-lg border border-line p-6">
+              <h3 className="font-medium text-ink mb-4">To-Dos</h3>
+              <div className="space-y-2">
+                {deal.todos.map((todo) => (
+                  <label key={todo.id} className="flex items-center gap-3 cursor-pointer">
+                    <input type="checkbox" checked={todo.completed} className="w-4 h-4" readOnly />
+                    <span className={`text-sm ${todo.completed ? 'line-through text-ink-lighter' : 'text-ink'}`}>
+                      {todo.content}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Calendar Events */}
+          {deal.calendarEvents && deal.calendarEvents.length > 0 && (
+            <div className="bg-white rounded-lg border border-line p-6">
+              <h3 className="font-medium text-ink mb-4">Upcoming Calls</h3>
+              <div className="space-y-3">
+                {deal.calendarEvents.map((event) => (
+                  <div key={event.id} className="text-sm">
+                    <p className="font-medium text-ink">{event.title}</p>
+                    <p className="text-xs text-ink-lighter">
+                      {new Date(event.startTime).toLocaleDateString()} at{' '}
+                      {new Date(event.startTime).toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
