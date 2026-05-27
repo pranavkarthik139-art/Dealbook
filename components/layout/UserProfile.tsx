@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 
 export function UserProfile() {
   const [isOpen, setIsOpen] = useState(false);
@@ -52,13 +52,9 @@ export function UserProfile() {
     );
   }
 
-  const menuItems = [
-    { label: 'Profile Settings', href: '#', section: 'profile' },
-    { label: 'RBAC & Permissions', href: '#', section: 'rbac' },
-    { label: 'Integrations', href: '#', section: 'integrations' },
-    { label: 'Preferences', href: '#', section: 'preferences' },
-    { label: 'Team Settings', href: '#', section: 'team' },
-    { label: 'Sign Out', href: '/api/auth/signout', section: 'logout' },
+  const menuItems: Array<{ label: string; href: string; section: string; action?: string }> = [
+    { label: 'Profile Settings', href: '/settings?tab=profile', section: 'profile' },
+    { label: 'Sign Out', href: '#', section: 'logout', action: 'signout' },
   ];
 
   return (
@@ -215,36 +211,66 @@ export function UserProfile() {
           {/* Menu Items */}
           <div style={{ padding: '8px 0' }}>
             {menuItems.map((item) => (
-              <Link
-                key={item.section}
-                href={item.href}
-                onClick={() => {
-                  if (item.section !== 'logout') {
+              item.action === 'signout' ? (
+                <button
+                  key={item.section}
+                  onClick={() => {
                     setIsOpen(false);
-                  }
-                }}
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  padding: '10px 16px',
-                  fontSize: '13px',
-                  fontWeight: 500,
-                  color: item.section === 'logout' ? 'var(--error)' : 'var(--ink)',
-                  textDecoration: 'none',
-                  transition: 'all 150ms ease',
-                  gap: '10px',
-                  cursor: 'pointer'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor =
-                    item.section === 'logout' ? 'var(--error-light)' : 'var(--line-light)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                }}
-              >
-                <span>{item.label}</span>
-              </Link>
+                    signOut({ redirect: true });
+                  }}
+                  style={{
+                    width: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    padding: '10px 16px',
+                    fontSize: '13px',
+                    fontWeight: 500,
+                    color: 'var(--error)',
+                    textDecoration: 'none',
+                    transition: 'all 150ms ease',
+                    gap: '10px',
+                    cursor: 'pointer',
+                    border: 'none',
+                    backgroundColor: 'transparent'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'var(--error-light)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                  }}
+                >
+                  <span>{item.label}</span>
+                </button>
+              ) : (
+                <Link
+                  key={item.section}
+                  href={item.href}
+                  onClick={() => {
+                    setIsOpen(false);
+                  }}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    padding: '10px 16px',
+                    fontSize: '13px',
+                    fontWeight: 500,
+                    color: 'var(--ink)',
+                    textDecoration: 'none',
+                    transition: 'all 150ms ease',
+                    gap: '10px',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'var(--line-light)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                  }}
+                >
+                  <span>{item.label}</span>
+                </Link>
+              )
             ))}
           </div>
         </div>

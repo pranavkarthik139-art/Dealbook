@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/db';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import { prisma } from '@/lib/db';
+import { authConfig } from '@/auth.config';
 
-export async function GET(req: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getServerSession(authConfig);
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -15,40 +15,40 @@ export async function GET(req: NextRequest) {
     });
 
     if (!user) {
-      console.error(`[Assignments] User not found: ${session.user.email}`);
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    console.log(`[Assignments] Fetching for user: ${user.email} (ID: ${user.id})`);
-
-    // Check if requesting all assignments (for settings page)
-    const url = new URL(req.url);
-    const getAll = url.searchParams.get('all') === 'true';
-
-    let assignments;
-
-    if (getAll) {
-      // Get all assignments (for settings/delegation page)
-      assignments = await prisma.dealAssignment.findMany({
-        include: {
-          deal: true,
-          seUser: true,
-          assignedByUser: true,
-        },
-        orderBy: { assignedAt: 'desc' },
-      });
-    } else {
-      // Get assignments for this user only (deals assigned to them)
-      assignments = await prisma.dealAssignment.findMany({
-        where: { seUserId: user.id },
-        include: {
-          deal: true,
-          seUser: true,
-          assignedByUser: true,
-        },
-        orderBy: { assignedAt: 'desc' },
-      });
+    // Only managers and admins can view assignments
+    if (!['admin', 'presales_lead'].includes(user.role)) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
+
+    // Get all assignments with deal and SE info
+    const assignments = await prisma.dealAssignment.findMany({
+      where: {
+        assignedByUserId: user.id,
+      },
+      include: {
+        deal: {
+          select: {
+            id: true,
+            name: true,
+            amount: true,
+            stage: true,
+          },
+        },
+        seUser: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
+      orderBy: {
+        assignedAt: 'desc',
+      },
+    });
 
     return NextResponse.json({ assignments });
   } catch (error) {
@@ -60,9 +60,9 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function POST(req: NextRequest) {
+export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await getServerSession(authConfig);
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
@@ -72,126 +72,133 @@ export async function POST(req: NextRequest) {
     });
 
     if (!user) {
-      console.error(`[Assignments POST] User not found: ${session.user.email}`);
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    const body = await req.json();
-    const { dealId, seUserId } = body;
+    // Only managers and admins can assign deals
+    if (!['admin', 'presales_lead'].includes(user.role)) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
 
-    console.log(`[Assignments POST] Request: dealId=${dealId}, seUserId=${seUserId}, by user=${user.id}`);
+    const body = await request.json();
+    const { dealId, seUserId } = body;
 
     if (!dealId || !seUserId) {
       return NextResponse.json(
-        { error: 'dealId and seUserId are required' },
+        { error: 'Missing required fields: dealId, seUserId' },
         { status: 400 }
       );
     }
 
-    // Verify deal exists
+    // Verify the deal exists
     const deal = await prisma.deal.findUnique({
-      where: { id: dealId },
+      where: { id: parseInt(dealId) },
     });
 
     if (!deal) {
-      console.error(`[Assignments POST] Deal not found: ${dealId}`);
-      return NextResponse.json(
-        { error: 'Deal not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Deal not found' }, { status: 404 });
     }
 
-    // Verify SE user exists
+    // Verify the SE user exists
     const seUser = await prisma.user.findUnique({
-      where: { id: seUserId },
+      where: { id: parseInt(seUserId) },
     });
 
     if (!seUser) {
-      console.error(`[Assignments POST] SE user not found: ${seUserId}`);
-      return NextResponse.json(
-        { error: 'Sales Engineer not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Sales engineer not found' }, { status: 404 });
     }
 
-    // Check if already assigned
-    const existing = await prisma.dealAssignment.findFirst({
+    // Create or update assignment
+    const assignment = await prisma.dealAssignment.upsert({
       where: {
-        dealId,
-        seUserId,
+        dealId_seUserId: {
+          dealId: parseInt(dealId),
+          seUserId: parseInt(seUserId),
+        },
       },
-    });
-
-    if (existing) {
-      console.warn(`[Assignments POST] Already assigned: deal=${dealId}, se=${seUserId}`);
-      return NextResponse.json(
-        { error: 'This deal is already assigned to this SE' },
-        { status: 409 }
-      );
-    }
-
-    // Create assignment
-    const assignment = await prisma.dealAssignment.create({
-      data: {
-        dealId,
-        seUserId,
+      create: {
+        dealId: parseInt(dealId),
+        seUserId: parseInt(seUserId),
         assignedByUserId: user.id,
+      },
+      update: {
+        assignedByUserId: user.id,
+        assignedAt: new Date(),
       },
       include: {
         deal: true,
-        seUser: true,
+        seUser: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
       },
     });
 
-    // Log activity
-    await prisma.activityLog.create({
-      data: {
-        userId: user.id,
-        dealId,
-        action: 'deal_assigned',
-        description: `Deal assigned to ${assignment.seUser.name || assignment.seUser.email}`,
-      },
+    return NextResponse.json({
+      success: true,
+      assignment,
+      message: `Deal "${deal.name}" assigned to ${seUser.name}`,
     });
-
-    console.log(`[Assignments POST] Success: assignment created, deal=${dealId}, se=${seUserId}`);
-
-    return NextResponse.json(assignment, { status: 201 });
   } catch (error) {
-    console.error('[Assignments POST] Caught error:', error);
-
-    // Handle Prisma-specific errors
-    if (error && typeof error === 'object') {
-      const err = error as any;
-
-      if ('code' in err) {
-        console.error(`[Assignments POST] Prisma error code: ${err.code}, message: ${err.message}`);
-        return NextResponse.json(
-          { error: 'Database constraint error', message: err.message || 'Unknown database error' },
-          { status: 500 }
-        );
-      }
-
-      if ('message' in err) {
-        console.error(`[Assignments POST] Error message: ${err.message}`);
-        return NextResponse.json(
-          { error: 'Error during assignment', message: err.message },
-          { status: 500 }
-        );
-      }
-    }
-
-    // Safe error message extraction
-    let errorMessage = 'Unknown error';
-    if (error instanceof Error) {
-      errorMessage = error.message;
-      console.error(`[Assignments POST] Error instance message: ${errorMessage}`);
-    } else if (typeof error === 'string') {
-      errorMessage = error;
-    }
-
-    console.error(`[Assignments POST] Final error message: ${errorMessage}`);
+    console.error('Error creating assignment:', error);
     return NextResponse.json(
-      { error: 'Failed to create assignment', message: errorMessage },
+      { error: 'Failed to assign deal' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const session = await getServerSession(authConfig);
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+    });
+
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    // Only managers and admins can delete assignments
+    if (!['admin', 'presales_lead'].includes(user.role)) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    const body = await request.json();
+    const { dealId, seUserId } = body;
+
+    if (!dealId || !seUserId) {
+      return NextResponse.json(
+        { error: 'Missing required fields: dealId, seUserId' },
+        { status: 400 }
+      );
+    }
+
+    // Delete the assignment
+    await prisma.dealAssignment.delete({
+      where: {
+        dealId_seUserId: {
+          dealId: parseInt(dealId),
+          seUserId: parseInt(seUserId),
+        },
+      },
+    });
+
+    return NextResponse.json({
+      success: true,
+      message: 'Assignment removed',
+    });
+  } catch (error) {
+    console.error('Error deleting assignment:', error);
+    return NextResponse.json(
+      { error: 'Failed to delete assignment' },
       { status: 500 }
     );
   }

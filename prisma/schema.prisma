@@ -29,10 +29,15 @@ model User {
   deals             Deal[]
   contacts          Contact[]
   calls             Call[]
+  calendarEvents    CalendarEvent[]
   todos             Todo[]
   activityLogs      ActivityLog[]
   preferences       UserPreference?
   links             Link[]
+
+  // Deal Assignments
+  seAssignments     DealAssignment[] @relation("assignedSE")    // Deals assigned to this SE
+  managerAssignments DealAssignment[] @relation("assignedBy")   // Assignments made by this manager
 
   createdAt         DateTime          @default(now()) @map("created_at")
   updatedAt         DateTime          @updatedAt @map("updated_at")
@@ -105,8 +110,10 @@ model Deal {
   user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   contacts          Contact[]
   calls             Call[]
+  calendarEvents    CalendarEvent[]
   todos             Todo[]
   activityLogs      ActivityLog[]
+  assignments       DealAssignment[]  // SEs assigned to this deal
 
   @@index([userId])
   @@map("deals")
@@ -136,6 +143,32 @@ model Contact {
   @@index([userId])
   @@index([dealId])
   @@map("contacts")
+}
+
+model CalendarEvent {
+  id              Int       @id @default(autoincrement())
+  userId          Int       @map("user_id")
+  dealId          Int?      @map("deal_id")
+  title           String    @db.VarChar(255)
+  startTime       DateTime  @map("start_time")
+  endTime         DateTime  @map("end_time")
+  attendees       String[]  @default([])
+  description     String?   @db.Text
+
+  // Google Calendar integration
+  googleEventId   String?   @unique @map("google_event_id")
+
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+
+  // Relations
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deal            Deal?     @relation(fields: [dealId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([dealId])
+  @@index([googleEventId])
+  @@map("calendar_events")
 }
 
 model Call {
@@ -286,4 +319,23 @@ model Link {
   @@index([userId])
   @@index([publicToken])
   @@map("links")
+}
+
+// ==================== DEAL ASSIGNMENTS ====================
+
+model DealAssignment {
+  id                Int       @id @default(autoincrement())
+  dealId            Int       @map("deal_id")
+  seUserId          Int       @map("se_user_id")
+  assignedByUserId  Int       @map("assigned_by_user_id")
+  assignedAt        DateTime  @default(now()) @map("assigned_at")
+
+  deal              Deal      @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  seUser            User      @relation("assignedSE", fields: [seUserId], references: [id], onDelete: Cascade)
+  assignedByUser    User      @relation("assignedBy", fields: [assignedByUserId], references: [id], onDelete: Cascade)
+
+  @@unique([dealId, seUserId])
+  @@index([dealId])
+  @@index([seUserId])
+  @@map("deal_assignments")
 }

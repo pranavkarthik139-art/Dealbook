@@ -1,23 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/db';
 import { getServerSession } from 'next-auth';
+import { prisma } from '@/lib/db';
+import { authConfig } from '@/auth.config';
 
-export async function GET(req: NextRequest) {
+export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession();
+    const session = await getServerSession(authConfig);
     if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Fetch all users (team members)
+    const searchParams = request.nextUrl.searchParams;
+    const role = searchParams.get('role');
+
+    // Build where clause
+    const where: any = {};
+    if (role) {
+      where.role = role;
+    }
+
+    // Fetch users
     const users = await prisma.user.findMany({
+      where,
       select: {
         id: true,
         name: true,
         email: true,
         role: true,
       },
-      orderBy: { name: 'asc' },
+      orderBy: {
+        name: 'asc',
+      },
     });
 
     return NextResponse.json({ users });

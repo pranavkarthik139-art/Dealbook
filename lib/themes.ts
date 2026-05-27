@@ -1,60 +1,49 @@
-export type ThemeName = 'light' | 'dark' | 'cobalt' | 'emerald' | 'slate';
+export type ThemeName = 'light' | 'dark' | 'typeui';
 
 export interface ThemeConfig {
   name: ThemeName;
   label: string;
-  sidebarColor: string;      // Left pane color
-  mainColor: string;         // Main content area color
+  sidebarColor: string;
+  mainColor: string;
   accentColor: string;
   textColor: string;
   description: string;
+  // TypeUI additions
+  surfaceColor?: string;
+  borderColor?: string;
+  shadowColor?: string;
 }
 
 export const THEMES: Record<ThemeName, ThemeConfig> = {
   light: {
     name: 'light',
     label: 'Light (Default)',
-    sidebarColor: '#FFFFFF',    // Clean white sidebar (Paper)
-    mainColor: '#F9F9F7',       // Paper alt background
-    accentColor: '#6366F1',     // Cobalt accent
-    textColor: '#0F172A',       // Ink text
+    sidebarColor: '#FFFFFF',
+    mainColor: '#F9F9F7',
+    accentColor: '#6366F1',
+    textColor: '#0F172A',
     description: 'Clean, minimal light theme with neutral sidebar',
   },
   dark: {
     name: 'dark',
     label: 'Dark',
-    sidebarColor: '#1E293B',    // Darker slate sidebar (improved contrast with text)
-    mainColor: '#0F172A',       // Dark ink background
-    accentColor: '#818CF8',     // Lighter cobalt for better contrast on dark bg
-    textColor: '#F8FAFC',       // Slightly lighter text for WCAG AA compliance
-    description: 'Dark theme with professional appearance and accessible contrast',
+    sidebarColor: '#1E293B',
+    mainColor: '#0F172A',
+    accentColor: '#818CF8',
+    textColor: '#F8FAFC',
+    description: 'Dark theme with professional appearance',
   },
-  cobalt: {
-    name: 'cobalt',
-    label: 'Cobalt',
-    sidebarColor: '#4F46E5',    // Rich cobalt sidebar
-    mainColor: '#F0F4FF',       // Light cobalt-tinted background
-    accentColor: '#6366F1',     // Cobalt accent
-    textColor: '#0F172A',       // Dark text
-    description: 'Modern cobalt theme with complementary sidebar and main area',
-  },
-  emerald: {
-    name: 'emerald',
-    label: 'Emerald',
-    sidebarColor: '#047857',    // Rich emerald sidebar
-    mainColor: '#F0FDF4',       // Light emerald-tinted background
-    accentColor: '#10B981',     // Emerald accent
-    textColor: '#0F172A',       // Dark text
-    description: 'Fresh emerald theme with complementary green sidebar',
-  },
-  slate: {
-    name: 'slate',
-    label: 'Slate',
-    sidebarColor: '#475569',    // Deep slate sidebar
-    mainColor: '#F8FAFC',       // Light slate-tinted background
-    accentColor: '#64748B',     // Slate accent
-    textColor: '#0F172A',       // Dark text
-    description: 'Professional slate theme with complementary sidebar',
+  typeui: {
+    name: 'typeui',
+    label: 'TypeUI (Dark Pro)',
+    sidebarColor: '#09090B',
+    mainColor: '#09090B',
+    accentColor: '#0C5CAB',
+    textColor: '#FAFAFA',
+    surfaceColor: '#121216',
+    borderColor: '#262629',
+    shadowColor: 'rgba(0, 0, 0, 0.4)',
+    description: 'Cloud platform aesthetic with glass-morphism panels',
   },
 };
 
@@ -75,5 +64,5 @@ export function getThemePreference(): ThemeName {
       return saved as ThemeName;
     }
   }
-  return 'light'; // Default to Light theme
+  return 'light';
 }

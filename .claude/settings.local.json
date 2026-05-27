@@ -292,7 +292,27 @@
       "Bash(cat)",
       "Bash(node /tmp/fix_deals.js)",
       "Bash(node check-db.js)",
-      "Bash(node test-deal-detail.js)"
+      "Bash(node test-deal-detail.js)",
+      "Bash(cd \"C:\\\\\\\\Users\\\\\\\\prana\\\\\\\\.claude\\\\\\\\projects\\\\\\\\C--Users-prana-OneDrive-Desktop-Hashwork\")",
+      "Bash(python3)",
+      "Bash(curl -X POST https://api.apollo.io/api/v1/organizations/search -H 'Content-Type: application/json' -H 'X-Api-Key: _pzCuYliecRYi9YcrP5-mA' -d '{\"q_organization_name\":\"Microsoft\",\"page\":1,\"per_page\":1}')",
+      "WebFetch(domain:www.typeui.sh)",
+      "Bash(grep -E \"\\\\.\\(ts|tsx|js\\)$\")",
+      "Bash(grep -v \"^$\")",
+      "Bash(pkill -f \"node\\\\|npm\")",
+      "Bash(curl -s http://localhost:3003/settings)",
+      "Bash(curl -s -I https://dealbook.vercel.app)",
+      "Bash(killall -9 node)",
+      "Bash(taskkill /PID 29100 /F)",
+      "Bash(vercel status *)",
+      "Bash(vercel ls *)",
+      "Bash(curl -s -I https://dealbook-ggdl.vercel.app/)",
+      "Bash(curl -s -I https://dealbook-ggdl.vercel.app/api/auth/signin)",
+      "Bash(vercel logs *)",
+      "Bash(curl -s https://dealbook-ggdl.vercel.app/dashboard)",
+      "Bash(curl -s -L https://dealbook-ggdl.vercel.app/dashboard)",
+      "Bash(vercel inspect *)",
+      "Bash(awk '{print $3}')"
     ]
   }
 }

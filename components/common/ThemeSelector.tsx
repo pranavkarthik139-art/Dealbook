@@ -4,7 +4,7 @@ import { useTheme, useSetTheme } from '@/lib/ThemeContext';
 import { getTheme, type ThemeName, THEMES } from '@/lib/themes';
 import { useState } from 'react';
 
-const THEME_OPTIONS: ThemeName[] = ['light', 'dark', 'cobalt', 'emerald', 'slate'];
+const THEME_OPTIONS: ThemeName[] = ['light', 'dark', 'typeui', 'cobalt', 'emerald', 'slate'];
 
 export function ThemeSelector() {
   const currentTheme = useTheme();
