@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { useTheme } from '@/lib/ThemeContext';
+import { getTheme } from '@/lib/themes';
 
 // Import tab components (we'll create these)
 import { ProfileTab } from '@/components/settings/ProfileTab';
@@ -17,6 +19,8 @@ import { AdvancedTab } from '@/components/settings/AdvancedTab';
 export default function SettingsPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const theme = useTheme();
+  const themeConfig = getTheme(theme);
   const [activeTab, setActiveTab] = useState('profile');
   const [isSaving, setIsSaving] = useState(false);
 
@@ -67,14 +71,14 @@ export default function SettingsPage() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#F9F9F7' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: themeConfig.mainColor, transition: 'background-color 300ms ease' }}>
       {/* Header */}
-      <div style={{ borderBottom: '1px solid #E5E5E0', backgroundColor: '#FFFFFF' }}>
+      <div style={{ borderBottom: `1px solid ${themeConfig.borderColor}`, backgroundColor: themeConfig.cardColor }}>
         <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '24px 32px' }}>
-          <h1 style={{ margin: '0 0 8px 0', fontSize: '28px', fontWeight: '700', color: '#1A202C' }}>
+          <h1 style={{ margin: '0 0 8px 0', fontSize: '28px', fontWeight: '700', color: themeConfig.textColor }}>
             Settings
           </h1>
-          <p style={{ margin: '0', fontSize: '14px', color: '#718096' }}>
+          <p style={{ margin: '0', fontSize: '14px', color: themeConfig.secondaryTextColor }}>
             Manage your account, preferences, and integrations
           </p>
         </div>
@@ -96,8 +100,8 @@ export default function SettingsPage() {
                   border: 'none',
                   borderRadius: '8px',
                   cursor: 'pointer',
-                  backgroundColor: activeTab === tab.id ? '#0047FF' : 'transparent',
-                  color: activeTab === tab.id ? '#FFFFFF' : '#4A5568',
+                  backgroundColor: activeTab === tab.id ? themeConfig.accentColor : 'transparent',
+                  color: activeTab === tab.id ? '#FFFFFF' : themeConfig.secondaryTextColor,
                   transition: 'all 150ms ease',
                 }}
                 onMouseEnter={(e) => {

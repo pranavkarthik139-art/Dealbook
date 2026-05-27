@@ -285,7 +285,8 @@
       "Bash(chmod +x /tmp/check_imports.sh)",
       "Bash(bash /tmp/check_imports.sh)",
       "Bash(chmod +x /tmp/check_api_usage.sh)",
-      "Bash(bash /tmp/check_api_usage.sh)"
+      "Bash(bash /tmp/check_api_usage.sh)",
+      "mcp__bf5722c8-7476-4eb7-863b-9f030a8e720a__get_project"
     ]
   }
 }

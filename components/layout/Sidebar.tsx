@@ -44,14 +44,16 @@ export function Sidebar() {
 
   // Determine text color based on sidebar background
   const isDarkSidebar = theme === 'dark';
-  const textColor = isDarkSidebar ? '#FFFFFF' : '#0F172A';
+  const textColor = isDarkSidebar ? '#FFFFFF' : themeConfig.textColor || '#0F172A';
   const borderColor = isDarkSidebar ? 'rgba(255, 255, 255, 0.15)' : 'rgba(0, 0, 0, 0.08)';
+  const hoverBgColor = isDarkSidebar ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.05)';
+  const activeBgColor = isDarkSidebar ? 'rgba(255, 255, 255, 0.2)' : 'rgba(0, 0, 0, 0.08)';
 
   return (
     <aside style={{
-      width: '236px',
+      width: '280px',
       backgroundColor: themeConfig.sidebarColor,
-      borderRight: '1px solid rgba(0, 0, 0, 0.08)',
+      borderRight: `1px solid ${borderColor}`,
       display: 'flex',
       flexDirection: 'column',
       flexShrink: 0,
@@ -91,14 +93,14 @@ export function Sidebar() {
               fontWeight: 700,
               textDecoration: 'none',
               transition: 'all 150ms ease',
-              backgroundColor: isActive('/dashboard') ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
+              backgroundColor: isActive('/dashboard') ? activeBgColor : 'transparent',
               color: textColor,
               opacity: isActive('/dashboard') ? 1 : 0.85,
               cursor: 'pointer'
             }}
             onMouseEnter={(e) => {
               if (!isActive('/dashboard')) {
-                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.12)';
+                e.currentTarget.style.backgroundColor = hoverBgColor;
                 e.currentTarget.style.opacity = '1';
               }
             }}
@@ -124,14 +126,14 @@ export function Sidebar() {
               fontWeight: 700,
               textDecoration: 'none',
               transition: 'all 150ms ease',
-              backgroundColor: isActive('/deals') ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
+              backgroundColor: isActive('/deals') ? activeBgColor : 'transparent',
               color: textColor,
               opacity: isActive('/deals') ? 1 : 0.85,
               cursor: 'pointer'
             }}
             onMouseEnter={(e) => {
               if (!isActive('/deals')) {
-                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.12)';
+                e.currentTarget.style.backgroundColor = hoverBgColor;
                 e.currentTarget.style.opacity = '1';
               }
             }}
@@ -185,7 +187,7 @@ export function Sidebar() {
               }}
               onMouseEnter={(e) => {
                 if (!isActive('/team')) {
-                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.12)';
+                  e.currentTarget.style.backgroundColor = hoverBgColor;
                   e.currentTarget.style.opacity = '1';
                 }
               }}
@@ -201,7 +203,7 @@ export function Sidebar() {
           ) : null}
 
           {/* Divider */}
-          <div style={{ height: '1px', backgroundColor: 'rgba(255, 255, 255, 0.12)', margin: '8px 0' }} />
+          <div style={{ height: '1px', backgroundColor: borderColor, margin: '8px 0' }} />
 
           {/* Automations */}
           <Link
@@ -215,14 +217,14 @@ export function Sidebar() {
               fontWeight: 700,
               textDecoration: 'none',
               transition: 'all 150ms ease',
-              backgroundColor: isActive('/automations') ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
+              backgroundColor: isActive('/automations') ? activeBgColor : 'transparent',
               color: textColor,
               opacity: isActive('/automations') ? 1 : 0.85,
               cursor: 'pointer'
             }}
             onMouseEnter={(e) => {
               if (!isActive('/automations')) {
-                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.12)';
+                e.currentTarget.style.backgroundColor = hoverBgColor;
                 e.currentTarget.style.opacity = '1';
               }
             }}
@@ -248,14 +250,14 @@ export function Sidebar() {
               fontWeight: 700,
               textDecoration: 'none',
               transition: 'all 150ms ease',
-              backgroundColor: isActive('/links') ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
+              backgroundColor: isActive('/links') ? activeBgColor : 'transparent',
               color: textColor,
               opacity: isActive('/links') ? 1 : 0.85,
               cursor: 'pointer'
             }}
             onMouseEnter={(e) => {
               if (!isActive('/links')) {
-                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.12)';
+                e.currentTarget.style.backgroundColor = hoverBgColor;
                 e.currentTarget.style.opacity = '1';
               }
             }}
@@ -281,14 +283,14 @@ export function Sidebar() {
               fontWeight: 700,
               textDecoration: 'none',
               transition: 'all 150ms ease',
-              backgroundColor: isActive('/settings') ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
+              backgroundColor: isActive('/settings') ? activeBgColor : 'transparent',
               color: textColor,
               opacity: isActive('/settings') ? 1 : 0.85,
               cursor: 'pointer'
             }}
             onMouseEnter={(e) => {
               if (!isActive('/settings')) {
-                e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.12)';
+                e.currentTarget.style.backgroundColor = hoverBgColor;
                 e.currentTarget.style.opacity = '1';
               }
             }}
@@ -307,7 +309,7 @@ export function Sidebar() {
       {/* Footer - User Profile with Menu */}
       <div style={{
         padding: '12px 12px',
-        borderTop: '1px solid rgba(255, 255, 255, 0.15)'
+        borderTop: `1px solid ${borderColor}`
       }}>
         <UserProfile />
       </div>
