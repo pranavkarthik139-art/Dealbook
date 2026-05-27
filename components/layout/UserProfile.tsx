@@ -54,12 +54,12 @@ export function UserProfile() {
   }
 
   const menuItems = [
-    { label: 'Profile Settings', icon: '👤', href: '#', section: 'profile' },
-    { label: 'RBAC & Permissions', icon: '🔐', href: '#', section: 'rbac' },
-    { label: 'Integrations', icon: '🔗', href: '#', section: 'integrations' },
-    { label: 'Preferences', icon: '⚙️', href: '#', section: 'preferences' },
-    { label: 'Team Settings', icon: '👥', href: '#', section: 'team' },
-    { label: 'Sign Out', icon: '🚪', href: '/api/auth/signout', section: 'logout' },
+    { label: 'Profile Settings', href: '#', section: 'profile' },
+    { label: 'RBAC & Permissions', href: '#', section: 'rbac' },
+    { label: 'Integrations', href: '#', section: 'integrations' },
+    { label: 'Preferences', href: '#', section: 'preferences' },
+    { label: 'Team Settings', href: '#', section: 'team' },
+    { label: 'Sign Out', href: '/api/auth/signout', section: 'logout' },
   ];
 
   return (
@@ -244,7 +244,6 @@ export function UserProfile() {
                   e.currentTarget.style.backgroundColor = 'transparent';
                 }}
               >
-                <span>{item.icon}</span>
                 <span>{item.label}</span>
               </Link>
             ))}

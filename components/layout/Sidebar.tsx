@@ -72,7 +72,7 @@ export function Sidebar() {
           letterSpacing: '-0.8px',
           lineHeight: 1.1
         }}>
-          Dealbook
+          Dealbook.
         </h1>
       </div>
 
@@ -87,8 +87,8 @@ export function Sidebar() {
               alignItems: 'center',
               padding: '10px 12px',
               borderRadius: '6px',
-              fontSize: '13px',
-              fontWeight: 500,
+              fontSize: '14px',
+              fontWeight: 700,
               textDecoration: 'none',
               transition: 'all 150ms ease',
               backgroundColor: isActive('/dashboard') ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
@@ -109,7 +109,6 @@ export function Sidebar() {
               }
             }}
           >
-            <span style={{ marginRight: '10px', fontSize: '16px' }}>📊</span>
             Dashboard
           </Link>
 
@@ -121,8 +120,8 @@ export function Sidebar() {
               alignItems: 'center',
               padding: '10px 12px',
               borderRadius: '6px',
-              fontSize: '13px',
-              fontWeight: 500,
+              fontSize: '14px',
+              fontWeight: 700,
               textDecoration: 'none',
               transition: 'all 150ms ease',
               backgroundColor: isActive('/deals') ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
@@ -143,7 +142,6 @@ export function Sidebar() {
               }
             }}
           >
-            <span style={{ marginRight: '10px', fontSize: '16px' }}>📊</span>
             <span style={{ flex: 1 }}>Deals & Insights</span>
             {dealCount > 0 && (
               <span style={{
@@ -176,8 +174,8 @@ export function Sidebar() {
                 alignItems: 'center',
                 padding: '10px 12px',
                 borderRadius: '6px',
-                fontSize: '13px',
-                fontWeight: 500,
+                fontSize: '14px',
+                fontWeight: 700,
                 textDecoration: 'none',
                 transition: 'all 150ms ease',
                 backgroundColor: isActive('/team') ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
@@ -198,7 +196,6 @@ export function Sidebar() {
                 }
               }}
             >
-              <span style={{ marginRight: '10px', fontSize: '16px' }}>👥</span>
               Team
             </Link>
           ) : null}
@@ -214,8 +211,8 @@ export function Sidebar() {
               alignItems: 'center',
               padding: '10px 12px',
               borderRadius: '6px',
-              fontSize: '13px',
-              fontWeight: 500,
+              fontSize: '14px',
+              fontWeight: 700,
               textDecoration: 'none',
               transition: 'all 150ms ease',
               backgroundColor: isActive('/automations') ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
@@ -236,7 +233,6 @@ export function Sidebar() {
               }
             }}
           >
-            <span style={{ marginRight: '10px', fontSize: '16px' }}>⚙️</span>
             Automations
           </Link>
 
@@ -248,8 +244,8 @@ export function Sidebar() {
               alignItems: 'center',
               padding: '10px 12px',
               borderRadius: '6px',
-              fontSize: '13px',
-              fontWeight: 500,
+              fontSize: '14px',
+              fontWeight: 700,
               textDecoration: 'none',
               transition: 'all 150ms ease',
               backgroundColor: isActive('/links') ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
@@ -270,7 +266,6 @@ export function Sidebar() {
               }
             }}
           >
-            <span style={{ marginRight: '10px', fontSize: '16px' }}>📎</span>
             Link Hub
           </Link>
 
@@ -282,8 +277,8 @@ export function Sidebar() {
               alignItems: 'center',
               padding: '10px 12px',
               borderRadius: '6px',
-              fontSize: '13px',
-              fontWeight: 500,
+              fontSize: '14px',
+              fontWeight: 700,
               textDecoration: 'none',
               transition: 'all 150ms ease',
               backgroundColor: isActive('/settings') ? 'rgba(255, 255, 255, 0.2)' : 'transparent',
@@ -304,7 +299,6 @@ export function Sidebar() {
               }
             }}
           >
-            <span style={{ marginRight: '10px', fontSize: '16px' }}>⚙️</span>
             Settings
           </Link>
         </div>

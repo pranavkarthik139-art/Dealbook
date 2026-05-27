@@ -9,13 +9,19 @@ export async function GET(
 ) {
   try {
     const user = await getCurrentUser();
+    console.log('[API] GET /api/deals/[id] - User:', user?.email, 'Role:', user?.role);
+
     if (!user) {
+      console.error('[API] No user found - returning 401');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { id } = await params;
+    const parsedId = parseInt(id);
+    console.log('[API] Fetching deal with ID:', parsedId, 'Type:', typeof parsedId);
+
     const deal = await prisma.deal.findUnique({
-      where: { id: parseInt(id) },
+      where: { id: parsedId },
       include: {
         calendarEvents: { orderBy: { startTime: 'asc' } },
         todos: { orderBy: { createdAt: 'desc' } },
@@ -24,7 +30,17 @@ export async function GET(
       },
     });
 
+    console.log('[API] Deal query result:', deal ? `Found (ID: ${deal.id}, Owner: ${deal.userId})` : 'Not found');
+
     if (!deal) {
+      console.error('[API] Deal ID', parsedId, 'not found in database');
+      // Log available deal IDs for debugging
+      const allDeals = await prisma.deal.findMany({
+        select: { id: true, userId: true, name: true },
+        take: 5,
+      });
+      console.log('[API] Sample available deals:', allDeals);
+
       return NextResponse.json(
         { error: 'Deal not found' },
         { status: 404 }
@@ -35,7 +51,10 @@ export async function GET(
     const isOwner = deal.userId === user.id;
     const isManager = user.role === 'presales_lead' || user.role === 'admin';
 
+    console.log('[API] Authorization check - isOwner:', isOwner, 'isManager:', isManager, 'userRole:', user.role);
+
     if (!isOwner && !isManager) {
+      console.warn('[API] Access denied - user', user.id, 'not authorized for deal', deal.id);
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 403 }

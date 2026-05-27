@@ -4,13 +4,14 @@ import { prisma } from '@/lib/db';
 
 /**
  * Get current user from session
- * For MVP: returns default demo user if not authenticated
+ * Extracts user from NextAuth session, falling back to demo user for development
  */
 export async function getCurrentUser() {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.email) {
-    // MVP: Return default demo user instead of null
+    console.warn('[Auth] No session found - using demo user');
+    // Fallback: return demo user (ID 1)
     return {
       id: 1,
       email: 'demo@dealbook.com',
@@ -24,30 +25,39 @@ export async function getCurrentUser() {
   }
 
   try {
-    // Find or create user by email
+    // Fetch user from database by email (source of truth for user data and role)
     const user = await prisma.user.findUnique({
       where: { email: session.user.email },
     });
 
     if (!user) {
-      // User session exists but not in DB (first-time login fallback)
-      // Create user with default role
+      console.warn(`[Auth] User ${session.user.email} not found in database - creating with default role`);
+      // Auto-create user if they have a valid session
       const newUser = await prisma.user.create({
         data: {
           email: session.user.email,
-          name: session.user.name || '',
-          image: session.user.image,
-          emailVerified: session.user.emailVerified,
-          role: 'sales_engineer', // Default role
+          name: session.user.name || session.user.email.split('@')[0],
+          image: session.user.image || null,
+          role: 'sales_engineer',
         },
       });
       return newUser;
     }
 
+    // Ensure user has a role set (should be set by signIn callback)
+    if (!user.role) {
+      console.warn(`[Auth] User ${user.email} has no role set - assigning sales_engineer`);
+      const updated = await prisma.user.update({
+        where: { id: user.id },
+        data: { role: 'sales_engineer' },
+      });
+      return updated;
+    }
+
     return user;
   } catch (error) {
-    console.error('Error fetching user:', error);
-    // MVP: Return default demo user on error instead of null
+    console.error('[Auth] Error fetching user from database:', error);
+    // Fallback on error
     return {
       id: 1,
       email: 'demo@dealbook.com',
