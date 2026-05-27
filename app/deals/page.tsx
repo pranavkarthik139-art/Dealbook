@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { DealCard } from '@/components/deals/DealCard';
 import { DealFilters } from '@/components/deals/DealFilters';
@@ -36,6 +36,7 @@ interface Deal {
 
 export default function DealsPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [deals, setDeals] = useState<Deal[]>([]);
   const [filteredDeals, setFilteredDeals] = useState<Deal[]>([]);
   const [selectedDeal, setSelectedDeal] = useState<Deal | null>(null);
@@ -61,6 +62,20 @@ export default function DealsPage() {
   const [sizeFilter, setSizeFilter] = useState('');
   const [stageFilter, setStageFilter] = useState('');
   const [stallFilter, setStallFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
+
+  // Load filters from URL query params on mount
+  useEffect(() => {
+    const status = searchParams.get('status') || '';
+    const stage = searchParams.get('stage') || '';
+    const activity = searchParams.get('activity') || '';
+    const size = searchParams.get('size') || '';
+
+    setStatusFilter(status);
+    setStageFilter(stage);
+    setActivityFilter(activity);
+    setSizeFilter(size);
+  }, [searchParams]);
 
   // Fetch deals
   useEffect(() => {
@@ -114,6 +129,11 @@ export default function DealsPage() {
       filtered = filtered.filter((deal) => deal.stage?.toLowerCase() === stageFilter.toLowerCase());
     }
 
+    // Status filter
+    if (statusFilter) {
+      filtered = filtered.filter((deal) => deal.status?.toLowerCase() === statusFilter.toLowerCase());
+    }
+
     // Stall filter
     if (stallFilter) {
       if (stallFilter === 'active') {
@@ -126,7 +146,7 @@ export default function DealsPage() {
     }
 
     setFilteredDeals(filtered);
-  }, [deals, activityFilter, sizeFilter, stageFilter, stallFilter]);
+  }, [deals, activityFilter, sizeFilter, stageFilter, stallFilter, statusFilter]);
 
   const handleCardClick = (deal: Deal) => {
     setSelectedDeal(deal);
