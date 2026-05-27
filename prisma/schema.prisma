@@ -206,10 +206,46 @@ model ActivityLog {
 model UserPreference {
   id                      Int       @id @default(autoincrement())
   userId                  Int       @unique @map("user_id")
+
+  // ===== PROFILE & ACCOUNT =====
   timezonePrimary         String    @default("UTC") @db.VarChar(50) @map("timezone_primary")
   timezoneSecondary       String?   @db.VarChar(50) @map("timezone_secondary")
+  language                String    @default("en") @db.VarChar(10)
+
+  // ===== PERSONALIZATION =====
+  theme                   String    @default("paper") @db.VarChar(50) // paper, cobalt, emerald
+  fontFamily              String    @default("dm-sans") @db.VarChar(50) @map("font_family") // dm-sans, inter, poppins, outfit
+  clockType               String    @default("digital") @db.VarChar(50) @map("clock_type") // digital, analog, both, minimal
+  density                 String    @default("normal") @db.VarChar(50) // compact, normal, spacious
+  dealViewType            String    @default("kanban") @db.VarChar(50) @map("deal_view_type") // kanban, list, grid
+  colorBlindMode          String?   @db.VarChar(50) @map("color_blind_mode") // protanopia, deuteranopia, tritanopia
+  darkMode                Boolean   @default(false) @map("dark_mode")
+
+  // ===== NOTIFICATIONS =====
+  notificationPreferences Json      @default("{\"email\": {\"default\": \"mentions\", \"quietHours\": null, \"digestFrequency\": \"daily\"}, \"slack\": {\"default\": \"mentions\", \"connected\": false}, \"inApp\": {\"enabled\": true, \"sound\": true}}") @map("notification_preferences")
+
+  // ===== DEAL HEALTH METRICS (Custom Thresholds) =====
+  dealHealthMetrics       Json      @default("{\"activityVelocity\": {\"critical\": 3, \"warning\": 7}, \"timeline\": {\"overdueDays\": 0, \"warningDays\": 7}, \"engagement\": {\"criticalDays\": 5, \"warningDays\": 14, \"minContacts\": 1}, \"probability\": {\"high\": 70, \"medium\": 30}, \"weights\": {\"activity\": 40, \"sentiment\": 35, \"engagement\": 25}}") @map("deal_health_metrics")
+
+  // ===== RISK FLAGS =====
+  riskFlags               Json      @default("{\"noActivity\": true, \"overdue\": true, \"noContact\": true, \"lowProbability\": true, \"approvalPending\": true}") @map("risk_flags")
+  notifyOnCritical        Boolean   @default(true) @map("notify_on_critical")
+
+  // ===== INTEGRATIONS & SYNC =====
   googleCalendarToken     String?   @db.Text @map("google_calendar_token")
   googleCalendarRefreshToken String? @db.Text @map("google_calendar_refresh_token")
+  gmailToken              String?   @db.Text @map("gmail_token")
+  gmailRefreshToken       String?   @db.Text @map("gmail_refresh_token")
+
+  // Integration configuration (which features are enabled)
+  integrationSettings     Json      @default("{\"google\": {\"connected\": false, \"syncCalls\": false, \"syncEmails\": false}, \"slack\": {\"connected\": false, \"dealUpdates\": false, \"callAlerts\": false}, \"anthropic\": {\"connected\": false, \"generateInsights\": false}, \"salesforce\": {\"connected\": false, \"bidirectionalSync\": false}}") @map("integration_settings")
+
+  // ===== AI PERMISSIONS (Claude) =====
+  aiPermissions           Json      @default("{\"allowRead\": [\"calls\", \"deals\", \"emails\"], \"blockRead\": []}") @map("ai_permissions")
+
+  // Last sync times
+  lastGmailSyncAt         DateTime? @map("last_gmail_sync_at")
+  lastCalendarSyncAt      DateTime? @map("last_calendar_sync_at")
 
   createdAt               DateTime  @default(now()) @map("created_at")
   updatedAt               DateTime  @updatedAt @map("updated_at")
