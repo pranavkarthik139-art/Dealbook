@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
+import { useTheme } from '@/lib/ThemeContext';
 import { analyzeDeal, DealIntelligence as DealIntelligenceType } from '@/lib/dealIntelligence';
 
 interface DealIntelligenceProps {

@@ -290,7 +290,9 @@
       "Bash(curl -s https://dealbook.vercel.app/api/seed-test-data)",
       "Bash(curl -s https://dealbook.vercel.app/api/deals)",
       "Bash(cat)",
-      "Bash(node /tmp/fix_deals.js)"
+      "Bash(node /tmp/fix_deals.js)",
+      "Bash(node check-db.js)",
+      "Bash(node test-deal-detail.js)"
     ]
   }
 }

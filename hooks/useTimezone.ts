@@ -69,7 +69,12 @@ export function useMultipleTimezones(timezones: string[]): TimezoneInfo[] {
   return times;
 }
 
-function getTimezoneAbbr(timezone: string): string {
+function getTimezoneAbbr(timezone: string | undefined): string {
+  // Safety check for undefined/null timezone
+  if (!timezone) {
+    return '---';
+  }
+
   const abbrMap: Record<string, string> = {
     'Asia/Kolkata': 'IST',
     'America/New_York': 'EST',
@@ -80,5 +85,5 @@ function getTimezoneAbbr(timezone: string): string {
     'Asia/Tokyo': 'JST',
   };
 
-  return abbrMap[timezone] || timezone.split('/')[1].slice(0, 3).toUpperCase();
+  return abbrMap[timezone] || (timezone.includes('/') ? timezone.split('/')[1].slice(0, 3).toUpperCase() : timezone.slice(0, 3).toUpperCase());
 }
