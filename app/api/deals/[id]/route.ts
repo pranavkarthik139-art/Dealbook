@@ -20,17 +20,23 @@ export async function GET(
     const parsedId = parseInt(id);
     console.log('[API] Fetching deal with ID:', parsedId, 'Type:', typeof parsedId);
 
-    const deal = await prisma.deal.findUnique({
-      where: { id: parsedId },
-      include: {
-        calendarEvents: { orderBy: { startTime: 'asc' } },
-        todos: { orderBy: { createdAt: 'desc' } },
-        activityLogs: { orderBy: { createdAt: 'desc' }, take: 20 },
-        contacts: true,
-      },
-    });
-
-    console.log('[API] Deal query result:', deal ? `Found (ID: ${deal.id}, Owner: ${deal.userId})` : 'Not found');
+    console.log('[API] Attempting to fetch deal with relations...');
+    let deal;
+    try {
+      deal = await prisma.deal.findUnique({
+        where: { id: parsedId },
+        include: {
+          calendarEvents: { orderBy: { startTime: 'asc' } },
+          todos: { orderBy: { createdAt: 'desc' } },
+          activityLogs: { orderBy: { createdAt: 'desc' }, take: 20 },
+          contacts: true,
+        },
+      });
+      console.log('[API] Deal query succeeded, deal:', deal ? `Found (ID: ${deal.id}, Owner: ${deal.userId})` : 'Not found');
+    } catch (queryError) {
+      console.error('[API] Deal query error:', queryError);
+      throw queryError;
+    }
 
     if (!deal) {
       console.error('[API] Deal ID', parsedId, 'not found in database');
@@ -80,9 +86,11 @@ export async function GET(
 
     return NextResponse.json(dealWithMetadata, { status: 200 });
   } catch (error) {
-    console.error('Error fetching deal:', error);
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    console.error('[API] Error fetching deal:', errorMsg);
+    console.error('[API] Full error:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch deal' },
+      { error: 'Failed to fetch deal', details: errorMsg },
       { status: 500 }
     );
   }
